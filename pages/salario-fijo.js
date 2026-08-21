@@ -1,5 +1,7 @@
 "use strict";
 (function () {
+  var cfg = window.PAGINA_SALARIO || { valor: 30000, formateado: "30.000" };
+
   App.renderNav();
   App.renderRelacionadas("relacionadas");
   var form = document.getElementById("formulario");
@@ -10,8 +12,8 @@
     salarioLabel: "Salario bruto anual",
     salarioHint: "Importe íntegro antes de impuestos y Seguridad Social.",
     salarioFormatoEspanol: true,
-    placeholder: "35.000",
-    defaultValue: "35.000"
+    placeholder: cfg.formateado,
+    defaultValue: cfg.formateado
   });
 
   function pagaExtraDesglose(r, datos) {
