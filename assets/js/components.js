@@ -200,6 +200,79 @@ var App = (function () {
     };
   }
 
+  // Orquestación Navarra 2026 compartida entre Bruto->Neto y Neto->Bruto:
+  // la Seguridad Social es estatal (se reutiliza TaxEngine sin cambios) y
+  // solo la retención IRPF usa TaxEngineNavarra (núcleo ya validado). Esta
+  // función vive aquí (no en tax-engine-navarra.js) para que ambas páginas
+  // la reutilicen sin duplicar la combinación SS+retención. Requiere que la
+  // página haya cargado lib/constants-2026.js, lib/tax-engine.js,
+  // lib/constants-navarra-2026.js y lib/tax-engine-navarra.js.
+  function brutoToNetoNavarra(datos) {
+    var ss = TaxEngine.calcularSegSocialTrabajador(
+      TaxEngine.normalizarInput({ brutoAnual: datos.salario, numPagas: datos.numPagas, tipoContrato: datos.tipoContrato }),
+      Constants2026
+    );
+    var navarra = TaxEngineNavarra.calcularTipoRetencion(
+      {
+        retribucionFija: datos.salario,
+        retribucionVariablePrevisible: 0,
+        numDescendientes: datos.numHijos,
+        discapacidad: datos.discapacidadPropia
+      },
+      ConstantsNavarra2026
+    );
+    var brutoAnual = TaxEngine.round(datos.salario);
+    var retencionAnual = TaxEngine.round(datos.salario * (navarra.tipoRetencion / 100));
+    var netoAnual = TaxEngine.round(datos.salario - ss.anual - retencionAnual);
+    return {
+      bloqueado: false,
+      brutoAnual: brutoAnual,
+      segSocial: ss,
+      irpf: { tipoRetencion: navarra.tipoRetencion, retencionAnual: retencionAnual },
+      netoAnual: netoAnual,
+      netoPorPaga: TaxEngine.round(netoAnual / datos.numPagas),
+      porcentajeQueLlega: brutoAnual > 0 ? TaxEngine.round((netoAnual / brutoAnual) * 100) : 0
+    };
+  }
+
+  // Bisección genérica bruto<->neto (algoritmo numérico, no una regla
+  // fiscal): dado un "paraBruto(bruto)" que devuelve {netoAnual,...}, busca
+  // el bruto cuyo neto anual coincide con el objetivo. Misma tolerancia
+  // (1 céntimo) y tope de bracket (1e9€) que TaxEngine.netoToBruto, para
+  // que el comportamiento sea consistente entre territorios.
+  function bisectarBrutoParaNeto(paraBruto, netoAnualObjetivo) {
+    var objetivo = Math.max(0, Number(netoAnualObjetivo) || 0);
+    var TOPE_ABSOLUTO = 1e9;
+    var lo = 0;
+    var hi = Math.max(objetivo, 1);
+    while (paraBruto(hi).netoAnual < objetivo) {
+      hi *= 2;
+      if (hi > TOPE_ABSOLUTO) {
+        return {
+          bloqueado: true,
+          motivo:
+            "No se ha podido encontrar un bruto anual que produzca ese neto dentro de un rango razonable " +
+            "(hasta " + TOPE_ABSOLUTO + "€). Revisa el importe objetivo."
+        };
+      }
+    }
+    var resultado = paraBruto(hi);
+    for (var iter = 0; iter < 200 && hi - lo > 1e-6; iter++) {
+      var mid = (lo + hi) / 2;
+      resultado = paraBruto(mid);
+      if (resultado.netoAnual < objetivo) lo = mid; else hi = mid;
+    }
+    resultado.netoAnualObjetivo = TaxEngine.round(objetivo);
+    resultado.objetivoAlcanzado = Math.abs(resultado.netoAnual - objetivo) <= 0.01 + 1e-6;
+    return resultado;
+  }
+
+  function netoToBrutoNavarra(datos) {
+    return bisectarBrutoParaNeto(function (bruto) {
+      return brutoToNetoNavarra(Object.assign({}, datos, { salario: bruto }));
+    }, datos.netoAnualObjetivo);
+  }
+
   function bloqueoHTML(motivo) {
     return '<div class="notice warn"><span>⚠️</span><span>' + motivo + "</span></div>";
   }
@@ -234,6 +307,8 @@ var App = (function () {
     segmentedHTML: segmentedHTML,
     wireSegmented: wireSegmented,
     splitBarHTML: splitBarHTML,
+    brutoToNetoNavarra: brutoToNetoNavarra,
+    netoToBrutoNavarra: netoToBrutoNavarra,
     DISCLAIMER: DISCLAIMER
   };
 })();

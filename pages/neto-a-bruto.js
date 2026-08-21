@@ -11,7 +11,8 @@
     salarioFormatoEspanol: true,
     salarioPresets: [1200, 1500, 2000, 2500, 3000, 4000],
     placeholder: "3.000",
-    defaultValue: "3.000"
+    defaultValue: "3.000",
+    territoriosSoportadosExtra: ["navarra"]
   });
 
   function render(r, netoPorPaga, datos) {
@@ -48,6 +49,11 @@
       return;
     }
     var netoAnualObjetivo = datos.salario * datos.numPagas;
+    if (datos.territorio === "navarra") {
+      var rNavarra = App.netoToBrutoNavarra(Object.assign({}, datos, { netoAnualObjetivo: netoAnualObjetivo }));
+      render(rNavarra, datos.salario, datos);
+      return;
+    }
     var r = TaxEngine.netoToBruto(
       {
         netoAnualObjetivo: netoAnualObjetivo,
