@@ -11,19 +11,24 @@
     salarioFormatoEspanol: true,
     placeholder: "28.000",
     defaultValue: "28.000",
-    idPrefix: "oa"
+    idPrefix: "oa",
+    territoriosSoportadosExtra: ["navarra"]
   });
   App.buildFormulario(formB, {
     salarioLabel: "Oferta B — bruto anual",
     salarioFormatoEspanol: true,
     placeholder: "32.000",
     defaultValue: "32.000",
-    idPrefix: "ob"
+    idPrefix: "ob",
+    territoriosSoportadosExtra: ["navarra"]
   });
 
   function calcularOferta(form) {
     var datos = App.leerFormulario(form);
     if (!Number.isFinite(datos.salario) || datos.salario <= 0) return null;
+    if (datos.territorio === "navarra") {
+      return App.brutoToNetoNavarra(datos);
+    }
     var r = TaxEngine.brutoToNeto(
       {
         brutoAnual: datos.salario,

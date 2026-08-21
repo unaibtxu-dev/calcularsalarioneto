@@ -229,6 +229,7 @@ var App = (function () {
       brutoAnual: brutoAnual,
       segSocial: ss,
       irpf: { tipoRetencion: navarra.tipoRetencion, retencionAnual: retencionAnual },
+      numPagas: datos.numPagas,
       netoAnual: netoAnual,
       netoPorPaga: TaxEngine.round(netoAnual / datos.numPagas),
       porcentajeQueLlega: brutoAnual > 0 ? TaxEngine.round((netoAnual / brutoAnual) * 100) : 0
