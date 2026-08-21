@@ -15,7 +15,8 @@ const PAGES = [
   "neto-a-bruto.html",
   "comparar-ofertas.html",
   "calculadora-subida-sueldo.html",
-  "coste-empresa.html"
+  "coste-empresa.html",
+  "35000-brutos-a-netos.html"
 ];
 
 let errores = [];
