@@ -52,16 +52,18 @@
     );
   }
 
-  function render(antes, despues, subidaBrutoAnual) {
+  function render(antes, despues, subidaBrutoAnual, datos) {
     result.hidden = false;
+    var resumen = App.resumenCondicionesHTML(datos);
     if (antes.bloqueado || despues.bloqueado) {
-      result.innerHTML = App.bloqueoHTML(antes.motivo || despues.motivo);
+      result.innerHTML = resumen + App.bloqueoHTML(antes.motivo || despues.motivo);
       return;
     }
     var diffNeto = TaxEngine.round(despues.netoAnual - antes.netoAnual);
     var porcentajeQueLlega = subidaBrutoAnual > 0 ? TaxEngine.round((diffNeto / subidaBrutoAnual) * 100) : 0;
 
     result.innerHTML =
+      resumen +
       '<div class="result-hero"><div class="label">De la subida bruta, esto llega al neto</div>' +
       '<div class="value money">' + Fmt.money(diffNeto) + "/año</div>" +
       '<div class="sub">' + Fmt.pct(porcentajeQueLlega) + " de la subida bruta (" + Fmt.money(subidaBrutoAnual, true) + ") — el resto es SS + IRPF adicional</div></div>" +
@@ -92,7 +94,7 @@
 
     var antes = calcularBruto(datos, datos.salario);
     var despues = calcularBruto(datos, brutoNuevo);
-    render(antes, despues, subidaBrutoAnual);
+    render(antes, despues, subidaBrutoAnual, datos);
   }
 
   form.addEventListener("app:change", calcular);

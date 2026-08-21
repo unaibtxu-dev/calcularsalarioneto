@@ -473,6 +473,16 @@ details.advanced .advanced-body {
   border-radius: 999px;
 }
 
+.resumen-condiciones {
+  margin-bottom: 10px;
+}
+
+.resumen-condiciones .pill {
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.4;
+}
+
 .notice {
   display: flex;
   gap: 8px;

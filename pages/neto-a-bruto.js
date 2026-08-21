@@ -17,11 +17,13 @@
 
   function render(r, netoPorPaga, datos) {
     result.hidden = false;
+    var resumen = App.resumenCondicionesHTML(datos, ["navarra"]);
     if (r.bloqueado) {
-      result.innerHTML = App.bloqueoHTML(r.motivo);
+      result.innerHTML = resumen + App.bloqueoHTML(r.motivo);
       return;
     }
     result.innerHTML =
+      resumen +
       '<div class="result-hero"><div class="label">Para cobrar ' + Fmt.money(netoPorPaga, true) + " netos necesitas aprox.</div>" +
       '<div class="value">' + Fmt.money(r.brutoAnual) + "/año</div>" +
       '<div class="sub">' + Fmt.money(r.brutoAnual / datos.numPagas, true) + " brutos por paga (" + datos.numPagas + " pagas/año)</div></div>" +

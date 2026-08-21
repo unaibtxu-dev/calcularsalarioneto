@@ -83,17 +83,19 @@
     el.addEventListener("change", calcular);
   });
 
-  function render(neto, empresa, atepPct, brutoAnual) {
+  function render(neto, empresa, atepPct, brutoAnual, datosPersonal) {
     result.hidden = false;
     var totalNoSalarial = TaxEngine.round(empresa.anual);
     var costeTotal = TaxEngine.round(brutoAnual + empresa.anual);
+    var resumenPersonal = '<div class="section-title">Neto del trabajador (referencia)</div>' + App.resumenCondicionesHTML(datosPersonal);
 
     var bloqueNeto;
     if (neto.bloqueado) {
-      bloqueNeto = '<div class="notice warn"><span>⚠️</span><span>No se puede estimar el neto del trabajador: ' + neto.motivo + "</span></div>";
+      bloqueNeto = resumenPersonal + '<div class="notice warn"><span>⚠️</span><span>No se puede estimar el neto del trabajador: ' + neto.motivo + "</span></div>";
     } else {
       var pctQueLlega = costeTotal > 0 ? TaxEngine.round((neto.netoAnual / costeTotal) * 100) : 0;
       bloqueNeto =
+        resumenPersonal +
         App.splitBarHTML(pctQueLlega, "De cada 100 € que paga la empresa, el trabajador recibe " + Fmt.money(pctQueLlega, true)) +
         '<div class="result-grid">' +
         '<div class="result-tile"><div class="t-label">SS a cargo de la empresa</div><div class="t-value">' + Fmt.money(totalNoSalarial) + "</div></div>" +
@@ -139,7 +141,7 @@
     var neto = TaxEngine.brutoToNeto(input, Constants2026);
     var normalizado = TaxEngine.normalizarInput(input);
     var empresa = TaxEngine.calcularSegSocialEmpresa(normalizado, Constants2026, atepPct / 100);
-    render(neto, empresa, atepPct, brutoAnual);
+    render(neto, empresa, atepPct, brutoAnual, input);
   }
 
   calcular();

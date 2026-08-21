@@ -25,9 +25,9 @@
 
   function calcularOferta(form) {
     var datos = App.leerFormulario(form);
-    if (!Number.isFinite(datos.salario) || datos.salario <= 0) return null;
+    if (!Number.isFinite(datos.salario) || datos.salario <= 0) return { datos: datos, r: null };
     if (datos.territorio === "navarra") {
-      return App.brutoToNetoNavarra(datos);
+      return { datos: datos, r: App.brutoToNetoNavarra(datos) };
     }
     var r = TaxEngine.brutoToNeto(
       {
@@ -45,7 +45,7 @@
       },
       Constants2026
     );
-    return r;
+    return { datos: datos, r: r };
   }
 
   function tile(label, r) {
@@ -56,14 +56,21 @@
     );
   }
 
-  function render(a, b) {
+  function render(ofertaA, ofertaB) {
+    var a = ofertaA.r;
+    var b = ofertaB.r;
     result.hidden = false;
+    var resumen =
+      '<div class="resumen-condiciones">' +
+      '<span class="pill">Oferta A · ' + App.resumenCondiciones(ofertaA.datos, ["navarra"]) + "</span> " +
+      '<span class="pill">Oferta B · ' + App.resumenCondiciones(ofertaB.datos, ["navarra"]) + "</span>" +
+      "</div>";
     if ((a && a.bloqueado) || (b && b.bloqueado)) {
-      result.innerHTML = App.bloqueoHTML((a && a.motivo) || (b && b.motivo));
+      result.innerHTML = resumen + App.bloqueoHTML((a && a.motivo) || (b && b.motivo));
       return;
     }
     if (!a || !b) {
-      result.innerHTML = '<p class="disclaimer">Rellena ambas ofertas para comparar.</p>';
+      result.innerHTML = resumen + '<p class="disclaimer">Rellena ambas ofertas para comparar.</p>';
       return;
     }
     var diffAnual = TaxEngine.round(b.netoAnual - a.netoAnual);
@@ -72,6 +79,7 @@
     var diffClase = diffAnual >= 0 ? "diff-positive" : "diff-negative";
 
     result.innerHTML =
+      resumen +
       '<div class="result-grid">' + tile("Neto anual A", a) + tile("Neto anual B", b) + "</div>" +
       '<div class="result-hero"><div class="label">Diferencia neta anual (B − A)</div>' +
       '<div class="value ' + diffClase + '">' + (diffAnual >= 0 ? "+" : "") + Fmt.money(diffAnual) + "</div>" +

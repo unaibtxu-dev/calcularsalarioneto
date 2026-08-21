@@ -200,6 +200,39 @@ var App = (function () {
     };
   }
 
+  // Resumen compacto y siempre visible de las condiciones usadas en el
+  // cálculo (territorio, pagas, hijos, discapacidad), para que se entienda
+  // el resultado aunque "Personalizar cálculo" esté cerrado. Un único sitio
+  // para el mapeo de etiquetas, reutilizado por las 5 herramientas.
+  function territorioLabel(territorio, extraSoportados) {
+    var soportados = extraSoportados || [];
+    if (territorio === "ceuta") return "Ceuta";
+    if (territorio === "melilla") return "Melilla";
+    if (territorio === "pais_vasco") return soportados.indexOf("pais_vasco") === -1 ? "País Vasco (no soportado)" : "País Vasco";
+    if (territorio === "navarra") return soportados.indexOf("navarra") === -1 ? "Navarra (no soportado)" : "Navarra";
+    return "Régimen común";
+  }
+
+  function discapacidadLabel(discapacidad) {
+    if (discapacidad === "33-64") return "discapacidad 33%-64%";
+    if (discapacidad === "65omas") return "discapacidad ≥65%";
+    return null;
+  }
+
+  function resumenCondiciones(datos, extraSoportados) {
+    var partes = [territorioLabel(datos.territorio, extraSoportados)];
+    if (datos.numPagas) partes.push(datos.numPagas + " pagas");
+    if (datos.numHijos > 0) partes.push(datos.numHijos + (datos.numHijos === 1 ? " hijo" : " hijos"));
+    var disc = discapacidadLabel(datos.discapacidadPropia);
+    if (disc) partes.push(disc);
+    return partes.join(" · ");
+  }
+
+  function resumenCondicionesHTML(datos, extraSoportados, prefijo) {
+    var texto = resumenCondiciones(datos, extraSoportados);
+    return '<div class="resumen-condiciones"><span class="pill">' + (prefijo ? prefijo + " · " : "") + texto + "</span></div>";
+  }
+
   // Orquestación Navarra 2026 compartida entre Bruto->Neto y Neto->Bruto:
   // la Seguridad Social es estatal (se reutiliza TaxEngine sin cambios) y
   // solo la retención IRPF usa TaxEngineNavarra (núcleo ya validado). Esta
@@ -310,6 +343,8 @@ var App = (function () {
     splitBarHTML: splitBarHTML,
     brutoToNetoNavarra: brutoToNetoNavarra,
     netoToBrutoNavarra: netoToBrutoNavarra,
+    resumenCondiciones: resumenCondiciones,
+    resumenCondicionesHTML: resumenCondicionesHTML,
     DISCLAIMER: DISCLAIMER
   };
 })();

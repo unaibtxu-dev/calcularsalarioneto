@@ -33,11 +33,13 @@
 
   function render(r, datos) {
     result.hidden = false;
+    var resumen = App.resumenCondicionesHTML(datos, ["navarra"]);
     if (r.bloqueado) {
-      result.innerHTML = App.bloqueoHTML(r.motivo);
+      result.innerHTML = resumen + App.bloqueoHTML(r.motivo);
       return;
     }
     result.innerHTML =
+      resumen +
       '<div class="result-hero"><div class="label">Neto por paga estimado</div>' +
       '<div class="value money">' + Fmt.money(r.netoPorPaga, true) + "</div>" +
       '<div class="sub">' + Fmt.money(r.netoAnual) + " netos al año (" + datos.numPagas + " pagas)</div></div>" +
