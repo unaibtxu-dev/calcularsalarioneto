@@ -1,0 +1,20 @@
+# Dependencias (el proyecto no tiene ninguna, por si se añaden en el futuro)
+node_modules/
+npm-debug.log*
+
+# Variables de entorno / secretos
+.env
+.env.*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Cloudflare Pages (artefactos locales de wrangler, si se usa en el futuro)
+.wrangler/

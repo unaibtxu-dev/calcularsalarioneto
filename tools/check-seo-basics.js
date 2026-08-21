@@ -90,7 +90,7 @@ if (locsEnSitemap.length !== canonicalesEsperados.length) {
 
 // robots.txt
 const robotsTxt = leer("robots.txt");
-if (!/Sitemap:\s*https:\/\/sueldoclaro\.es\/sitemap\.xml/.test(robotsTxt)) {
+if (!/Sitemap:\s*https:\/\/calcularsalarioneto\.es\/sitemap\.xml/.test(robotsTxt)) {
   errores.push("robots.txt: no referencia sitemap.xml");
 }
 if (/Disallow:\s*\/\s*$/m.test(robotsTxt)) {

@@ -8,8 +8,9 @@
 
   App.buildFormulario(form, {
     salarioLabel: "Salario bruto anual actual",
-    placeholder: "30000",
-    defaultValue: "30000"
+    salarioFormatoEspanol: true,
+    placeholder: "30.000",
+    defaultValue: "30.000"
   });
 
   raiseBox.innerHTML =
@@ -17,7 +18,7 @@
     App.segmentedHTML("tipoSubida", "Tipo de subida", [{ value: "pct", label: "% de subida" }, { value: "eur", label: "€ de subida" }], "pct") +
     "</div>" +
     '<div class="field"><label for="subida-valor" id="subida-label">Porcentaje de subida</label>' +
-    '<input type="number" min="0" step="0.1" inputmode="decimal" id="subida-valor" value="5"></div>';
+    '<input type="text" inputmode="decimal" id="subida-valor" value="5"></div>';
 
   App.wireSegmented(raiseBox);
   raiseBox.addEventListener("app:change", function () {
@@ -25,7 +26,12 @@
     document.getElementById("subida-label").textContent = tipoSubida === "pct" ? "Porcentaje de subida" : "Subida en euros brutos/año";
     calcular();
   });
-  document.getElementById("subida-valor").addEventListener("input", calcular);
+  var subidaValorEl = document.getElementById("subida-valor");
+  subidaValorEl.addEventListener("input", calcular);
+  subidaValorEl.addEventListener("blur", function () {
+    var parsed = Fmt.parseEs(subidaValorEl.value);
+    if (Number.isFinite(parsed)) subidaValorEl.value = Fmt.formatEsInput(parsed);
+  });
 
   function calcularBruto(datos, brutoAnual) {
     return TaxEngine.brutoToNeto(
@@ -79,7 +85,8 @@
       return;
     }
     var tipoSubida = raiseBox.querySelector('[data-field="tipoSubida"]').getAttribute("data-value");
-    var valor = Number(document.getElementById("subida-valor").value) || 0;
+    var valor = Fmt.parseEs(document.getElementById("subida-valor").value);
+    if (!Number.isFinite(valor)) valor = 0;
     var brutoNuevo = tipoSubida === "pct" ? datos.salario * (1 + valor / 100) : datos.salario + valor;
     var subidaBrutoAnual = brutoNuevo - datos.salario;
 

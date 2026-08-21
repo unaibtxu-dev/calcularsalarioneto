@@ -21,6 +21,23 @@ var App = (function () {
     });
     html += "</nav>";
     el.innerHTML = html;
+
+    // Si el botón activo (p.ej. el último, "Coste empresa") queda fuera del
+    // área visible en móvil/tablet, lo centramos en el scroll al cargar la
+    // página — nunca debe quedar oculto o a medio cortar.
+    var nav = el.querySelector(".topnav-inner");
+    var activeLink = el.querySelector("a.active");
+    if (nav && activeLink && nav.scrollWidth > nav.clientWidth) {
+      var linkLeft = activeLink.offsetLeft;
+      var linkRight = linkLeft + activeLink.offsetWidth;
+      var yaVisible = linkLeft >= nav.scrollLeft && linkRight <= nav.scrollLeft + nav.clientWidth;
+      if (!yaVisible) {
+        var target = linkLeft - (nav.clientWidth - activeLink.offsetWidth) / 2;
+        // behavior:"instant" explícito: si no, hereda scroll-behavior:smooth
+        // del CSS y la posición inicial llegaría animada en vez de directa.
+        nav.scrollTo({ left: Math.max(0, target), behavior: "instant" });
+      }
+    }
   }
 
   function renderRelacionadas(containerId, activeId) {
@@ -57,12 +74,25 @@ var App = (function () {
     return html;
   }
 
+  function presetsHTML(presets) {
+    var html = '<div class="preset-row" role="group" aria-label="Importes rápidos">';
+    presets.forEach(function (v) {
+      html += '<button type="button" class="preset-chip" data-preset="' + v + '">' + Fmt.formatEsInput(v) + " €</button>";
+    });
+    html += "</div>";
+    return html;
+  }
+
   function formularioHTML(cfg) {
     var pre = cfg.idPrefix;
+    var salarioInput = cfg.salarioFormatoEspanol
+      ? '<input type="text" inputmode="decimal" data-field="salario" data-format="es" id="' + pre + '-salario" placeholder="' + (cfg.placeholder || "3.000") + '" value="' + (cfg.defaultValue || "") + '">'
+      : '<input type="number" min="0" step="0.01" inputmode="decimal" data-field="salario" id="' + pre + '-salario" placeholder="' + (cfg.placeholder || "30000") + '" value="' + (cfg.defaultValue || "") + '">';
     return (
       '<div class="field">' +
       '<label for="' + pre + '-salario">' + cfg.salarioLabel + "</label>" +
-      '<input type="number" min="0" step="0.01" inputmode="decimal" data-field="salario" id="' + pre + '-salario" placeholder="' + (cfg.placeholder || "30000") + '" value="' + (cfg.defaultValue || "") + '">' +
+      salarioInput +
+      (cfg.salarioPresets ? presetsHTML(cfg.salarioPresets) : "") +
       (cfg.salarioHint ? '<div class="field-hint">' + cfg.salarioHint + "</div>" : "") +
       "</div>" +
       (cfg.showPagas === false
@@ -107,6 +137,15 @@ var App = (function () {
     );
   }
 
+  function syncPresetActive(container) {
+    var salarioEl = container.querySelector('[data-field="salario"]');
+    if (!salarioEl) return;
+    var actual = Fmt.parseEs(salarioEl.value);
+    container.querySelectorAll(".preset-chip").forEach(function (chip) {
+      chip.classList.toggle("active", Number(chip.getAttribute("data-preset")) === actual);
+    });
+  }
+
   function buildFormulario(container, cfg) {
     cfg = cfg || {};
     cfg.idPrefix = cfg.idPrefix || "f" + Math.random().toString(36).slice(2, 7);
@@ -116,14 +155,35 @@ var App = (function () {
       el.addEventListener("input", function () { container.dispatchEvent(new Event("app:change")); });
       el.addEventListener("change", function () { container.dispatchEvent(new Event("app:change")); });
     });
+
+    var salarioEl = container.querySelector('[data-field="salario"]');
+    if (salarioEl && salarioEl.dataset.format === "es") {
+      salarioEl.addEventListener("blur", function () {
+        var parsed = Fmt.parseEs(salarioEl.value);
+        if (Number.isFinite(parsed)) salarioEl.value = Fmt.formatEsInput(parsed);
+      });
+    }
+    container.querySelectorAll(".preset-chip").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        if (salarioEl) salarioEl.value = Fmt.formatEsInput(Number(chip.getAttribute("data-preset")));
+        syncPresetActive(container);
+        container.dispatchEvent(new Event("app:change"));
+      });
+    });
+    container.addEventListener("app:change", function () { syncPresetActive(container); });
+    syncPresetActive(container);
+
     return cfg.idPrefix;
   }
 
   function leerFormulario(container) {
     var salarioEl = container.querySelector('[data-field="salario"]');
     var pagasWrap = container.querySelector('[data-field="numPagas"]');
+    var salarioValor = salarioEl
+      ? (salarioEl.dataset.format === "es" ? Fmt.parseEs(salarioEl.value) : salarioEl.valueAsNumber)
+      : NaN;
     return {
-      salario: salarioEl ? salarioEl.valueAsNumber : NaN,
+      salario: salarioValor,
       numPagas: pagasWrap ? Number(pagasWrap.getAttribute("data-value")) : 12,
       situacionFamiliar: container.querySelector('[data-field="situacionFamiliar"]').value,
       numHijos: Number(container.querySelector('[data-field="numHijos"]').value) || 0,

@@ -4,47 +4,110 @@
   App.renderRelacionadas("relacionadas", "coste-empresa");
   var form = document.getElementById("formulario");
   var atepBox = document.getElementById("atep-box");
+  var personalBox = document.getElementById("personalizar-personal");
   var result = document.getElementById("resultado");
 
-  App.buildFormulario(form, {
-    salarioLabel: "Salario bruto anual del trabajador",
-    placeholder: "30000",
-    defaultValue: "30000"
+  // Solo datos que afectan al coste empresarial: salario, periodicidad,
+  // tipo de contrato (cambia el tipo de desempleo) y AT/EP. Nada de
+  // situación familiar/hijos aquí: eso es IRPF del trabajador, no coste SS.
+  form.innerHTML =
+    '<div class="field"><label for="ce-salario">Salario bruto</label>' +
+    '<input type="text" inputmode="decimal" id="ce-salario" data-format="es" value="30.000" placeholder="30.000">' +
+    '<div class="field-hint" id="ce-salario-hint">Importe anual, antes de impuestos y Seguridad Social.</div></div>' +
+    '<div class="field"><span class="field-label">Periodicidad</span>' +
+    App.segmentedHTML("periodicidad", "Periodicidad del salario", [{ value: "anual", label: "Anual" }, { value: "mensual", label: "Mensual" }], "anual") +
+    "</div>" +
+    '<div class="field"><label for="ce-contrato">Tipo de contrato</label>' +
+    '<select id="ce-contrato">' +
+    '<option value="general">General</option>' +
+    '<option value="especial">Relación laboral especial</option>' +
+    '<option value="duracionInferiorAno">Duración inferior a un año</option>' +
+    "</select>" +
+    '<div class="field-hint">Cambia el tipo de cotización por desempleo a cargo de la empresa.</div></div>';
+
+  App.wireSegmented(form);
+  form.addEventListener("app:change", function () {
+    var periodicidad = form.querySelector('[data-field="periodicidad"]').getAttribute("data-value");
+    document.getElementById("ce-salario-hint").textContent =
+      periodicidad === "mensual" ? "Importe mensual, antes de impuestos y Seguridad Social." : "Importe anual, antes de impuestos y Seguridad Social.";
+    calcular();
+  });
+  document.getElementById("ce-salario").addEventListener("blur", function (e) {
+    var parsed = Fmt.parseEs(e.target.value);
+    if (Number.isFinite(parsed)) e.target.value = Fmt.formatEsInput(parsed);
+  });
+  form.querySelectorAll("input, select").forEach(function (el) {
+    el.addEventListener("input", calcular);
+    el.addEventListener("change", calcular);
   });
 
   var rango = Constants2026.segSocial.atEpRangoOrientativo;
   var sugerido = (rango.oficinasAdministrativo * 100).toFixed(2);
   atepBox.innerHTML =
     '<div class="field"><label for="atep-valor">Tipo AT/EP de tu convenio (%)</label>' +
-    '<input type="number" min="0" step="0.01" inputmode="decimal" id="atep-valor" value="' + sugerido + '"></div>' +
+    '<input type="text" inputmode="decimal" id="atep-valor" value="' + sugerido.replace(".", ",") + '"></div>' +
     '<div class="field-hint">No existe un tipo único: depende del epígrafe CNAE de tu empresa (desde ~' +
     (rango.oficinasAdministrativo * 100).toFixed(2) + "% en oficinas hasta ~" +
     (rango.mineriaSubterranea * 100).toFixed(2) +
     '% en actividades de mayor riesgo). Consulta tu RLC o pregunta a tu gestoría para el dato exacto.</div>';
+  var atepEl = document.getElementById("atep-valor");
+  atepEl.addEventListener("input", calcular);
+  atepEl.addEventListener("blur", function () {
+    var parsed = Fmt.parseEs(atepEl.value);
+    if (Number.isFinite(parsed)) atepEl.value = Fmt.formatEsInput(parsed);
+  });
 
-  document.getElementById("atep-valor").addEventListener("input", calcular);
+  personalBox.innerHTML =
+    '<details class="advanced"><summary>Personalizar el neto del trabajador (opcional) <span class="chevron" aria-hidden="true">▾</span></summary>' +
+    '<div class="advanced-body">' +
+    '<div class="field-hint">Esto no cambia el coste para la empresa: solo afina el neto estimado del trabajador que se muestra como referencia.</div>' +
+    '<div class="field"><label for="ce-sitfam">Situación familiar del trabajador</label>' +
+    '<select id="ce-sitfam">' +
+    '<option value="otro">Soltero/a o sin cónyuge a cargo</option>' +
+    '<option value="monoparental">Familia monoparental con hijos</option>' +
+    '<option value="casadoConyugeBajosIngresos">Casado/a, cónyuge con rentas ≤ 1.500 €/año</option>' +
+    "</select></div>" +
+    '<div class="field"><label for="ce-hijos">Hijos a cargo</label>' +
+    '<input type="number" min="0" step="1" id="ce-hijos" value="0"></div>' +
+    '<div class="field"><label for="ce-territorio">Territorio</label>' +
+    '<select id="ce-territorio">' +
+    '<option value="comun">Régimen común</option>' +
+    '<option value="ceuta">Ceuta</option>' +
+    '<option value="melilla">Melilla</option>' +
+    '<option value="pais_vasco">País Vasco (no soportado)</option>' +
+    '<option value="navarra">Navarra (no soportado)</option>' +
+    "</select></div>" +
+    "</div></details>";
+  personalBox.querySelectorAll("input, select").forEach(function (el) {
+    el.addEventListener("input", calcular);
+    el.addEventListener("change", calcular);
+  });
 
-  function render(neto, empresa, atepPct) {
+  function render(neto, empresa, atepPct, brutoAnual) {
     result.hidden = false;
-    if (neto.bloqueado) {
-      result.innerHTML = App.bloqueoHTML(neto.motivo);
-      return;
-    }
     var totalNoSalarial = TaxEngine.round(empresa.anual);
-    var costeTotal = TaxEngine.round(neto.brutoAnual + empresa.anual);
-    var pctQueLlegaAlTrabajador = costeTotal > 0 ? TaxEngine.round((neto.netoAnual / costeTotal) * 100) : 0;
+    var costeTotal = TaxEngine.round(brutoAnual + empresa.anual);
+
+    var bloqueNeto;
+    if (neto.bloqueado) {
+      bloqueNeto = '<div class="notice warn"><span>⚠️</span><span>No se puede estimar el neto del trabajador: ' + neto.motivo + "</span></div>";
+    } else {
+      var pctQueLlega = costeTotal > 0 ? TaxEngine.round((neto.netoAnual / costeTotal) * 100) : 0;
+      bloqueNeto =
+        App.splitBarHTML(pctQueLlega, "De cada 100 € que paga la empresa, el trabajador recibe " + Fmt.money(pctQueLlega, true)) +
+        '<div class="result-grid">' +
+        '<div class="result-tile"><div class="t-label">SS a cargo de la empresa</div><div class="t-value">' + Fmt.money(totalNoSalarial) + "</div></div>" +
+        '<div class="result-tile"><div class="t-label">Neto del trabajador</div><div class="t-value money">' + Fmt.money(neto.netoAnual) + "</div></div>" +
+        "</div>";
+    }
 
     result.innerHTML =
       '<div class="result-hero"><div class="label">Coste total anual para la empresa</div>' +
       '<div class="value">' + Fmt.money(costeTotal) + "</div>" +
-      '<div class="sub">' + Fmt.money(costeTotal / 12, true) + "/mes · bruto trabajador " + Fmt.money(neto.brutoAnual, true) + "</div></div>" +
-      App.splitBarHTML(pctQueLlegaAlTrabajador, "De cada 100 € que paga la empresa, el trabajador recibe " + Fmt.money(pctQueLlegaAlTrabajador, true)) +
-      '<div class="result-grid">' +
-      '<div class="result-tile"><div class="t-label">SS a cargo de la empresa</div><div class="t-value">' + Fmt.money(totalNoSalarial) + "</div></div>" +
-      '<div class="result-tile"><div class="t-label">Neto que recibe el trabajador</div><div class="t-value money">' + Fmt.money(neto.netoAnual) + "</div></div>" +
-      "</div>" +
+      '<div class="sub">' + Fmt.money(costeTotal / 12, true) + "/mes · salario bruto " + Fmt.money(brutoAnual, true) + "</div></div>" +
+      bloqueNeto +
       '<div class="breakdown">' +
-      '<div class="breakdown-row"><span class="name">Salario bruto</span><span class="val">' + Fmt.money(neto.brutoAnual, true) + "</span></div>" +
+      '<div class="breakdown-row"><span class="name">Salario bruto</span><span class="val">' + Fmt.money(brutoAnual, true) + "</span></div>" +
       '<div class="breakdown-row"><span class="name">Contingencias comunes + desempleo + FP + MEI + FOGASA</span><span class="val">' + Fmt.money(TaxEngine.round(empresa.anual - empresa.baseAnual * (atepPct / 100)), true) + "</span></div>" +
       '<div class="breakdown-row"><span class="name">AT/EP (' + Fmt.pct(atepPct) + ")</span><span class=\"val\">" + Fmt.money(TaxEngine.round(empresa.baseAnual * (atepPct / 100)), true) + "</span></div>" +
       '<div class="breakdown-row"><span class="name">Coste total empresa</span><span class="val">' + Fmt.money(costeTotal, true) + "</span></div>" +
@@ -53,35 +116,31 @@
   }
 
   function calcular() {
-    var datos = App.leerFormulario(form);
-    if (!Number.isFinite(datos.salario) || datos.salario <= 0) {
+    var salarioRaw = Fmt.parseEs(document.getElementById("ce-salario").value);
+    if (!Number.isFinite(salarioRaw) || salarioRaw <= 0) {
       result.hidden = true;
       return;
     }
-    var atepPct = Number(document.getElementById("atep-valor").value) || 0;
+    var periodicidad = form.querySelector('[data-field="periodicidad"]').getAttribute("data-value");
+    var brutoAnual = periodicidad === "mensual" ? salarioRaw * 12 : salarioRaw;
+    var tipoContrato = document.getElementById("ce-contrato").value;
+    var atepPct = Fmt.parseEs(document.getElementById("atep-valor").value);
+    if (!Number.isFinite(atepPct)) atepPct = 0;
+
     var input = {
-      brutoAnual: datos.salario,
-      numPagas: datos.numPagas,
-      situacionFamiliar: datos.situacionFamiliar,
-      numHijos: datos.numHijos,
-      territorio: datos.territorio,
-      tipoContrato: datos.tipoContrato,
-      discapacidadPropia: datos.discapacidadPropia,
-      edad65oMas: datos.edad65oMas,
-      edad75oMas: datos.edad75oMas,
-      pensionistaSS: datos.pensionistaSS,
-      desempleado: datos.desempleado
+      brutoAnual: brutoAnual,
+      numPagas: 12,
+      tipoContrato: tipoContrato,
+      situacionFamiliar: document.getElementById("ce-sitfam").value,
+      numHijos: Number(document.getElementById("ce-hijos").value) || 0,
+      territorio: document.getElementById("ce-territorio").value
     };
+
     var neto = TaxEngine.brutoToNeto(input, Constants2026);
-    if (neto.bloqueado) {
-      render(neto, null, atepPct);
-      return;
-    }
     var normalizado = TaxEngine.normalizarInput(input);
     var empresa = TaxEngine.calcularSegSocialEmpresa(normalizado, Constants2026, atepPct / 100);
-    render(neto, empresa, atepPct);
+    render(neto, empresa, atepPct, brutoAnual);
   }
 
-  form.addEventListener("app:change", calcular);
   calcular();
 })();

@@ -6,26 +6,32 @@
   var result = document.getElementById("resultado");
 
   App.buildFormulario(form, {
-    salarioLabel: "Neto anual que quieres cobrar",
-    salarioHint: "Calculamos el bruto anual que hace falta pactar para llegar a ese neto.",
-    placeholder: "24000",
-    defaultValue: "24000"
+    salarioLabel: "¿Cuánto quieres cobrar neto?",
+    salarioHint: "Por paga, según el número de pagas que elijas abajo.",
+    salarioFormatoEspanol: true,
+    salarioPresets: [1200, 1500, 2000, 2500, 3000, 4000],
+    placeholder: "3.000",
+    defaultValue: "3.000"
   });
 
-  function render(r, datos) {
+  function render(r, netoPorPaga, datos) {
     result.hidden = false;
     if (r.bloqueado) {
       result.innerHTML = App.bloqueoHTML(r.motivo);
       return;
     }
     result.innerHTML =
-      '<div class="result-hero"><div class="label">Bruto anual necesario</div>' +
-      '<div class="value">' + Fmt.money(r.brutoAnual) + "</div>" +
-      '<div class="sub">' + Fmt.money(r.brutoAnual / datos.numPagas, true) + " por paga (" + datos.numPagas + " pagas/año)</div></div>" +
+      '<div class="result-hero"><div class="label">Para cobrar ' + Fmt.money(netoPorPaga, true) + " netos necesitas aprox.</div>" +
+      '<div class="value">' + Fmt.money(r.brutoAnual) + "/año</div>" +
+      '<div class="sub">' + Fmt.money(r.brutoAnual / datos.numPagas, true) + " brutos por paga (" + datos.numPagas + " pagas/año)</div></div>" +
       (r.objetivoAlcanzado
         ? ""
         : '<div class="notice">No se ha encontrado un bruto que dé exactamente ese neto; el resultado es la mejor aproximación.</div>') +
       App.splitBarHTML(r.porcentajeQueLlega, "De cada 100 € brutos, te llegan " + Fmt.money(r.porcentajeQueLlega, true)) +
+      '<div class="result-grid">' +
+      '<div class="result-tile"><div class="t-label">Bruto por paga</div><div class="t-value">' + Fmt.money(r.brutoAnual / datos.numPagas, true) + "</div></div>" +
+      '<div class="result-tile"><div class="t-label">Retención IRPF</div><div class="t-value">' + Fmt.pct(r.irpf.tipoRetencion) + "</div></div>" +
+      "</div>" +
       '<div class="breakdown">' +
       '<div class="breakdown-row"><span class="name">Bruto anual</span><span class="val">' + Fmt.money(r.brutoAnual, true) + "</span></div>" +
       '<div class="breakdown-row"><span class="name">Seguridad Social (trabajador)</span><span class="val">−' + Fmt.money(r.segSocial.anual, true) + "</span></div>" +
@@ -41,9 +47,10 @@
       result.hidden = true;
       return;
     }
+    var netoAnualObjetivo = datos.salario * datos.numPagas;
     var r = TaxEngine.netoToBruto(
       {
-        netoAnualObjetivo: datos.salario,
+        netoAnualObjetivo: netoAnualObjetivo,
         numPagas: datos.numPagas,
         situacionFamiliar: datos.situacionFamiliar,
         numHijos: datos.numHijos,
@@ -57,7 +64,7 @@
       },
       Constants2026
     );
-    render(r, datos);
+    render(r, datos.salario, datos);
   }
 
   form.addEventListener("app:change", calcular);

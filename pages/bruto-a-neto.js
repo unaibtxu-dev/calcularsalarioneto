@@ -8,8 +8,9 @@
   App.buildFormulario(form, {
     salarioLabel: "Salario bruto anual",
     salarioHint: "Importe íntegro antes de impuestos y Seguridad Social.",
-    placeholder: "30000",
-    defaultValue: "30000"
+    salarioFormatoEspanol: true,
+    placeholder: "30.000",
+    defaultValue: "30.000"
   });
 
   function pagaExtraDesglose(r, datos) {

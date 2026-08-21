@@ -8,14 +8,16 @@
 
   App.buildFormulario(formA, {
     salarioLabel: "Oferta A — bruto anual",
-    placeholder: "28000",
-    defaultValue: "28000",
+    salarioFormatoEspanol: true,
+    placeholder: "28.000",
+    defaultValue: "28.000",
     idPrefix: "oa"
   });
   App.buildFormulario(formB, {
     salarioLabel: "Oferta B — bruto anual",
-    placeholder: "32000",
-    defaultValue: "32000",
+    salarioFormatoEspanol: true,
+    placeholder: "32.000",
+    defaultValue: "32.000",
     idPrefix: "ob"
   });
 

@@ -40,9 +40,9 @@ node tools/check-seo-basics.js          # title/description/canonical/OG/JSON-LD
 - `sitemap.xml` con las 5 URLs y `robots.txt` apuntando a él, sin bloquear nada.
 - No hay páginas programáticas ni contenido duplicado (fuera de alcance de v1).
 
-**Antes de publicar**, sustituye el dominio placeholder `https://sueldoclaro.es`
-por el dominio real en: `sitemap.xml`, `robots.txt` y el `<head>` de las 5
-páginas (`canonical`, `og:url`, JSON-LD `url`).
+Dominio en producción: `https://calcularsalarioneto.es` (ya sustituido en
+`sitemap.xml`, `robots.txt` y el `<head>` de las 5 páginas — `canonical`,
+`og:url`, JSON-LD `url`). DNS en Cloudflare ya activo.
 
 ## Pendiente (fuera de este cambio)
 
@@ -64,8 +64,7 @@ páginas (`canonical`, `og:url`, JSON-LD `url`).
    - **Build output directory**: `/` (la raíz de este directorio)
 4. Despliega. Cloudflare servirá `_headers` automáticamente (cabeceras de
    seguridad y caché ya incluidas en este repo).
-5. Añade el dominio propio en **Custom domains** y actualiza el dominio
-   placeholder en `sitemap.xml`, `robots.txt` y los `<head>` antes o
-   inmediatamente después de apuntar el DNS.
+5. Añade `calcularsalarioneto.es` en **Custom domains** (DNS ya apunta a
+   Cloudflare).
 6. Envía `sitemap.xml` en Google Search Console / Bing Webmaster Tools una
-   vez el dominio real esté en producción y verificado.
+   vez el dominio esté sirviendo en producción y verificado.
