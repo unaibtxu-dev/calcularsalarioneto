@@ -85,6 +85,9 @@ var App = (function () {
 
   function formularioHTML(cfg) {
     var pre = cfg.idPrefix;
+    var soportados = cfg.territoriosSoportadosExtra || [];
+    var labelPaisVasco = soportados.indexOf("pais_vasco") === -1 ? "País Vasco (no soportado)" : "País Vasco";
+    var labelNavarra = soportados.indexOf("navarra") === -1 ? "Navarra (no soportado)" : "Navarra";
     var salarioInput = cfg.salarioFormatoEspanol
       ? '<input type="text" inputmode="decimal" data-field="salario" data-format="es" id="' + pre + '-salario" placeholder="' + (cfg.placeholder || "3.000") + '" value="' + (cfg.defaultValue || "") + '">'
       : '<input type="number" min="0" step="0.01" inputmode="decimal" data-field="salario" id="' + pre + '-salario" placeholder="' + (cfg.placeholder || "30000") + '" value="' + (cfg.defaultValue || "") + '">';
@@ -114,8 +117,8 @@ var App = (function () {
       '<option value="comun">Régimen común</option>' +
       '<option value="ceuta">Ceuta</option>' +
       '<option value="melilla">Melilla</option>' +
-      '<option value="pais_vasco">País Vasco (no soportado)</option>' +
-      '<option value="navarra">Navarra (no soportado)</option>' +
+      '<option value="pais_vasco">' + labelPaisVasco + "</option>" +
+      '<option value="navarra">' + labelNavarra + "</option>" +
       "</select></div>" +
       '<div class="field"><label for="' + pre + '-contrato">Tipo de contrato</label>' +
       '<select data-field="tipoContrato" id="' + pre + '-contrato">' +

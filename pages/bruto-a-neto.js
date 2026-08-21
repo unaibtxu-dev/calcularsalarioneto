@@ -10,8 +10,43 @@
     salarioHint: "Importe íntegro antes de impuestos y Seguridad Social.",
     salarioFormatoEspanol: true,
     placeholder: "30.000",
-    defaultValue: "30.000"
+    defaultValue: "30.000",
+    territoriosSoportadosExtra: ["navarra"]
   });
+
+  // Navarra (Convenio Económico): la Seguridad Social es estatal y se
+  // reutiliza tal cual; solo la retención IRPF cambia de motor. El "núcleo
+  // general" de tax-engine-navarra.js no calcula el importe monetario
+  // directamente (ver comentarios de ese módulo), así que se aplica aquí
+  // el tipo sobre el bruto anual, igual que hace brutoToNeto en el régimen
+  // común.
+  function calcularNavarra(datos) {
+    var ss = TaxEngine.calcularSegSocialTrabajador(
+      TaxEngine.normalizarInput({ brutoAnual: datos.salario, numPagas: datos.numPagas, tipoContrato: datos.tipoContrato }),
+      Constants2026
+    );
+    var navarra = TaxEngineNavarra.calcularTipoRetencion(
+      {
+        retribucionFija: datos.salario,
+        retribucionVariablePrevisible: 0,
+        numDescendientes: datos.numHijos,
+        discapacidad: datos.discapacidadPropia
+      },
+      ConstantsNavarra2026
+    );
+    var brutoAnual = TaxEngine.round(datos.salario);
+    var retencionAnual = TaxEngine.round(datos.salario * (navarra.tipoRetencion / 100));
+    var netoAnual = TaxEngine.round(datos.salario - ss.anual - retencionAnual);
+    return {
+      bloqueado: false,
+      brutoAnual: brutoAnual,
+      segSocial: ss,
+      irpf: { tipoRetencion: navarra.tipoRetencion, retencionAnual: retencionAnual },
+      netoAnual: netoAnual,
+      netoPorPaga: TaxEngine.round(netoAnual / datos.numPagas),
+      porcentajeQueLlega: brutoAnual > 0 ? TaxEngine.round((netoAnual / brutoAnual) * 100) : 0
+    };
+  }
 
   function pagaExtraDesglose(r, datos) {
     if (datos.numPagas !== 14 || r.bloqueado) return "";
@@ -59,6 +94,10 @@
     var datos = App.leerFormulario(form);
     if (!Number.isFinite(datos.salario) || datos.salario <= 0) {
       result.hidden = true;
+      return;
+    }
+    if (datos.territorio === "navarra") {
+      render(calcularNavarra(datos), datos);
       return;
     }
     var r = TaxEngine.brutoToNeto(
