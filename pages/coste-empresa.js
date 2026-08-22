@@ -69,13 +69,19 @@
     "</select></div>" +
     '<div class="field"><label for="ce-hijos">Hijos a cargo</label>' +
     '<input type="number" min="0" step="1" id="ce-hijos" value="0"></div>' +
+    '<div class="field"><label for="ce-discapacidad">Discapacidad del trabajador</label>' +
+    '<select id="ce-discapacidad">' +
+    '<option value="ninguna">Sin discapacidad reconocida</option>' +
+    '<option value="33-64">Discapacidad 33% - 64%</option>' +
+    '<option value="65omas">Discapacidad ≥ 65%</option>' +
+    "</select></div>" +
     '<div class="field"><label for="ce-territorio">Territorio</label>' +
     '<select id="ce-territorio">' +
     '<option value="comun">Régimen común</option>' +
     '<option value="ceuta">Ceuta</option>' +
     '<option value="melilla">Melilla</option>' +
     '<option value="pais_vasco">País Vasco (no soportado)</option>' +
-    '<option value="navarra">Navarra (no soportado)</option>' +
+    '<option value="navarra">Navarra</option>' +
     "</select></div>" +
     "</div></details>";
   personalBox.querySelectorAll("input, select").forEach(function (el) {
@@ -87,7 +93,7 @@
     result.hidden = false;
     var totalNoSalarial = TaxEngine.round(empresa.anual);
     var costeTotal = TaxEngine.round(brutoAnual + empresa.anual);
-    var resumenPersonal = '<div class="section-title">Neto del trabajador (referencia)</div>' + App.resumenCondicionesHTML(datosPersonal);
+    var resumenPersonal = '<div class="section-title">Neto del trabajador (referencia)</div>' + App.resumenCondicionesHTML(datosPersonal, ["navarra"]);
 
     var bloqueNeto;
     if (neto.bloqueado) {
@@ -135,12 +141,24 @@
       tipoContrato: tipoContrato,
       situacionFamiliar: document.getElementById("ce-sitfam").value,
       numHijos: Number(document.getElementById("ce-hijos").value) || 0,
+      discapacidadPropia: document.getElementById("ce-discapacidad").value,
       territorio: document.getElementById("ce-territorio").value
     };
 
-    var neto = TaxEngine.brutoToNeto(input, Constants2026);
-    var normalizado = TaxEngine.normalizarInput(input);
+    // El coste empresarial solo depende de salario, periodicidad, tipo de
+    // contrato y AT/EP: se calcula sobre un input sin territorio/hijos para
+    // que ninguna condición de IRPF del trabajador pueda alterarlo.
+    var inputEmpresa = { brutoAnual: brutoAnual, numPagas: 12, tipoContrato: tipoContrato };
+    var normalizado = TaxEngine.normalizarInput(inputEmpresa);
     var empresa = TaxEngine.calcularSegSocialEmpresa(normalizado, Constants2026, atepPct / 100);
+
+    // Bloque secundario informativo: neto del trabajador, con motor foral
+    // cuando el territorio es Navarra.
+    var neto =
+      input.territorio === "navarra"
+        ? App.brutoToNetoNavarra(Object.assign({}, input, { salario: brutoAnual }))
+        : TaxEngine.brutoToNeto(input, Constants2026);
+
     render(neto, empresa, atepPct, brutoAnual, input);
   }
 
