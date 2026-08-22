@@ -10,7 +10,8 @@
     salarioLabel: "Salario bruto anual actual",
     salarioFormatoEspanol: true,
     placeholder: "30.000",
-    defaultValue: "30.000"
+    defaultValue: "30.000",
+    territoriosSoportadosExtra: ["navarra"]
   });
 
   raiseBox.innerHTML =
@@ -34,6 +35,9 @@
   });
 
   function calcularBruto(datos, brutoAnual) {
+    if (datos.territorio === "navarra") {
+      return App.brutoToNetoNavarra(Object.assign({}, datos, { salario: brutoAnual }));
+    }
     return TaxEngine.brutoToNeto(
       {
         brutoAnual: brutoAnual,
@@ -54,7 +58,7 @@
 
   function render(antes, despues, subidaBrutoAnual, datos) {
     result.hidden = false;
-    var resumen = App.resumenCondicionesHTML(datos);
+    var resumen = App.resumenCondicionesHTML(datos, ["navarra"]);
     if (antes.bloqueado || despues.bloqueado) {
       result.innerHTML = resumen + App.bloqueoHTML(antes.motivo || despues.motivo);
       return;
