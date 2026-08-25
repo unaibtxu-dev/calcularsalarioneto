@@ -12,12 +12,12 @@
     salarioPresets: [1200, 1500, 2000, 2500, 3000, 4000],
     placeholder: "3.000",
     defaultValue: "3.000",
-    territoriosSoportadosExtra: ["navarra", "bizkaia", "gipuzkoa"]
+    territoriosSoportadosExtra: ["navarra", "bizkaia", "gipuzkoa", "alava"]
   });
 
   function render(r, netoPorPaga, datos) {
     result.hidden = false;
-    var resumen = App.resumenCondicionesHTML(datos, ["navarra", "bizkaia", "gipuzkoa"]);
+    var resumen = App.resumenCondicionesHTML(datos, ["navarra", "bizkaia", "gipuzkoa", "alava"]);
     if (r.bloqueado) {
       result.innerHTML = resumen + App.bloqueoHTML(r.motivo);
       return;
@@ -64,6 +64,11 @@
     if (datos.territorio === "gipuzkoa") {
       var rGipuzkoa = App.netoToBrutoGipuzkoa(Object.assign({}, datos, { netoAnualObjetivo: netoAnualObjetivo }));
       render(rGipuzkoa, datos.salario, datos);
+      return;
+    }
+    if (datos.territorio === "alava") {
+      var rAlava = App.netoToBrutoAlava(Object.assign({}, datos, { netoAnualObjetivo: netoAnualObjetivo }));
+      render(rAlava, datos.salario, datos);
       return;
     }
     var r = TaxEngine.netoToBruto(

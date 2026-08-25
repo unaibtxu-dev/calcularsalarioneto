@@ -19,6 +19,7 @@ const PAGES = [
   "calculadora-sueldo-neto-navarra.html",
   "calculadora-sueldo-neto-bizkaia.html",
   "calculadora-sueldo-neto-gipuzkoa.html",
+  "calculadora-sueldo-neto-alava.html",
   "30000-brutos-a-netos.html",
   "35000-brutos-a-netos.html",
   "40000-brutos-a-netos.html",

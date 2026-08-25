@@ -14,7 +14,7 @@
     salarioFormatoEspanol: true,
     placeholder: cfg.formateado,
     defaultValue: cfg.formateado,
-    territoriosSoportadosExtra: ["navarra", "bizkaia", "gipuzkoa"]
+    territoriosSoportadosExtra: ["navarra", "bizkaia", "gipuzkoa", "alava"]
   });
 
   function pagaExtraDesglose(r, datos) {
@@ -36,7 +36,7 @@
 
   function render(r, datos) {
     result.hidden = false;
-    var resumen = App.resumenCondicionesHTML(datos, ["navarra", "bizkaia", "gipuzkoa"]);
+    var resumen = App.resumenCondicionesHTML(datos, ["navarra", "bizkaia", "gipuzkoa", "alava"]);
     if (r.bloqueado) {
       result.innerHTML = resumen + App.bloqueoHTML(r.motivo);
       if (faqDinamica) faqDinamica.textContent = "Con el territorio elegido no podemos calcular una cifra fiable (" + r.motivo + ").";
@@ -85,6 +85,10 @@
     }
     if (datos.territorio === "gipuzkoa") {
       render(App.brutoToNetoGipuzkoa(datos), datos);
+      return;
+    }
+    if (datos.territorio === "alava") {
+      render(App.brutoToNetoAlava(datos), datos);
       return;
     }
     var r = TaxEngine.brutoToNeto(
