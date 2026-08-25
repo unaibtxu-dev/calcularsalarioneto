@@ -117,6 +117,27 @@
   </section>
   <section class="card" id="formulario"></section>
   <section class="card" id="resultado" hidden aria-live="polite" aria-atomic="true"></section>
+
+  <section class="card" id="contenido">
+    <h2 class="section-title">Cómo se compara con otros sueldos</h2>
+    <p>Con 40.000 € brutos y sin hijos, el neto anual en régimen común es de <strong>29.656 €</strong>, con una retención del <strong>19,36 %</strong>.</p>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="name">← <a href="35000-brutos-a-netos">35.000 €</a></span><span class="val">+3.259 € netos (65,18 % de la subida llega)</span></div>
+      <div class="breakdown-row"><span class="name">40.000 € (esta página)</span><span class="val">29.656 € netos · 19,36 %</span></div>
+      <div class="breakdown-row"><span class="name">→ <a href="45000-brutos-a-netos">45.000 €</a></span><span class="val">+2.946,50 € netos (58,93 % de la subida llega)</span></div>
+    </div>
+    <p>Aquí hay un salto real: de 35.000 € a 40.000 € llega el 65,18 % de la subida, pero de 40.000 € a 45.000 € solo el 58,93 %. Ese tramo cruza un umbral de retención más alto.</p>
+
+    <h2 class="section-title">¿Y si trabajo en Navarra o Bizkaia?</h2>
+    <p>Ambos territorios tienen hacienda foral propia, con su propia tabla de retenciones distinta de la estatal. Sobre 40.000 € brutos, sin hijos:</p>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="name">Régimen común</span><span class="val">19,36 % · 29.656 € netos</span></div>
+      <div class="breakdown-row"><span class="name">Navarra</span><span class="val">18,10 % · 30.160 € netos</span></div>
+      <div class="breakdown-row"><span class="name">Bizkaia</span><span class="val">17,00 % · 30.600 € netos</span></div>
+    </div>
+    <p>Selecciona tu territorio en "Personalizar cálculo" para verlo con tu situación exacta. Álava y Gipuzkoa todavía no están soportados.</p>
+  </section>
+
   <section class="card" id="faq">
     <h2 class="section-title">Preguntas frecuentes</h2>
     <details class="advanced" open>
@@ -161,6 +182,10 @@
 <footer class="footer">Herramienta orientativa, no oficial. No sustituye a tu declaración de la renta ni a tu asesoría.</footer>
 <script src="lib/constants-2026.js"></script>
 <script src="lib/tax-engine.js"></script>
+<script src="lib/constants-navarra-2026.js"></script>
+<script src="lib/tax-engine-navarra.js"></script>
+<script src="lib/constants-bizkaia-2026.js"></script>
+<script src="lib/tax-engine-bizkaia.js"></script>
 <script src="assets/js/format.js"></script>
 <script src="assets/js/components.js"></script>
 <script src="pages/salario-fijo.js"></script>
