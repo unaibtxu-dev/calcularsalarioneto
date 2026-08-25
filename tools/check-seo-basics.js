@@ -16,6 +16,7 @@ const PAGES = [
   "comparar-ofertas.html",
   "calculadora-subida-sueldo.html",
   "coste-empresa.html",
+  "calculadora-sueldo-neto-navarra.html",
   "30000-brutos-a-netos.html",
   "35000-brutos-a-netos.html",
   "40000-brutos-a-netos.html",
