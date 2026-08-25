@@ -41,6 +41,54 @@
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Cuánto se paga de Seguridad Social en 2026?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Con contrato indefinido se descuenta un 6,50% del salario bruto: 4,70% de contingencias comunes, 1,55% de desempleo, 0,10% de formación profesional y 0,15% de MEI. Con contrato temporal es un 6,55%, porque el tipo de desempleo sube al 1,60%. La base de cotización tiene un tope máximo de 5.101,20 euros al mes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cobras más con 12 o con 14 pagas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El total anual es exactamente el mismo. Solo cambia cómo se reparte. La Seguridad Social se prorratea siempre entre 12 meses por ley, así que las pagas extra no llevan descuento adicional de Seguridad Social. Con 14 pagas cobras menos cada mes ordinario pero recibes dos pagas extra casi íntegras."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Afecta la comunidad autónoma al sueldo neto?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "En la nómina no. La retención mensual usa una escala estatal única, igual en toda España, y el algoritmo oficial de la Agencia Tributaria no incluye ningún campo de comunidad autónoma. La comunidad solo interviene en la declaración de la renta anual. Las excepciones que sí cambian la nómina son Navarra, País Vasco y Ceuta y Melilla."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿A partir de qué sueldo empiezan a retener IRPF?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Para un trabajador soltero y sin hijos el umbral está en 15.876 euros brutos anuales. Con cónyuge a cargo de rentas bajas sube a 17.197 euros, y aumenta con cada hijo. Por debajo de esos importes la retención es del 0% y solo se descuenta la Seguridad Social."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Por qué cambia la retención al cambiar de trabajo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Porque el tipo de retención se calcula sobre la previsión de lo que vas a ganar en el año, no sobre lo ya ganado. Una empresa a la que entras a mitad de año calcula la retención según lo que va a pagarte ella, que suele ser menos que un año completo. Por eso a veces te retienen menos de lo que corresponde y la declaración sale a pagar."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="hero">
@@ -53,8 +101,131 @@
 </header>
 <div class="topnav" id="topnav"></div>
 <main class="container">
+  <section class="card" id="intro">
+    <p>Tu salario bruto no es lo que cobras. Entre el bruto que figura en tu contrato y el dinero que entra en tu cuenta hay dos descuentos obligatorios: la <strong>Seguridad Social</strong> y la <strong>retención del IRPF</strong>. Esta calculadora aplica los dos con la normativa vigente en 2026 y te dice cuánto vas a cobrar realmente cada mes.</p>
+  </section>
   <section class="card" id="formulario"></section>
   <section class="card" id="resultado" hidden aria-live="polite" aria-atomic="true"></section>
+
+  <section class="card" id="contenido">
+    <h2 class="section-title">¿Qué diferencia hay entre el salario bruto y el neto?</h2>
+    <p>El <strong>salario bruto</strong> es el importe total que tu empresa se compromete a pagarte, antes de impuestos y cotizaciones. Es la cifra que aparece en el contrato y en las ofertas de empleo. El <strong>salario neto</strong> es lo que realmente llega a tu cuenta cada mes, una vez restados los descuentos obligatorios.</p>
+    <p>La diferencia entre ambos no es un porcentaje fijo. Depende de cuánto ganes, de tu situación familiar, del número de pagas y de tu tipo de contrato. Para un sueldo medio en España la diferencia suele moverse entre el 20% y el 25%, pero en salarios altos puede superar el 35%, y en salarios cercanos al SMI puede ser de apenas un 6%, porque no hay retención de IRPF.</p>
+
+    <h2 class="section-title">¿Cómo se calcula tu nómina paso a paso?</h2>
+    <p>El cálculo tiene dos bloques independientes que se restan del bruto anual:</p>
+    <p><strong>1. Cotizaciones a la Seguridad Social.</strong> Se calculan sobre tu base de cotización, con unos tipos fijos que no dependen de tu situación personal. Son iguales para todo el mundo dentro del mismo tipo de contrato.</p>
+    <p><strong>2. Retención del IRPF.</strong> Aquí sí influye tu situación personal y familiar. Se calcula un porcentaje único para todo el año, siguiendo el procedimiento general que recoge el Reglamento del IRPF (artículos 80 a 89 del RD 439/2007), y ese porcentaje se aplica a cada nómina.</p>
+    <p>Lo que queda después de restar ambos es tu neto. Esta calculadora implementa literalmente ese procedimiento oficial, no una estimación aproximada por porcentajes medios.</p>
+
+    <h2 class="section-title">¿Cuánto se paga de Seguridad Social en 2026?</h2>
+    <p>Los tipos a cargo del trabajador en 2026, según la Orden PJC/297/2026, son estos:</p>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="name">Contingencias comunes</span><span class="val">4,70 %</span></div>
+      <div class="breakdown-row"><span class="name">Desempleo (contrato indefinido)</span><span class="val">1,55 %</span></div>
+      <div class="breakdown-row"><span class="name">Desempleo (contrato temporal)</span><span class="val">1,60 %</span></div>
+      <div class="breakdown-row"><span class="name">Formación profesional</span><span class="val">0,10 %</span></div>
+      <div class="breakdown-row"><span class="name">MEI (Mecanismo de Equidad Intergeneracional)</span><span class="val">0,15 %</span></div>
+      <div class="breakdown-row"><span class="name">Total con contrato indefinido</span><span class="val">6,50 %</span></div>
+    </div>
+    <p>Es decir: con un contrato indefinido se te descuenta un <strong>6,50%</strong> del bruto por Seguridad Social, y un 6,55% si el contrato es temporal. A diferencia del IRPF, este porcentaje no cambia por tener hijos ni por tu situación familiar.</p>
+    <p>Hay un límite importante: la base de cotización tiene un <strong>tope máximo de 5.101,20 € al mes</strong>. Si ganas más que eso, cotizas solo hasta ese tope. Por eso, a partir de unos 61.000 € brutos anuales, la cuota de Seguridad Social deja de subir aunque suba tu sueldo.</p>
+
+    <h2 class="section-title">¿Cómo funciona la retención del IRPF por tramos?</h2>
+    <p>El IRPF es progresivo: no pagas el mismo porcentaje por todo tu sueldo. Tu base se divide en tramos y cada tramo tributa a un tipo distinto. La escala de retención para 2026 es esta:</p>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="name">Hasta 12.450 €</span><span class="val">19 %</span></div>
+      <div class="breakdown-row"><span class="name">De 12.450 € a 20.200 €</span><span class="val">24 %</span></div>
+      <div class="breakdown-row"><span class="name">De 20.200 € a 35.200 €</span><span class="val">30 %</span></div>
+      <div class="breakdown-row"><span class="name">De 35.200 € a 60.000 €</span><span class="val">37 %</span></div>
+      <div class="breakdown-row"><span class="name">De 60.000 € a 300.000 €</span><span class="val">45 %</span></div>
+      <div class="breakdown-row"><span class="name">Más de 300.000 €</span><span class="val">47 %</span></div>
+    </div>
+    <p>Un error muy común es pensar que si subes de tramo pagas ese porcentaje por todo tu sueldo. No es así: <strong>solo el dinero que entra en el tramo superior tributa al tipo superior</strong>. Cobrar más nunca hace que te quede menos neto.</p>
+    <p>De esa escala sale una cuota, y de ahí un porcentaje único —tu tipo de retención— que se aplica a todas tus nóminas. Ese tipo se trunca a dos decimales, no se redondea, y nunca puede superar el 47%.</p>
+
+    <h2 class="section-title">¿Qué es el mínimo personal y familiar?</h2>
+    <p>Es la parte de tu renta que se considera destinada a cubrir tus necesidades básicas y las de tu familia, y que por tanto no tributa. Cuanto mayor sea, menor será tu retención. En 2026:</p>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="name">Mínimo del contribuyente</span><span class="val">5.550 €</span></div>
+      <div class="breakdown-row"><span class="name">Primer hijo</span><span class="val">2.400 €</span></div>
+      <div class="breakdown-row"><span class="name">Segundo hijo</span><span class="val">2.700 €</span></div>
+      <div class="breakdown-row"><span class="name">Tercer hijo</span><span class="val">4.000 €</span></div>
+      <div class="breakdown-row"><span class="name">Cuarto hijo y siguientes</span><span class="val">4.500 €</span></div>
+      <div class="breakdown-row"><span class="name">Adicional por hijo menor de 3 años</span><span class="val">2.800 €</span></div>
+      <div class="breakdown-row"><span class="name">Adicional por edad (65 años o más)</span><span class="val">1.150 €</span></div>
+      <div class="breakdown-row"><span class="name">Discapacidad del 33% al 64%</span><span class="val">3.000 €</span></div>
+      <div class="breakdown-row"><span class="name">Discapacidad del 65% o superior</span><span class="val">9.000 €</span></div>
+    </div>
+    <p>A esto se suman los <strong>2.000 € de gastos deducibles generales</strong> que se restan a todos los trabajadores por cuenta ajena, y una reducción adicional por rendimientos del trabajo que beneficia sobre todo a los salarios más bajos.</p>
+
+    <h2 class="section-title">¿A partir de qué sueldo empiezan a retenerte?</h2>
+    <p>Por debajo de ciertos umbrales la retención es del 0%. Para un trabajador soltero y sin hijos, ese umbral está en <strong>15.876 € brutos anuales</strong>. Con cónyuge a cargo de rentas bajas sube a 17.197 €, y aumenta con cada hijo.</p>
+    <p>Como el SMI de 2026 está en <strong>17.094 € anuales</strong>, un salario mínimo sin cargas familiares queda muy cerca de ese umbral: la retención resultante es cero o casi cero. Eso explica por qué en salarios bajos el neto se parece tanto al bruto — solo se descuenta la Seguridad Social.</p>
+
+    <h2 class="section-title">¿Cobras más con 12 o con 14 pagas?</h2>
+    <p><strong>El total anual es exactamente el mismo.</strong> Lo único que cambia es cómo se reparte a lo largo del año.</p>
+    <p>Mucha gente cree que con 14 pagas cobra más, y no es cierto. La confusión viene de que la Seguridad Social se prorratea siempre entre 12 meses por ley, independientemente de cómo te pague la empresa. Por eso las pagas extra no llevan un descuento adicional de Seguridad Social: ya está repartido en las nóminas ordinarias.</p>
+    <p>Con 14 pagas cobras menos cada mes ordinario, pero recibes dos pagas extra que llegan casi íntegras (solo con la retención de IRPF descontada). Con 12 pagas cobras lo mismo todos los meses. Si eliges 14 pagas en la calculadora verás el desglose exacto de ambas situaciones.</p>
+
+    <h2 class="section-title">¿Afecta tu comunidad autónoma al sueldo neto?</h2>
+    <p><strong>En la nómina, no.</strong> Y esto es algo que muchas calculadoras explican mal.</p>
+    <p>La retención que te aplican cada mes usa una escala estatal única, la misma en Madrid, Andalucía o Galicia. El propio algoritmo oficial que publica la Agencia Tributaria para calcular retenciones <strong>no tiene ningún campo de comunidad autónoma</strong>. Por eso esta calculadora no te la pide.</p>
+    <p>Donde sí interviene tu comunidad es en la <strong>declaración de la renta anual</strong>, que usa la escala estatal más la autonómica y puede incluir deducciones propias de tu región. Pero eso es un momento distinto y un cálculo distinto al de tu nómina.</p>
+    <p>Hay tres excepciones reales, que sí cambian la nómina: Navarra, País Vasco y Ceuta/Melilla.</p>
+
+    <h2 class="section-title">Navarra y País Vasco: los regímenes forales</h2>
+    <p>Navarra y el País Vasco tienen haciendas propias con normativa de retenciones distinta de la estatal. No es un matiz: son tablas y reglas completamente diferentes.</p>
+    <p><strong>Navarra sí está implementada</strong> en esta calculadora, con la tabla foral de retenciones de 2026, que funciona por tramos de rendimiento anual y número de descendientes, además de una minoración específica por discapacidad. Selecciona Navarra en "Personalizar cálculo" y el cálculo cambia al sistema foral.</p>
+    <p><strong>El País Vasco todavía no.</strong> Son tres haciendas forales independientes —Álava, Bizkaia y Gipuzkoa— cada una con su propia normativa. Cuando seleccionas País Vasco, la calculadora <strong>bloquea el resultado y te avisa</strong>, en lugar de darte una cifra del régimen común que sería incorrecta. Preferimos no darte un número antes que darte uno equivocado.</p>
+
+    <h2 class="section-title">¿Y si trabajas en Ceuta o Melilla?</h2>
+    <p>Ceuta y Melilla tienen un tratamiento especial que sí se aplica en la nómina: la cuota de retención se reduce un <strong>60%</strong>. Es el equivalente en la retención a la deducción del 60% que existe en la declaración anual para las rentas obtenidas allí. Puedes activarlo en "Personalizar cálculo".</p>
+
+    <h2 class="section-title">¿Por qué cambia tu retención al cambiar de trabajo?</h2>
+    <p>Porque el tipo de retención se calcula sobre la <strong>previsión de lo que vas a ganar en el año</strong>, no sobre lo que ganaste antes. Cuando entras en una empresa nueva a mitad de año, esa empresa calcula tu retención en función de lo que va a pagarte ella, que puede ser bastante menos que un año completo.</p>
+    <p>Eso hace que a veces te retengan menos de lo que corresponde a tu renta total del año, y que en la declaración te salga a pagar. Es la causa más habitual de las sorpresas desagradables en la campaña de la renta tras un cambio de empleo.</p>
+    <p>Lo mismo ocurre con los bonus y la retribución variable: si están previstos, deben sumarse a la previsión anual antes de calcular el tipo, lo que sube el porcentaje aplicado a todo el año, no solo al mes en que los cobras.</p>
+
+    <h2 class="section-title">Esto no es tu declaración de la renta</h2>
+    <p>Es importante entenderlo: la retención de nómina es un <strong>adelanto a cuenta</strong> del IRPF, no el impuesto definitivo. Tu declaración anual usa la escala real estatal más la autonómica, incluye todas tus rentas —no solo el trabajo— y puede aplicar deducciones que aquí no intervienen.</p>
+    <p>Por eso el resultado de esta calculadora te dice cuánto vas a cobrar cada mes, pero no si te va a salir a pagar o a devolver en junio.</p>
+  </section>
+
+  <section class="card" id="faq">
+    <h2 class="section-title">Preguntas frecuentes</h2>
+    <details class="advanced" open>
+      <summary>¿Es fiable esta calculadora? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Implementa el procedimiento general de retenciones del Reglamento del IRPF y sus resultados están contrastados contra el simulador oficial de la Agencia Tributaria, coincidiendo de forma exacta en los casos verificados. El cálculo de Navarra está contrastado contra el calculador de la Hacienda Foral. Aun así, es una herramienta orientativa y no sustituye a tu asesoría.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Guardáis mi salario o mis datos? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>No. Todo el cálculo se ejecuta en tu propio navegador. Tu salario no se envía a ningún servidor ni se almacena en ninguna parte.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Por qué mi nómina real no coincide exactamente? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Las causas más habituales son: que tu empresa aplique un convenio con complementos o pagas adicionales, que hayas cambiado de trabajo durante el año, que tengas retribución en especie, o que la empresa haya regularizado tu retención a mitad de año. Esta calculadora modela un escenario estable durante todo el año.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Puedo pedir que me retengan más? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Sí. Puedes solicitar a tu empresa un tipo de retención superior al que te corresponde. Es habitual entre quienes prefieren cobrar algo menos cada mes para evitar que la declaración les salga a pagar. Lo que no puedes es pedir que te retengan menos del mínimo legal.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Cuánto le cuesta a la empresa mi sueldo? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Bastante más que tu bruto. La empresa paga un 23,60% de contingencias comunes, entre un 5,50% y un 6,70% de desempleo, un 0,60% de formación, un 0,75% de MEI, un 0,20% de FOGASA y un porcentaje variable de accidentes de trabajo según su actividad. Puedes calcularlo en nuestra herramienta de coste de empresa.</p>
+      </div>
+    </details>
+  </section>
+
   <section class="card" id="relacionadas"></section>
 </main>
 <footer class="footer">Herramienta orientativa, no oficial. No sustituye a tu declaración de la renta ni a tu asesoría.</footer>
