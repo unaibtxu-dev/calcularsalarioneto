@@ -357,6 +357,46 @@ var App = (function () {
     }, datos.netoAnualObjetivo);
   }
 
+  // Orquestación Gipuzkoa 2026: reutiliza el mismo motor que Bizkaia
+  // (TaxEngineBizkaia) porque la tabla es idéntica, verificado por separado
+  // contra fuente propia de Gipuzkoa — solo cambian las constantes.
+  // Requiere que la página haya cargado lib/constants-gipuzkoa-2026.js
+  // además de lib/tax-engine-bizkaia.js.
+  function brutoToNetoGipuzkoa(datos) {
+    var ss = TaxEngine.calcularSegSocialTrabajador(
+      TaxEngine.normalizarInput({ brutoAnual: datos.salario, numPagas: datos.numPagas, tipoContrato: datos.tipoContrato }),
+      Constants2026
+    );
+    var gipuzkoa = TaxEngineBizkaia.calcularTipoRetencion(
+      {
+        retribucionFija: datos.salario,
+        retribucionVariablePrevisible: 0,
+        numDescendientes: datos.numHijos,
+        discapacidad: datos.discapacidadPropia
+      },
+      ConstantsGipuzkoa2026
+    );
+    var brutoAnual = TaxEngine.round(datos.salario);
+    var retencionAnual = TaxEngine.round(datos.salario * (gipuzkoa.tipoRetencion / 100));
+    var netoAnual = TaxEngine.round(datos.salario - ss.anual - retencionAnual);
+    return {
+      bloqueado: false,
+      brutoAnual: brutoAnual,
+      segSocial: ss,
+      irpf: { tipoRetencion: gipuzkoa.tipoRetencion, retencionAnual: retencionAnual },
+      numPagas: datos.numPagas,
+      netoAnual: netoAnual,
+      netoPorPaga: TaxEngine.round(netoAnual / datos.numPagas),
+      porcentajeQueLlega: brutoAnual > 0 ? TaxEngine.round((netoAnual / brutoAnual) * 100) : 0
+    };
+  }
+
+  function netoToBrutoGipuzkoa(datos) {
+    return bisectarBrutoParaNeto(function (bruto) {
+      return brutoToNetoGipuzkoa(Object.assign({}, datos, { salario: bruto }));
+    }, datos.netoAnualObjetivo);
+  }
+
   function bloqueoHTML(motivo) {
     return '<div class="notice warn"><span>⚠️</span><span>' + motivo + "</span></div>";
   }
@@ -395,6 +435,8 @@ var App = (function () {
     netoToBrutoNavarra: netoToBrutoNavarra,
     brutoToNetoBizkaia: brutoToNetoBizkaia,
     netoToBrutoBizkaia: netoToBrutoBizkaia,
+    brutoToNetoGipuzkoa: brutoToNetoGipuzkoa,
+    netoToBrutoGipuzkoa: netoToBrutoGipuzkoa,
     resumenCondiciones: resumenCondiciones,
     resumenCondicionesHTML: resumenCondicionesHTML,
     DISCLAIMER: DISCLAIMER

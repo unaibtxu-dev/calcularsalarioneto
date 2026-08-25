@@ -11,7 +11,7 @@
     salarioFormatoEspanol: true,
     placeholder: "30.000",
     defaultValue: "30.000",
-    territoriosSoportadosExtra: ["navarra", "bizkaia"]
+    territoriosSoportadosExtra: ["navarra", "bizkaia", "gipuzkoa"]
   });
 
   function pagaExtraDesglose(r, datos) {
@@ -33,7 +33,7 @@
 
   function render(r, datos) {
     result.hidden = false;
-    var resumen = App.resumenCondicionesHTML(datos, ["navarra", "bizkaia"]);
+    var resumen = App.resumenCondicionesHTML(datos, ["navarra", "bizkaia", "gipuzkoa"]);
     if (r.bloqueado) {
       result.innerHTML = resumen + App.bloqueoHTML(r.motivo);
       return;
@@ -70,6 +70,10 @@
     }
     if (datos.territorio === "bizkaia") {
       render(App.brutoToNetoBizkaia(datos), datos);
+      return;
+    }
+    if (datos.territorio === "gipuzkoa") {
+      render(App.brutoToNetoGipuzkoa(datos), datos);
       return;
     }
     var r = TaxEngine.brutoToNeto(

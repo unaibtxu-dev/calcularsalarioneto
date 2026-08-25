@@ -18,6 +18,7 @@ const PAGES = [
   "coste-empresa.html",
   "calculadora-sueldo-neto-navarra.html",
   "calculadora-sueldo-neto-bizkaia.html",
+  "calculadora-sueldo-neto-gipuzkoa.html",
   "30000-brutos-a-netos.html",
   "35000-brutos-a-netos.html",
   "40000-brutos-a-netos.html",

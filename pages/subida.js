@@ -11,7 +11,7 @@
     salarioFormatoEspanol: true,
     placeholder: "30.000",
     defaultValue: "30.000",
-    territoriosSoportadosExtra: ["navarra", "bizkaia"]
+    territoriosSoportadosExtra: ["navarra", "bizkaia", "gipuzkoa"]
   });
 
   raiseBox.innerHTML =
@@ -41,6 +41,9 @@
     if (datos.territorio === "bizkaia") {
       return App.brutoToNetoBizkaia(Object.assign({}, datos, { salario: brutoAnual }));
     }
+    if (datos.territorio === "gipuzkoa") {
+      return App.brutoToNetoGipuzkoa(Object.assign({}, datos, { salario: brutoAnual }));
+    }
     return TaxEngine.brutoToNeto(
       {
         brutoAnual: brutoAnual,
@@ -61,7 +64,7 @@
 
   function render(antes, despues, subidaBrutoAnual, datos) {
     result.hidden = false;
-    var resumen = App.resumenCondicionesHTML(datos, ["navarra", "bizkaia"]);
+    var resumen = App.resumenCondicionesHTML(datos, ["navarra", "bizkaia", "gipuzkoa"]);
     if (antes.bloqueado || despues.bloqueado) {
       result.innerHTML = resumen + App.bloqueoHTML(antes.motivo || despues.motivo);
       return;
