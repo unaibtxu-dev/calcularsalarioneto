@@ -53,8 +53,76 @@
 </header>
 <div class="topnav" id="topnav"></div>
 <main class="container">
+  <section class="card" id="intro">
+    <p>Sabes lo que quieres cobrar limpio cada mes, pero en una negociación se habla en bruto. Esta herramienta hace el cálculo al revés: le dices el neto que necesitas y te dice qué salario bruto tienes que pactar para llegar ahí en 2026.</p>
+  </section>
   <section class="card" id="formulario"></section>
   <section class="card" id="resultado" hidden aria-live="polite" aria-atomic="true"></section>
+
+  <section class="card" id="contenido">
+    <h2 class="section-title">¿Por qué no puedes calcular el bruto con una regla de tres?</h2>
+    <p>Es el error más habitual cuando alguien intenta hacer este cálculo a mano. Si sabes que de 30.000 € brutos te quedan unos 23.100 € netos, es tentador pensar que basta con aplicar esa misma proporción hacia arriba. No funciona.</p>
+    <p>El motivo es que <strong>el IRPF es progresivo</strong>. Cuanto más ganas, mayor es el porcentaje que se te retiene. Si necesitas un 20% más de neto, vas a necesitar bastante más de un 20% adicional de bruto, porque cada euro extra tributa a un tipo más alto que el anterior.</p>
+    <p>Además hay un segundo efecto que complica el cálculo: la Seguridad Social deja de crecer a partir de la base máxima de cotización, fijada en <strong>5.101,20 € mensuales</strong>. Por encima de ese punto la relación entre bruto y neto vuelve a cambiar de pendiente.</p>
+    <p>Por eso esta calculadora no invierte una fórmula: prueba salarios brutos de forma iterativa con el mismo motor de cálculo que usa la herramienta de bruto a neto, hasta encontrar el que produce exactamente el neto que has pedido, con una precisión de un céntimo.</p>
+
+    <h2 class="section-title">¿Cuánto bruto necesitas para los netos más habituales?</h2>
+    <p>Como referencia orientativa, para un trabajador soltero, sin hijos y con contrato indefinido en régimen común, estos son los brutos anuales aproximados que hacen falta con 12 pagas:</p>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="name">1.200 € netos al mes</span><span class="val">≈ 15.400 € brutos/año (0 % IRPF)</span></div>
+      <div class="breakdown-row"><span class="name">1.500 € netos al mes</span><span class="val">≈ 22.100 € brutos/año (12,14 %)</span></div>
+      <div class="breakdown-row"><span class="name">2.000 € netos al mes</span><span class="val">≈ 31.300 € brutos/año (16,91 %)</span></div>
+      <div class="breakdown-row"><span class="name">2.500 € netos al mes</span><span class="val">≈ 40.600 € brutos/año (19,58 %)</span></div>
+      <div class="breakdown-row"><span class="name">3.000 € netos al mes</span><span class="val">≈ 50.800 € brutos/año (22,59 %)</span></div>
+    </div>
+    <p>Fíjate en el efecto de la progresividad: pasar de 1.200 € a 3.000 € netos al mes es multiplicar tu neto por 2,5, pero exige multiplicar el bruto por <strong>3,3</strong>. El tipo de retención pasa del 0 % al 22,59 % por el camino.</p>
+    <p>Ese primer caso es revelador: con 15.400 € brutos la retención es cero, porque estás por debajo del umbral de 15.876 € que marca la tabla de retención mínima para un soltero sin hijos. Solo se te descuenta la Seguridad Social.</p>
+    <p>Usa la calculadora de arriba para tu caso concreto, porque estas cifras cambian con hijos, situación familiar o territorio.</p>
+
+    <h2 class="section-title">Cómo usar esto en una negociación salarial</h2>
+    <p>Si vas a negociar un sueldo, hay tres cosas que conviene tener claras antes de sentarte:</p>
+    <p><strong>Habla siempre en bruto anual.</strong> Es el lenguaje estándar en las ofertas de empleo y en los contratos. Si negocias en neto mensual te arriesgas a malentendidos, porque el neto depende de circunstancias personales que la empresa no tiene por qué conocer.</p>
+    <p><strong>Pregunta por el número de pagas.</strong> Un sueldo de 30.000 € en 12 pagas y otro de 30.000 € en 14 pagas dan el mismo neto anual, pero cambian mucho cómo lo percibes mes a mes. Si comparas ofertas mirando solo el neto mensual sin saber las pagas, la comparación es engañosa.</p>
+    <p><strong>Ten en cuenta tu situación personal.</strong> El neto que te queda depende de tus hijos, de tu situación familiar y de tu territorio. Dos personas con el mismo bruto pueden cobrar netos distintos. Por eso el número que salga aquí para ti no tiene por qué servirle a un compañero.</p>
+
+    <h2 class="section-title">¿Qué pasa si pides el bruto justo?</h2>
+    <p>Ten cuidado con ajustar demasiado. Si calculas el bruto exacto para un neto concreto y lo pactas al céntimo, cualquier cambio en tus circunstancias moverá ese neto: un hijo que cumple 3 años, un cambio en tu situación familiar o una modificación normativa alterarán tu retención.</p>
+    <p>El resultado de esta herramienta es una referencia sólida para negociar, no una garantía contractual de tu nómina exacta.</p>
+
+    <h2 class="section-title">Neto a bruto en Navarra</h2>
+    <p>Si trabajas en Navarra, el cálculo inverso también funciona con el <strong>sistema foral</strong>. Navarra tiene su propia tabla de retenciones, distinta de la estatal, y la calculadora la aplica cuando seleccionas ese territorio en "Personalizar cálculo".</p>
+    <p>El País Vasco todavía no está soportado: sus tres haciendas forales tienen normativa propia. Si lo seleccionas, la herramienta bloquea el resultado en lugar de darte una cifra del régimen común que sería incorrecta.</p>
+    <p>Si quieres entender en detalle cómo se construye la retención —tramos, mínimo personal y familiar, Seguridad Social— lo tienes explicado en la <a href="index.html">calculadora de bruto a neto</a>.</p>
+  </section>
+
+  <section class="card" id="faq">
+    <h2 class="section-title">Preguntas frecuentes</h2>
+    <details class="advanced" open>
+      <summary>¿Qué bruto necesito para cobrar 2.000 € netos? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Para un trabajador soltero, sin hijos y en régimen común con 12 pagas, hacen falta unos 31.300 € brutos anuales, con un tipo de retención del 16,91 %. La cifra baja si tienes hijos a cargo, porque el mínimo familiar reduce la retención. Introduce tus datos en la calculadora para el importe exacto de tu caso.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿El resultado incluye la paga extra? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Sí. El bruto que te devuelve es anual e incluye todas las pagas. Si eliges 14 pagas, el neto objetivo que indicas se interpreta como el de una nómina ordinaria, y el reparto entre nóminas y pagas extra se calcula en consecuencia.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Puedo pedirle a la empresa un bruto que me dé un neto exacto? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Puedes pactar el bruto que quieras, pero la empresa no puede garantizarte un neto fijo: la retención la marca la ley en función de tus circunstancias, y estas pueden cambiar durante el año. Algunos contratos de alta dirección pactan neto garantizado, pero es excepcional.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Por qué me sale un bruto distinto al de otra calculadora? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Muchas calculadoras aplican porcentajes medios en vez del procedimiento oficial de retenciones, o ignoran el tope de la base de cotización. Esta implementa el cálculo del Reglamento del IRPF y sus resultados están contrastados contra el simulador oficial de la Agencia Tributaria.</p>
+      </div>
+    </details>
+  </section>
+
   <section class="card" id="relacionadas"></section>
 </main>
 <footer class="footer">Herramienta orientativa, no oficial. No sustituye a tu declaración de la renta ni a tu asesoría.</footer>

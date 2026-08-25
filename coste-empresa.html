@@ -53,10 +53,86 @@
 </header>
 <div class="topnav" id="topnav"></div>
 <main class="container">
+  <section class="card" id="intro">
+    <p>Un trabajador le cuesta a la empresa bastante más que su salario bruto. A las cotizaciones a la Seguridad Social a cargo del empleador hay que sumar el tipo de accidentes de trabajo, que varía según la actividad. Aquí calculas el coste real con los tipos de 2026.</p>
+  </section>
   <section class="card" id="formulario"></section>
   <section class="card" id="atep-box"></section>
   <section class="card" id="personalizar-personal"></section>
   <section class="card" id="resultado" hidden aria-live="polite" aria-atomic="true"></section>
+
+  <section class="card" id="contenido">
+    <h2 class="section-title">¿Cuánto cuesta realmente un trabajador?</h2>
+    <p>La regla práctica que se maneja en España es que un empleado cuesta en torno a un <strong>30-35 % más</strong> que su salario bruto. Con un tipo de accidentes de trabajo bajo, propio de oficinas, el sobrecoste ronda el <strong>32 %</strong>.</p>
+    <p>Traducido a cifras concretas, con un tipo de AT/EP del 1,50 %:</p>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="name">Bruto 25.000 €</span><span class="val">cuesta 33.038 € (+8.038 €)</span></div>
+      <div class="breakdown-row"><span class="name">Bruto 30.000 €</span><span class="val">cuesta 39.645 € (+9.645 €)</span></div>
+      <div class="breakdown-row"><span class="name">Bruto 40.000 €</span><span class="val">cuesta 52.860 € (+12.860 €)</span></div>
+      <div class="breakdown-row"><span class="name">Bruto 60.000 €</span><span class="val">cuesta 79.290 € (+19.290 €)</span></div>
+    </div>
+    <p>Hay un dato que sorprende a mucha gente: entre lo que paga la empresa y lo que ingresa el trabajador puede haber una diferencia enorme. De los 39.645 € que cuesta un sueldo de 30.000 €, al trabajador le llegan unos 23.100 € netos. Es decir, <strong>de cada 100 € que desembolsa la empresa, el trabajador recibe unos 58 €</strong>.</p>
+
+    <h2 class="section-title">Qué cotizaciones paga la empresa en 2026</h2>
+    <p>Estos son los tipos a cargo del empleador, según la Orden PJC/297/2026:</p>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="name">Contingencias comunes</span><span class="val">23,60 %</span></div>
+      <div class="breakdown-row"><span class="name">Desempleo (contrato indefinido)</span><span class="val">5,50 %</span></div>
+      <div class="breakdown-row"><span class="name">Desempleo (contrato temporal)</span><span class="val">6,70 %</span></div>
+      <div class="breakdown-row"><span class="name">Formación profesional</span><span class="val">0,60 %</span></div>
+      <div class="breakdown-row"><span class="name">MEI</span><span class="val">0,75 %</span></div>
+      <div class="breakdown-row"><span class="name">FOGASA</span><span class="val">0,20 %</span></div>
+      <div class="breakdown-row"><span class="name">Accidentes de trabajo (AT/EP)</span><span class="val">variable según CNAE</span></div>
+    </div>
+    <p>Compara la diferencia con el trabajador: por contingencias comunes el empleado aporta un 4,70 % y la empresa un 23,60 %, cinco veces más. El grueso del sistema de Seguridad Social lo sostienen las cotizaciones empresariales.</p>
+    <p>Un detalle relevante para las contrataciones cortas: el contrato temporal cotiza un <strong>1,20 % más</strong> por desempleo que el indefinido a cargo de la empresa. Es una penalización deliberada a la temporalidad.</p>
+
+    <h2 class="section-title">El tipo de AT/EP: por qué te lo pedimos</h2>
+    <p>Esta es la parte que ninguna calculadora puede acertar por ti, y por eso te dejamos editarla en lugar de inventar un número.</p>
+    <p>La cotización por accidentes de trabajo y enfermedades profesionales <strong>no tiene un tipo único</strong>. Depende del epígrafe CNAE de la actividad de la empresa, y la horquilla es muy amplia: desde alrededor del <strong>1,50 %</strong> en oficinas y trabajo administrativo hasta cerca del <strong>6,70 %</strong> en construcción de edificios o el <strong>7,15 %</strong> en minería subterránea.</p>
+    <p>Sobre un sueldo de 30.000 €, esa diferencia son más de 1.500 € anuales. No es un matiz despreciable, y es la razón por la que desconfiar de cualquier calculadora que te dé un coste de empresa "exacto" sin preguntarte por tu actividad.</p>
+    <p>¿Dónde encontrar tu tipo real? En el <strong>recibo de liquidación de cotizaciones (RLC)</strong> que la empresa presenta cada mes, o preguntando a tu gestoría.</p>
+
+    <h2 class="section-title">Qué no incluye este cálculo</h2>
+    <p>El coste que ves aquí es el de las cotizaciones obligatorias. En un cálculo de coste real de plantilla habría que sumar además otros conceptos:</p>
+    <p><strong>Indemnizaciones y provisiones.</strong> El coste futuro de un despido, que en un indefinido ordinario son 33 días por año trabajado.</p>
+    <p><strong>Retribución flexible y beneficios.</strong> Seguro médico, tickets restaurante, plan de pensiones o formación.</p>
+    <p><strong>Costes de estructura.</strong> Puesto de trabajo, equipo informático, licencias de software o espacio de oficina.</p>
+    <p><strong>Bonificaciones y reducciones.</strong> Determinados contratos y colectivos tienen bonificaciones en la cuota empresarial que reducen el coste y que esta herramienta no aplica.</p>
+
+    <h2 class="section-title">El neto del trabajador que se muestra abajo</h2>
+    <p>Como referencia añadimos una estimación del neto que percibiría el trabajador. Es información secundaria y <strong>no afecta al coste empresarial</strong>: cambiar los hijos, la situación familiar o el territorio modifica el neto del empleado, pero el coste para la empresa se mantiene idéntico, porque las cotizaciones no dependen del IRPF personal.</p>
+    <p>Si trabajas en Navarra, ese neto se calcula con el sistema foral. El País Vasco no está soportado y se indica expresamente en lugar de mostrar una cifra incorrecta. Para el detalle del cálculo del trabajador, tienes la <a href="index.html">calculadora de bruto a neto</a>.</p>
+  </section>
+
+  <section class="card" id="faq">
+    <h2 class="section-title">Preguntas frecuentes</h2>
+    <details class="advanced" open>
+      <summary>¿Cuánto le cuesta a la empresa un sueldo de 30.000 €? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Unos 39.645 € anuales con un tipo de accidentes de trabajo del 1,50 %, es decir 9.645 € por encima del bruto. Si la actividad tiene un AT/EP más alto, el coste sube: en construcción, con un 6,70 %, superaría los 41.200 €.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Por qué el coste no cambia si pongo hijos o cambio de territorio? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Porque esas variables afectan al IRPF del trabajador, no a las cotizaciones sociales. La empresa cotiza los mismos porcentajes sobre la base de cotización con independencia de la situación familiar o fiscal del empleado. Solo modifican el neto que se muestra como referencia.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Cotiza igual un contrato temporal? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>No. El tipo de desempleo a cargo de la empresa es del 6,70 % en temporal frente al 5,50 % en indefinido, un 1,20 % más. El resto de conceptos son iguales. Puedes cambiar el tipo de contrato en el formulario para ver la diferencia.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Hay un tope en lo que cotiza la empresa? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Sí. La base de cotización tiene un tope máximo de 5.101,20 € mensuales. Por encima de ese importe la empresa no cotiza más, así que para salarios muy altos el sobrecoste porcentual baja respecto al bruto.</p>
+      </div>
+    </details>
+  </section>
+
   <section class="card" id="relacionadas"></section>
 </main>
 <footer class="footer">Herramienta orientativa, no oficial. No sustituye a tu declaración de la renta ni a tu asesoría.</footer>

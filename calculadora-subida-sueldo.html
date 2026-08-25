@@ -53,9 +53,75 @@
 </header>
 <div class="topnav" id="topnav"></div>
 <main class="container">
+  <section class="card" id="intro">
+    <p>Te han ofrecido una subida, o vas a pedirla. La pregunta que importa no es cuánto sube el bruto, sino cuánto de eso acaba llegando a tu cuenta. Aquí lo calculas con la normativa de 2026: Seguridad Social e IRPF adicional descontados.</p>
+  </section>
   <section class="card" id="formulario"></section>
   <section class="card" id="subida-box"></section>
   <section class="card" id="resultado" hidden aria-live="polite" aria-atomic="true"></section>
+
+  <section class="card" id="contenido">
+    <h2 class="section-title">¿Por qué una subida de sueldo no llega entera al neto?</h2>
+    <p>Porque cada euro adicional que ganas se lleva dos descuentos. Primero la <strong>Seguridad Social</strong>, un 6,50 % con contrato indefinido. Y después el <strong>IRPF</strong>, que al ser progresivo grava ese dinero extra al tipo del tramo más alto en el que caiga, no a tu tipo medio.</p>
+    <p>Esa es la clave que casi nadie tiene clara: si tu retención media es del 16 %, tu subida no tributa al 16 %. Tributa al <strong>tipo marginal</strong>, que es bastante más alto porque corresponde al último tramo que ocupas.</p>
+    <p>El resultado es que de cada 100 € brutos de subida, lo habitual es que te lleguen entre 55 y 66 € netos.</p>
+
+    <h2 class="section-title">Cuánto llega al neto según tu sueldo actual</h2>
+    <p>Estas cifras son de una subida de 3.000 € brutos anuales, para un trabajador soltero, sin hijos, con contrato indefinido y 12 pagas en régimen común:</p>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="name">De 20.000 € a 23.000 €</span><span class="val">+1.573 € netos · llega el 52,4 %</span></div>
+      <div class="breakdown-row"><span class="name">De 25.000 € a 28.000 €</span><span class="val">+1.965 € netos · llega el 65,5 %</span></div>
+      <div class="breakdown-row"><span class="name">De 30.000 € a 33.000 €</span><span class="val">+1.966 € netos · llega el 65,5 %</span></div>
+      <div class="breakdown-row"><span class="name">De 40.000 € a 43.000 €</span><span class="val">+1.768 € netos · llega el 59,0 %</span></div>
+      <div class="breakdown-row"><span class="name">De 50.000 € a 53.000 €</span><span class="val">+1.767 € netos · llega el 58,9 %</span></div>
+      <div class="breakdown-row"><span class="name">De 80.000 € a 83.000 €</span><span class="val">+1.650 € netos · llega el 55,0 %</span></div>
+    </div>
+    <p>Fíjate en el primer caso, que es el más llamativo: con 20.000 € de partida solo te llega el 52 % de la subida, menos que con 30.000 €. No es un error. En esa zona salarial la subida hace que pierdas parte de la reducción por rendimientos del trabajo, que beneficia a los salarios bajos y se va retirando conforme ganas más. Por eso el salto del 8,86 % al 13,06 % de retención es tan brusco.</p>
+
+    <h2 class="section-title">¿Cuánto tengo que pedir para notar X al mes?</h2>
+    <p>Esta es la forma útil de plantear una negociación. Si quieres notar <strong>100 € más netos al mes</strong> —1.200 € al año— y estás en la franja donde te llega el 65 %, necesitas pedir alrededor de <strong>1.850 € brutos anuales</strong>.</p>
+    <p>Si buscas <strong>200 € netos más al mes</strong>, la petición sube a unos 3.700 € brutos anuales. Y si estás en un salario alto, donde solo llega el 55 %, harían falta cerca de 4.400 €.</p>
+    <p>La regla práctica: <strong>divide el neto anual que quieres entre 0,6</strong> y tendrás una petición realista en bruto. Usa la calculadora de arriba para afinar con tus datos, que es la forma de llegar a la conversación con una cifra defendible en lugar de una intuición.</p>
+
+    <h2 class="section-title">Cuidado con confundir el tipo medio y el marginal</h2>
+    <p>Es el malentendido más extendido sobre el IRPF, y también el más caro. Mucha gente teme que subir de tramo le haga cobrar menos, y rechaza subidas o promociones por ese motivo.</p>
+    <p><strong>Eso no puede pasar.</strong> Solo el dinero que entra en el tramo superior tributa al tipo superior; el resto sigue tributando exactamente igual que antes. Cobrar más bruto siempre implica cobrar más neto. Lo que ocurre es que la ganancia es menor de lo que esperabas, no negativa.</p>
+    <p>En la tabla de arriba puedes comprobarlo: en todos los casos, sin excepción, el neto sube.</p>
+
+    <h2 class="section-title">Subida salarial en Navarra</h2>
+    <p>Si trabajas en Navarra, el cálculo usa el <strong>sistema foral</strong>, con su tabla propia de retenciones. Ahí el efecto de los tramos es incluso más visible que en régimen común, porque la tabla navarra funciona por escalones de rendimiento anual: una subida que te cruza un escalón puede reducir bastante el porcentaje que te llega, mientras que otra que se queda dentro del mismo escalón llega casi íntegra.</p>
+    <p>Selecciona Navarra en "Personalizar cálculo" para verlo con tus cifras. El País Vasco todavía no está soportado y la herramienta lo indica en lugar de darte un resultado incorrecto.</p>
+    <p>Si quieres entender de dónde salen estos porcentajes, la mecánica completa está explicada en la <a href="index.html">calculadora de bruto a neto</a>.</p>
+  </section>
+
+  <section class="card" id="faq">
+    <h2 class="section-title">Preguntas frecuentes</h2>
+    <details class="advanced" open>
+      <summary>¿Puede una subida hacer que cobre menos? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>No. Es imposible con el sistema de tramos español. Solo la parte del sueldo que entra en el tramo superior tributa al tipo más alto, nunca el sueldo entero. Una subida bruta siempre se traduce en más neto, aunque llegue recortada.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Cuánto pedir para notar 100 € netos más al mes? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Alrededor de 1.850 € brutos anuales en una franja salarial media, donde te llega en torno al 65 % de la subida. En salarios altos necesitarás más, cerca de 2.200 €. Calcúlalo con tus datos en la herramienta de arriba.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Y si la subida es un bonus en lugar de sueldo fijo? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Si el bonus está previsto, se suma a la previsión de retribución anual y eleva tu tipo de retención durante todo el año, no solo en el mes en que lo cobras. El impacto neto anual es similar al de una subida equivalente, pero se reparte de forma distinta.</p>
+      </div>
+    </details>
+    <details class="advanced">
+      <summary>¿Por qué mi subida real no coincide con este cálculo? <span class="chevron" aria-hidden="true">▾</span></summary>
+      <div class="advanced-body">
+        <p>Si la subida llega a mitad de año, la empresa regulariza tu retención para el tiempo que queda, y el porcentaje aplicado en los meses restantes puede ser mayor que el que verás aquí. Esta herramienta compara dos escenarios anuales completos y estables.</p>
+      </div>
+    </details>
+  </section>
+
   <section class="card" id="relacionadas"></section>
 </main>
 <footer class="footer">Herramienta orientativa, no oficial. No sustituye a tu declaración de la renta ni a tu asesoría.</footer>
