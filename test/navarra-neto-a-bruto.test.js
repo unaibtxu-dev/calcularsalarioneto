@@ -59,8 +59,8 @@ describe("Navarra 2026 — Neto->Bruto: comportamiento territorial", () => {
     assert.ok(r.objetivoAlcanzado);
   });
 
-  test("País Vasco sigue bloqueado en netoToBruto común (sin ruta Navarra)", () => {
-    const r = TaxEngine.netoToBruto({ netoAnualObjetivo: 24000, numPagas: 12, territorio: "pais_vasco" }, Constants2026);
+  test("País Vasco (Álava) sigue bloqueado en netoToBruto común (sin ruta Navarra)", () => {
+    const r = TaxEngine.netoToBruto({ netoAnualObjetivo: 24000, numPagas: 12, territorio: "alava" }, Constants2026);
     assert.equal(r.bloqueado, true);
   });
 

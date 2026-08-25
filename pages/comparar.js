@@ -12,7 +12,7 @@
     placeholder: "28.000",
     defaultValue: "28.000",
     idPrefix: "oa",
-    territoriosSoportadosExtra: ["navarra"]
+    territoriosSoportadosExtra: ["navarra", "bizkaia"]
   });
   App.buildFormulario(formB, {
     salarioLabel: "Oferta B — bruto anual",
@@ -20,7 +20,7 @@
     placeholder: "32.000",
     defaultValue: "32.000",
     idPrefix: "ob",
-    territoriosSoportadosExtra: ["navarra"]
+    territoriosSoportadosExtra: ["navarra", "bizkaia"]
   });
 
   function calcularOferta(form) {
@@ -28,6 +28,9 @@
     if (!Number.isFinite(datos.salario) || datos.salario <= 0) return { datos: datos, r: null };
     if (datos.territorio === "navarra") {
       return { datos: datos, r: App.brutoToNetoNavarra(datos) };
+    }
+    if (datos.territorio === "bizkaia") {
+      return { datos: datos, r: App.brutoToNetoBizkaia(datos) };
     }
     var r = TaxEngine.brutoToNeto(
       {
@@ -62,8 +65,8 @@
     result.hidden = false;
     var resumen =
       '<div class="resumen-condiciones">' +
-      '<span class="pill">Oferta A · ' + App.resumenCondiciones(ofertaA.datos, ["navarra"]) + "</span> " +
-      '<span class="pill">Oferta B · ' + App.resumenCondiciones(ofertaB.datos, ["navarra"]) + "</span>" +
+      '<span class="pill">Oferta A · ' + App.resumenCondiciones(ofertaA.datos, ["navarra", "bizkaia"]) + "</span> " +
+      '<span class="pill">Oferta B · ' + App.resumenCondiciones(ofertaB.datos, ["navarra", "bizkaia"]) + "</span>" +
       "</div>";
     if ((a && a.bloqueado) || (b && b.bloqueado)) {
       result.innerHTML = resumen + App.bloqueoHTML((a && a.motivo) || (b && b.motivo));

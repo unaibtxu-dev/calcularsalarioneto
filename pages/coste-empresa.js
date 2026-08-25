@@ -80,7 +80,9 @@
     '<option value="comun">Régimen común</option>' +
     '<option value="ceuta">Ceuta</option>' +
     '<option value="melilla">Melilla</option>' +
-    '<option value="pais_vasco">País Vasco (no soportado)</option>' +
+    '<option value="alava">Álava (no soportado)</option>' +
+    '<option value="bizkaia">Bizkaia</option>' +
+    '<option value="gipuzkoa">Gipuzkoa (no soportado)</option>' +
     '<option value="navarra">Navarra</option>' +
     "</select></div>" +
     "</div></details>";
@@ -93,7 +95,7 @@
     result.hidden = false;
     var totalNoSalarial = TaxEngine.round(empresa.anual);
     var costeTotal = TaxEngine.round(brutoAnual + empresa.anual);
-    var resumenPersonal = '<div class="section-title">Neto del trabajador (referencia)</div>' + App.resumenCondicionesHTML(datosPersonal, ["navarra"]);
+    var resumenPersonal = '<div class="section-title">Neto del trabajador (referencia)</div>' + App.resumenCondicionesHTML(datosPersonal, ["navarra", "bizkaia"]);
 
     var bloqueNeto;
     if (neto.bloqueado) {
@@ -153,11 +155,15 @@
     var empresa = TaxEngine.calcularSegSocialEmpresa(normalizado, Constants2026, atepPct / 100);
 
     // Bloque secundario informativo: neto del trabajador, con motor foral
-    // cuando el territorio es Navarra.
-    var neto =
-      input.territorio === "navarra"
-        ? App.brutoToNetoNavarra(Object.assign({}, input, { salario: brutoAnual }))
-        : TaxEngine.brutoToNeto(input, Constants2026);
+    // cuando el territorio es Navarra o Bizkaia.
+    var neto;
+    if (input.territorio === "navarra") {
+      neto = App.brutoToNetoNavarra(Object.assign({}, input, { salario: brutoAnual }));
+    } else if (input.territorio === "bizkaia") {
+      neto = App.brutoToNetoBizkaia(Object.assign({}, input, { salario: brutoAnual }));
+    } else {
+      neto = TaxEngine.brutoToNeto(input, Constants2026);
+    }
 
     render(neto, empresa, atepPct, brutoAnual, input);
   }

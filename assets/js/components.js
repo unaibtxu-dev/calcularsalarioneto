@@ -86,7 +86,9 @@ var App = (function () {
   function formularioHTML(cfg) {
     var pre = cfg.idPrefix;
     var soportados = cfg.territoriosSoportadosExtra || [];
-    var labelPaisVasco = soportados.indexOf("pais_vasco") === -1 ? "País Vasco (no soportado)" : "País Vasco";
+    var labelAlava = soportados.indexOf("alava") === -1 ? "Álava (no soportado)" : "Álava";
+    var labelBizkaia = soportados.indexOf("bizkaia") === -1 ? "Bizkaia (no soportado)" : "Bizkaia";
+    var labelGipuzkoa = soportados.indexOf("gipuzkoa") === -1 ? "Gipuzkoa (no soportado)" : "Gipuzkoa";
     var labelNavarra = soportados.indexOf("navarra") === -1 ? "Navarra (no soportado)" : "Navarra";
     // Permite que una página monográfica (p. ej. la de Navarra) abra ya con su
     // territorio seleccionado, sin duplicar el formulario.
@@ -122,7 +124,9 @@ var App = (function () {
       '<option value="comun"' + selTerr("comun") + ">Régimen común</option>" +
       '<option value="ceuta"' + selTerr("ceuta") + ">Ceuta</option>" +
       '<option value="melilla"' + selTerr("melilla") + ">Melilla</option>" +
-      '<option value="pais_vasco"' + selTerr("pais_vasco") + ">" + labelPaisVasco + "</option>" +
+      '<option value="alava"' + selTerr("alava") + ">" + labelAlava + "</option>" +
+      '<option value="bizkaia"' + selTerr("bizkaia") + ">" + labelBizkaia + "</option>" +
+      '<option value="gipuzkoa"' + selTerr("gipuzkoa") + ">" + labelGipuzkoa + "</option>" +
       '<option value="navarra"' + selTerr("navarra") + ">" + labelNavarra + "</option>" +
       "</select></div>" +
       '<div class="field"><label for="' + pre + '-contrato">Tipo de contrato</label>' +
@@ -213,7 +217,9 @@ var App = (function () {
     var soportados = extraSoportados || [];
     if (territorio === "ceuta") return "Ceuta";
     if (territorio === "melilla") return "Melilla";
-    if (territorio === "pais_vasco") return soportados.indexOf("pais_vasco") === -1 ? "País Vasco (no soportado)" : "País Vasco";
+    if (territorio === "alava") return soportados.indexOf("alava") === -1 ? "Álava (no soportado)" : "Álava";
+    if (territorio === "bizkaia") return soportados.indexOf("bizkaia") === -1 ? "Bizkaia (no soportado)" : "Bizkaia";
+    if (territorio === "gipuzkoa") return soportados.indexOf("gipuzkoa") === -1 ? "Gipuzkoa (no soportado)" : "Gipuzkoa";
     if (territorio === "navarra") return soportados.indexOf("navarra") === -1 ? "Navarra (no soportado)" : "Navarra";
     return "Régimen común";
   }
@@ -312,6 +318,45 @@ var App = (function () {
     }, datos.netoAnualObjetivo);
   }
 
+  // Orquestación Bizkaia 2026, mismo patrón que Navarra: SS estatal +
+  // retención vía TaxEngineBizkaia (núcleo ya validado). Requiere que la
+  // página haya cargado lib/constants-bizkaia-2026.js y
+  // lib/tax-engine-bizkaia.js además de los comunes.
+  function brutoToNetoBizkaia(datos) {
+    var ss = TaxEngine.calcularSegSocialTrabajador(
+      TaxEngine.normalizarInput({ brutoAnual: datos.salario, numPagas: datos.numPagas, tipoContrato: datos.tipoContrato }),
+      Constants2026
+    );
+    var bizkaia = TaxEngineBizkaia.calcularTipoRetencion(
+      {
+        retribucionFija: datos.salario,
+        retribucionVariablePrevisible: 0,
+        numDescendientes: datos.numHijos,
+        discapacidad: datos.discapacidadPropia
+      },
+      ConstantsBizkaia2026
+    );
+    var brutoAnual = TaxEngine.round(datos.salario);
+    var retencionAnual = TaxEngine.round(datos.salario * (bizkaia.tipoRetencion / 100));
+    var netoAnual = TaxEngine.round(datos.salario - ss.anual - retencionAnual);
+    return {
+      bloqueado: false,
+      brutoAnual: brutoAnual,
+      segSocial: ss,
+      irpf: { tipoRetencion: bizkaia.tipoRetencion, retencionAnual: retencionAnual },
+      numPagas: datos.numPagas,
+      netoAnual: netoAnual,
+      netoPorPaga: TaxEngine.round(netoAnual / datos.numPagas),
+      porcentajeQueLlega: brutoAnual > 0 ? TaxEngine.round((netoAnual / brutoAnual) * 100) : 0
+    };
+  }
+
+  function netoToBrutoBizkaia(datos) {
+    return bisectarBrutoParaNeto(function (bruto) {
+      return brutoToNetoBizkaia(Object.assign({}, datos, { salario: bruto }));
+    }, datos.netoAnualObjetivo);
+  }
+
   function bloqueoHTML(motivo) {
     return '<div class="notice warn"><span>⚠️</span><span>' + motivo + "</span></div>";
   }
@@ -348,6 +393,8 @@ var App = (function () {
     splitBarHTML: splitBarHTML,
     brutoToNetoNavarra: brutoToNetoNavarra,
     netoToBrutoNavarra: netoToBrutoNavarra,
+    brutoToNetoBizkaia: brutoToNetoBizkaia,
+    netoToBrutoBizkaia: netoToBrutoBizkaia,
     resumenCondiciones: resumenCondiciones,
     resumenCondicionesHTML: resumenCondicionesHTML,
     DISCLAIMER: DISCLAIMER

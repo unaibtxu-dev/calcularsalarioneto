@@ -109,7 +109,7 @@ describe("Ceuta y Melilla", () => {
 });
 
 describe("País Vasco / Navarra — bloqueo explícito, sin fallback silencioso", () => {
-  for (const territorio of ["pais_vasco", "navarra"]) {
+  for (const territorio of ["alava", "gipuzkoa", "navarra"]) {
     test(`territorio=${territorio} devuelve bloqueado=true con motivo`, () => {
       const r = TaxEngine.brutoToNeto({ brutoAnual: 30000, numPagas: 12, territorio }, C);
       assert.equal(r.bloqueado, true);
@@ -280,7 +280,7 @@ describe("netoToBruto (bisección sobre brutoToNeto)", () => {
   });
 
   test("territorio foral en netoToBruto también bloquea, sin fallback silencioso", () => {
-    const r = TaxEngine.netoToBruto({ netoAnualObjetivo: 20000, territorio: "pais_vasco" }, C);
+    const r = TaxEngine.netoToBruto({ netoAnualObjetivo: 20000, territorio: "alava" }, C);
     assert.equal(r.bloqueado, true);
   });
 });
