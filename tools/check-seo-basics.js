@@ -24,8 +24,16 @@ const PAGES = [
   "35000-brutos-a-netos.html",
   "40000-brutos-a-netos.html",
   "45000-brutos-a-netos.html",
-  "50000-brutos-a-netos.html"
+  "50000-brutos-a-netos.html",
+  "privacidad.html",
+  "aviso-legal.html"
 ];
+
+// Páginas de calculadora usan WebApplication; páginas informativas (legal,
+// privacidad) usan WebPage — ambos son tipos JSON-LD válidos según lo que
+// describen realmente, forzar WebApplication en una página legal sería un
+// dato estructurado falso.
+const TIPOS_JSONLD_VALIDOS = ["WebApplication", "WebPage"];
 
 let errores = [];
 
@@ -73,7 +81,7 @@ for (const file of PAGES) {
   } else {
     try {
       const data = JSON.parse(ldJsonMatch[1]);
-      if (data["@type"] !== "WebApplication") errores.push(file + ": JSON-LD sin @type WebApplication");
+      if (!TIPOS_JSONLD_VALIDOS.includes(data["@type"])) errores.push(file + ": JSON-LD con @type inesperado (" + data["@type"] + ")");
     } catch (e) {
       errores.push(file + ": JSON-LD inválido (" + e.message + ")");
     }
