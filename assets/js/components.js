@@ -1,16 +1,27 @@
 "use strict";
 var App = (function () {
   var PAGES = [
-    { id: "bruto-neto", href: "index.html", label: "Bruto a neto", icon: "💶", desc: "Cuánto cobras realmente cada mes a partir de tu salario bruto." },
-    { id: "neto-bruto", href: "neto-a-bruto.html", label: "Neto a bruto", icon: "🔄", desc: "El bruto que necesitas pactar para llegar al neto que quieres." },
-    { id: "comparar", href: "comparar-ofertas.html", label: "Comparar ofertas", icon: "⚖️", desc: "Compara el neto real de dos ofertas de trabajo." },
-    { id: "subida", href: "calculadora-subida-sueldo.html", label: "Subida salarial", icon: "📈", desc: "Cuánto de tu subida bruta llega de verdad a tu neto." },
-    { id: "coste-empresa", href: "coste-empresa.html", label: "Coste empresa", icon: "🏢", desc: "Lo que le cuesta a la empresa un trabajador, más allá del bruto." }
+    { id: "bruto-neto", href: "/", label: "Bruto a neto", icon: "💶", desc: "Cuánto cobras realmente cada mes a partir de tu salario bruto." },
+    { id: "neto-bruto", href: "neto-a-bruto", label: "Neto a bruto", icon: "🔄", desc: "El bruto que necesitas pactar para llegar al neto que quieres." },
+    { id: "comparar", href: "comparar-ofertas", label: "Comparar ofertas", icon: "⚖️", desc: "Compara el neto real de dos ofertas de trabajo." },
+    { id: "subida", href: "calculadora-subida-sueldo", label: "Subida salarial", icon: "📈", desc: "Cuánto de tu subida bruta llega de verdad a tu neto." },
+    { id: "coste-empresa", href: "coste-empresa", label: "Coste empresa", icon: "🏢", desc: "Lo que le cuesta a la empresa un trabajador, más allá del bruto." }
+  ];
+
+  // Se agrupan aparte del resto de PAGES porque comparten un único punto de
+  // entrada en el menú ("Navarra y País Vasco", nombre reconocible en vez
+  // del término técnico "territorios forales") que despliega las 4 páginas.
+  var REGIONES = [
+    { id: "navarra", href: "calculadora-sueldo-neto-navarra", label: "Navarra" },
+    { id: "bizkaia", href: "calculadora-sueldo-neto-bizkaia", label: "Bizkaia" },
+    { id: "gipuzkoa", href: "calculadora-sueldo-neto-gipuzkoa", label: "Gipuzkoa" },
+    { id: "alava", href: "calculadora-sueldo-neto-alava", label: "Álava" }
   ];
 
   function renderNav(activeId) {
     var el = document.getElementById("topnav");
     if (!el) return;
+    var regionActiva = REGIONES.some(function (r) { return r.id === activeId; });
     var html = '<nav class="topnav-inner" aria-label="Herramientas">';
     PAGES.forEach(function (p) {
       var active = p.id === activeId;
@@ -19,14 +30,66 @@ var App = (function () {
         '<span aria-hidden="true">' + p.icon + "</span>" + p.label +
         "</a>";
     });
+    html +=
+      '<div class="topnav-dropdown">' +
+      '<button type="button" class="' + (regionActiva ? "active" : "") + '" aria-haspopup="true" aria-expanded="false">' +
+      '<span aria-hidden="true">🏔️</span>Navarra y País Vasco<span class="chevron" aria-hidden="true">▾</span>' +
+      "</button>" +
+      "</div>";
     html += "</nav>";
+    // El menú del desplegable se renderiza fuera de .topnav-inner: ese
+    // contenedor tiene overflow-x:auto, y por la propia especificación CSS
+    // un overflow-y:visible ahí se recalcula como "auto" (recorta), así que
+    // cualquier menú anidado dentro quedaría invisible salvo que quepa en
+    // los 40px de alto de la barra.
+    html +=
+      '<div class="topnav-dropdown-menu">' +
+      REGIONES.map(function (r) {
+        var active = r.id === activeId;
+        return '<a href="' + r.href + '" class="' + (active ? "active" : "") + '"' + (active ? ' aria-current="page"' : "") + ">" + r.label + "</a>";
+      }).join("") +
+      "</div>";
     el.innerHTML = html;
+
+    var dropdownToggle = el.querySelector(".topnav-dropdown > button");
+    var dropdownMenu = el.querySelector(".topnav-dropdown-menu");
+    if (dropdownToggle && dropdownMenu) {
+      var posicionarMenu = function () {
+        var toggleRect = dropdownToggle.getBoundingClientRect();
+        var navRect = el.getBoundingClientRect();
+        dropdownMenu.style.left = (toggleRect.left - navRect.left) + "px";
+      };
+      dropdownToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var abrir = !dropdownMenu.classList.contains("open");
+        if (abrir) posicionarMenu();
+        dropdownMenu.classList.toggle("open", abrir);
+        dropdownToggle.setAttribute("aria-expanded", abrir ? "true" : "false");
+      });
+      document.addEventListener("click", function () {
+        dropdownMenu.classList.remove("open");
+        dropdownToggle.setAttribute("aria-expanded", "false");
+      });
+      // Si el usuario hace scroll horizontal de la barra con el menú
+      // abierto, el botón se mueve pero el menú (fuera del contenedor con
+      // scroll) no lo seguiría — más simple y predecible cerrarlo.
+      var navInnerEl = el.querySelector(".topnav-inner");
+      if (navInnerEl) {
+        navInnerEl.addEventListener("scroll", function () {
+          dropdownMenu.classList.remove("open");
+          dropdownToggle.setAttribute("aria-expanded", "false");
+        });
+      }
+    }
 
     // Si el botón activo (p.ej. el último, "Coste empresa") queda fuera del
     // área visible en móvil/tablet, lo centramos en el scroll al cargar la
     // página — nunca debe quedar oculto o a medio cortar.
     var nav = el.querySelector(".topnav-inner");
-    var activeLink = el.querySelector("a.active");
+    // Ojo: buscar "a.active" solo dentro de nav, no de el (#topnav) — el
+    // menú desplegable también cuelga de #topnav como hermano de nav, y su
+    // enlace activo (p.ej. "Álava") coincidiría antes que el propio botón.
+    var activeLink = (nav && nav.querySelector("a.active")) || el.querySelector(".topnav-dropdown > button.active");
     if (nav && activeLink && nav.scrollWidth > nav.clientWidth) {
       var linkLeft = activeLink.offsetLeft;
       var linkRight = linkLeft + activeLink.offsetWidth;

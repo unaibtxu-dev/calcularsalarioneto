@@ -1,6 +1,6 @@
 "use strict";
 (function () {
-  App.renderNav();
+  App.renderNav("alava");
   App.renderRelacionadas("relacionadas");
   var form = document.getElementById("formulario");
   var result = document.getElementById("resultado");
