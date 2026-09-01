@@ -81,6 +81,7 @@
     var discapacidadPropia = document.getElementById("cf-discapacidad").value;
 
     if (!Number.isFinite(salario) || salario <= 0) {
+      salidaEl.classList.remove("cls-reserve");
       salidaEl.innerHTML = "";
       return;
     }
@@ -135,6 +136,7 @@
     html += "</div>";
     html += '<p class="field-hint">Estimación con la normativa de 2026. Tu situación real (situación familiar, tipo de contrato, discapacidad) puede cambiar el resultado — usa la calculadora completa de cada territorio para tu caso exacto.</p>';
 
+    salidaEl.classList.remove("cls-reserve");
     salidaEl.innerHTML = html;
 
     var copiarBtn = document.getElementById("cf-copiar");

@@ -603,6 +603,14 @@ details.advanced .advanced-body {
   margin: 4px 0 10px;
 }
 
+/* Reserva el alto medido del resultado del comparador para evitar el salto
+   de layout mientras carga el JS que lo rellena; pages/fiscalidad-foral.js
+   quita esta clase en cuanto ejecuta el primer calcular(), así que nunca
+   deja un hueco vacío cuando el usuario borra el salario después. */
+#comparador-salida.cls-reserve {
+  min-height: 1350px;
+}
+
 .comparador-compartir-btn {
   background: none;
   border: none;
