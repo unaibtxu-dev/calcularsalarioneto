@@ -153,6 +153,11 @@ body {
   scroll-snap-align: start;
 }
 
+.topnav a:hover {
+  background: var(--navy);
+  color: #ffffff;
+}
+
 .topnav a.active {
   background: var(--navy);
   color: #ffffff;
@@ -179,6 +184,11 @@ body {
   white-space: nowrap;
   border: 1px solid transparent;
   cursor: pointer;
+}
+
+.topnav-dropdown > button:hover {
+  background: var(--navy);
+  color: #ffffff;
 }
 
 .topnav-dropdown > button.active {
