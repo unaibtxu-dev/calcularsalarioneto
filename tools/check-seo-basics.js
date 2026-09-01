@@ -26,7 +26,9 @@ const PAGES = [
   "45000-brutos-a-netos.html",
   "50000-brutos-a-netos.html",
   "privacidad.html",
-  "aviso-legal.html"
+  "aviso-legal.html",
+  "sueldos.html",
+  "fiscalidad-foral.html"
 ];
 
 // Páginas de calculadora usan WebApplication; páginas informativas (legal,
