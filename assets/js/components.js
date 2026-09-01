@@ -18,7 +18,7 @@ var App = (function () {
   // hubs/páginas ya existentes.
   var CATEGORIAS = [
     { id: "sueldos", href: "/sueldos", label: "Sueldos", icon: "💶" },
-    { id: "fiscalidad-foral", href: "/fiscalidad-foral", label: "Fiscalidad foral", icon: "🏔️" },
+    { id: "fiscalidad-foral", href: "/fiscalidad-foral", label: "Navarra y País Vasco", icon: "🏔️" },
     { id: "empresas", href: "/coste-empresa", label: "Empresas", icon: "🏢" }
   ];
 
