@@ -570,6 +570,31 @@ details.advanced .advanced-body {
   line-height: 1.4;
 }
 
+.comparador-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.comparador-card {
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.comparador-card-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.comparador-card-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .notice {
   display: flex;
   gap: 8px;
