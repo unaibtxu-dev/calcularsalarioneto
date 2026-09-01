@@ -224,7 +224,8 @@ body {
 }
 
 .topnav-dropdown-menu a:hover {
-  background: var(--bg);
+  background: var(--navy);
+  color: #ffffff;
 }
 
 .topnav-dropdown-menu a.active {
