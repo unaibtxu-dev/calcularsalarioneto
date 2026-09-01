@@ -31,7 +31,10 @@ var App = (function () {
   function renderNav(activeId) {
     var el = document.getElementById("topnav");
     if (!el) return;
-    var calculadorasActiva = PAGES.some(function (p) { return p.id === activeId; });
+    // "coste-empresa" se excluye aquí: esa página tiene su propia categoría
+    // principal ("Empresas"), aunque la herramienta siga listada dentro de
+    // este desplegable.
+    var calculadorasActiva = activeId !== "coste-empresa" && PAGES.some(function (p) { return p.id === activeId; });
     var fiscalidadActiva = activeId === "fiscalidad-foral" || REGIONES_IDS.indexOf(activeId) !== -1;
     var empresasActiva = activeId === "empresas" || activeId === "coste-empresa";
 
