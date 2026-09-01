@@ -8,34 +8,43 @@ var App = (function () {
     { id: "coste-empresa", href: "coste-empresa", label: "Coste empresa", icon: "🏢", desc: "Lo que le cuesta a la empresa un trabajador, más allá del bruto." }
   ];
 
-  // Se agrupan aparte del resto de PAGES porque comparten un único punto de
-  // entrada en el menú ("Navarra y País Vasco", nombre reconocible en vez
-  // del término técnico "territorios forales") que despliega las 4 páginas.
-  var REGIONES = [
-    { id: "navarra", href: "calculadora-sueldo-neto-navarra", label: "Navarra" },
-    { id: "bizkaia", href: "calculadora-sueldo-neto-bizkaia", label: "Bizkaia" },
-    { id: "gipuzkoa", href: "calculadora-sueldo-neto-gipuzkoa", label: "Gipuzkoa" },
-    { id: "alava", href: "calculadora-sueldo-neto-alava", label: "Álava" }
+  // IDs de las 4 páginas forales, usados solo para saber si hay que marcar
+  // "Fiscalidad foral" como categoría activa — el enlace en sí va al hub
+  // /fiscalidad-foral, no a cada territorio (eso ya lo hace esa página).
+  var REGIONES_IDS = ["navarra", "bizkaia", "gipuzkoa", "alava"];
+
+  // Las 4 categorías visibles en el menú principal: un desplegable
+  // ("Calculadoras", que reutiliza PAGES) y tres enlaces directos a los
+  // hubs/páginas ya existentes.
+  var CATEGORIAS = [
+    { id: "sueldos", href: "/sueldos", label: "Sueldos", icon: "💶" },
+    { id: "fiscalidad-foral", href: "/fiscalidad-foral", label: "Fiscalidad foral", icon: "🏔️" },
+    { id: "empresas", href: "/coste-empresa", label: "Empresas", icon: "🏢" }
   ];
+
+  function categoriaLinkHTML(cat, active) {
+    return '<a href="' + cat.href + '" class="' + (active ? "active" : "") + '"' + (active ? ' aria-current="page"' : "") + '>' +
+      '<span aria-hidden="true">' + cat.icon + "</span>" + cat.label +
+      "</a>";
+  }
 
   function renderNav(activeId) {
     var el = document.getElementById("topnav");
     if (!el) return;
-    var regionActiva = REGIONES.some(function (r) { return r.id === activeId; });
-    var html = '<nav class="topnav-inner" aria-label="Herramientas">';
-    PAGES.forEach(function (p) {
-      var active = p.id === activeId;
-      html +=
-        '<a href="' + p.href + '" class="' + (active ? "active" : "") + '"' + (active ? ' aria-current="page"' : "") + '>' +
-        '<span aria-hidden="true">' + p.icon + "</span>" + p.label +
-        "</a>";
-    });
+    var calculadorasActiva = PAGES.some(function (p) { return p.id === activeId; });
+    var fiscalidadActiva = activeId === "fiscalidad-foral" || REGIONES_IDS.indexOf(activeId) !== -1;
+    var empresasActiva = activeId === "empresas" || activeId === "coste-empresa";
+
+    var html = '<nav class="topnav-inner" aria-label="Categorías">';
     html +=
       '<div class="topnav-dropdown">' +
-      '<button type="button" class="' + (regionActiva ? "active" : "") + '" aria-haspopup="true" aria-expanded="false">' +
-      '<span aria-hidden="true">🏔️</span>Navarra y País Vasco<span class="chevron" aria-hidden="true">▾</span>' +
+      '<button type="button" class="' + (calculadorasActiva ? "active" : "") + '" aria-haspopup="true" aria-expanded="false">' +
+      '<span aria-hidden="true">🧮</span>Calculadoras<span class="chevron" aria-hidden="true">▾</span>' +
       "</button>" +
       "</div>";
+    html += categoriaLinkHTML(CATEGORIAS[0], activeId === "sueldos");
+    html += categoriaLinkHTML(CATEGORIAS[1], fiscalidadActiva);
+    html += categoriaLinkHTML(CATEGORIAS[2], empresasActiva);
     html += "</nav>";
     // El menú del desplegable se renderiza fuera de .topnav-inner: ese
     // contenedor tiene overflow-x:auto, y por la propia especificación CSS
@@ -44,9 +53,9 @@ var App = (function () {
     // los 40px de alto de la barra.
     html +=
       '<div class="topnav-dropdown-menu">' +
-      REGIONES.map(function (r) {
-        var active = r.id === activeId;
-        return '<a href="' + r.href + '" class="' + (active ? "active" : "") + '"' + (active ? ' aria-current="page"' : "") + ">" + r.label + "</a>";
+      PAGES.map(function (p) {
+        var active = p.id === activeId;
+        return '<a href="' + p.href + '" class="' + (active ? "active" : "") + '"' + (active ? ' aria-current="page"' : "") + ">" + p.label + "</a>";
       }).join("") +
       "</div>";
     el.innerHTML = html;
@@ -82,7 +91,7 @@ var App = (function () {
       }
     }
 
-    // Si el botón activo (p.ej. el último, "Coste empresa") queda fuera del
+    // Si el botón/enlace activo (p.ej. el último, "Empresas") queda fuera del
     // área visible en móvil/tablet, lo centramos en el scroll al cargar la
     // página — nunca debe quedar oculto o a medio cortar.
     var nav = el.querySelector(".topnav-inner");
