@@ -8,17 +8,17 @@ var App = (function () {
     { id: "coste-empresa", href: "coste-empresa", label: "Coste empresa", icon: "🏢", desc: "Lo que le cuesta a la empresa un trabajador, más allá del bruto." }
   ];
 
-  // IDs de las 4 páginas forales, usados solo para saber si hay que marcar
-  // "Fiscalidad foral" como categoría activa — el enlace en sí va al hub
-  // /fiscalidad-foral, no a cada territorio (eso ya lo hace esa página).
-  var REGIONES_IDS = ["navarra", "bizkaia", "gipuzkoa", "alava"];
+  var REGIONES = [
+    { id: "navarra", href: "calculadora-sueldo-neto-navarra", label: "Navarra" },
+    { id: "bizkaia", href: "calculadora-sueldo-neto-bizkaia", label: "Bizkaia" },
+    { id: "gipuzkoa", href: "calculadora-sueldo-neto-gipuzkoa", label: "Gipuzkoa" },
+    { id: "alava", href: "calculadora-sueldo-neto-alava", label: "Álava" }
+  ];
 
-  // Las 4 categorías visibles en el menú principal: un desplegable
-  // ("Calculadoras", que reutiliza PAGES) y tres enlaces directos a los
-  // hubs/páginas ya existentes.
+  // Las 2 categorías del menú que son enlaces directos (no desplegables):
+  // "Calculadoras" y "Navarra y País Vasco" sí son desplegables, ver abajo.
   var CATEGORIAS = [
     { id: "sueldos", href: "/sueldos", label: "Sueldos", icon: "💶" },
-    { id: "fiscalidad-foral", href: "/fiscalidad-foral", label: "Navarra y País Vasco", icon: "🏔️" },
     { id: "empresas", href: "/coste-empresa", label: "Empresas", icon: "🏢" }
   ];
 
@@ -28,6 +28,84 @@ var App = (function () {
       "</a>";
   }
 
+  function dropdownButtonHTML(icon, label, active) {
+    return '<div class="topnav-dropdown">' +
+      '<button type="button" class="' + (active ? "active" : "") + '" aria-haspopup="true" aria-expanded="false">' +
+      '<span aria-hidden="true">' + icon + "</span>" + label + '<span class="chevron" aria-hidden="true">▾</span>' +
+      "</button>" +
+      "</div>";
+  }
+
+  // Algunos navegadores móviles disparan mouseenter/mouseleave sintéticos
+  // justo antes del clic al tocar; sin esto, un tap podría abrir por hover
+  // y cerrarse en el mismo gesto al procesar el clic. En cuanto se detecta
+  // un touchstart en la página, el hover deja de simular apertura/cierre y
+  // el desplegable pasa a depender solo del clic (que sí funciona con tap).
+  var esInteraccionTactil = false;
+  if (typeof document !== "undefined" && document.addEventListener) {
+    document.addEventListener("touchstart", function () { esInteraccionTactil = true; }, { passive: true });
+  }
+
+  // Cablea un desplegable para que se abra con clic, hover (con margen para
+  // no cerrarse al mover el ratón del botón al menú) y foco de teclado, y
+  // se cierre con Escape, clic fuera o al perder el foco fuera del par
+  // botón+menú. Se reutiliza para "Calculadoras" y "Navarra y País Vasco".
+  function wireDropdown(el, toggle, menu, cerrarOtros) {
+    var closeTimer = null;
+
+    function posicionar() {
+      var toggleRect = toggle.getBoundingClientRect();
+      var navRect = el.getBoundingClientRect();
+      menu.style.left = (toggleRect.left - navRect.left) + "px";
+    }
+    function abrir() {
+      clearTimeout(closeTimer);
+      cerrarOtros();
+      posicionar();
+      menu.classList.add("open");
+      toggle.setAttribute("aria-expanded", "true");
+    }
+    function cerrar() {
+      menu.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+    function cerrarConRetraso() {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(cerrar, 200);
+    }
+    function cancelarCierre() {
+      clearTimeout(closeTimer);
+    }
+
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (menu.classList.contains("open")) cerrar();
+      else abrir();
+    });
+    toggle.addEventListener("mouseenter", function () { if (!esInteraccionTactil) abrir(); });
+    toggle.addEventListener("mouseleave", function () { if (!esInteraccionTactil) cerrarConRetraso(); });
+    menu.addEventListener("mouseenter", function () { if (!esInteraccionTactil) cancelarCierre(); });
+    menu.addEventListener("mouseleave", function () { if (!esInteraccionTactil) cerrarConRetraso(); });
+    [toggle, menu].forEach(function (n) {
+      n.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          cerrar();
+          toggle.focus();
+        }
+      });
+      n.addEventListener("focusout", function () {
+        // Se comprueba en el siguiente turno: si el nuevo foco no está ni
+        // en el botón ni en el menú, se cierra (igual criterio que el hover).
+        setTimeout(function () {
+          var activo = document.activeElement;
+          if (activo !== toggle && !menu.contains(activo)) cerrar();
+        }, 0);
+      });
+    });
+
+    return { abrir: abrir, cerrar: cerrar };
+  }
+
   function renderNav(activeId) {
     var el = document.getElementById("topnav");
     if (!el) return;
@@ -35,23 +113,18 @@ var App = (function () {
     // principal ("Empresas"), aunque la herramienta siga listada dentro de
     // este desplegable.
     var calculadorasActiva = activeId !== "coste-empresa" && PAGES.some(function (p) { return p.id === activeId; });
-    var fiscalidadActiva = activeId === "fiscalidad-foral" || REGIONES_IDS.indexOf(activeId) !== -1;
+    var regionActiva = activeId === "fiscalidad-foral" || REGIONES.some(function (r) { return r.id === activeId; });
     var empresasActiva = activeId === "empresas" || activeId === "coste-empresa";
 
     var html = '<nav class="topnav-inner" aria-label="Categorías">';
-    html +=
-      '<div class="topnav-dropdown">' +
-      '<button type="button" class="' + (calculadorasActiva ? "active" : "") + '" aria-haspopup="true" aria-expanded="false">' +
-      '<span aria-hidden="true">🧮</span>Calculadoras<span class="chevron" aria-hidden="true">▾</span>' +
-      "</button>" +
-      "</div>";
+    html += dropdownButtonHTML("🧮", "Calculadoras", calculadorasActiva);
     html += categoriaLinkHTML(CATEGORIAS[0], activeId === "sueldos");
-    html += categoriaLinkHTML(CATEGORIAS[1], fiscalidadActiva);
-    html += categoriaLinkHTML(CATEGORIAS[2], empresasActiva);
+    html += dropdownButtonHTML("🏔️", "Navarra y País Vasco", regionActiva);
+    html += categoriaLinkHTML(CATEGORIAS[1], empresasActiva);
     html += "</nav>";
-    // El menú del desplegable se renderiza fuera de .topnav-inner: ese
-    // contenedor tiene overflow-x:auto, y por la propia especificación CSS
-    // un overflow-y:visible ahí se recalcula como "auto" (recorta), así que
+    // Los menús se renderizan fuera de .topnav-inner: ese contenedor tiene
+    // overflow-x:auto, y por la propia especificación CSS un
+    // overflow-y:visible ahí se recalcula como "auto" (recorta), así que
     // cualquier menú anidado dentro quedaría invisible salvo que quepa en
     // los 40px de alto de la barra.
     html +=
@@ -60,48 +133,51 @@ var App = (function () {
         var active = p.id === activeId;
         return '<a href="' + p.href + '" class="' + (active ? "active" : "") + '"' + (active ? ' aria-current="page"' : "") + ">" + p.label + "</a>";
       }).join("") +
+      "</div>" +
+      '<div class="topnav-dropdown-menu">' +
+      '<a href="/fiscalidad-foral" class="' + (activeId === "fiscalidad-foral" ? "active" : "") + '"' + (activeId === "fiscalidad-foral" ? ' aria-current="page"' : "") + ">Ver todos los territorios</a>" +
+      REGIONES.map(function (r) {
+        var active = r.id === activeId;
+        return '<a href="' + r.href + '" class="' + (active ? "active" : "") + '"' + (active ? ' aria-current="page"' : "") + ">" + r.label + "</a>";
+      }).join("") +
       "</div>";
     el.innerHTML = html;
 
-    var dropdownToggle = el.querySelector(".topnav-dropdown > button");
-    var dropdownMenu = el.querySelector(".topnav-dropdown-menu");
-    if (dropdownToggle && dropdownMenu) {
-      var posicionarMenu = function () {
-        var toggleRect = dropdownToggle.getBoundingClientRect();
-        var navRect = el.getBoundingClientRect();
-        dropdownMenu.style.left = (toggleRect.left - navRect.left) + "px";
-      };
-      dropdownToggle.addEventListener("click", function (e) {
-        e.stopPropagation();
-        var abrir = !dropdownMenu.classList.contains("open");
-        if (abrir) posicionarMenu();
-        dropdownMenu.classList.toggle("open", abrir);
-        dropdownToggle.setAttribute("aria-expanded", abrir ? "true" : "false");
+    var toggles = el.querySelectorAll(".topnav-dropdown > button");
+    var menus = el.querySelectorAll(".topnav-dropdown-menu");
+    var controles = [];
+    toggles.forEach(function (toggle, i) {
+      var menu = menus[i];
+      if (!toggle || !menu) return;
+      controles.push(
+        wireDropdown(el, toggle, menu, function () {
+          controles.forEach(function (c, j) {
+            if (menus[j] !== menu) c.cerrar();
+          });
+        })
+      );
+    });
+    document.addEventListener("click", function () {
+      controles.forEach(function (c) { c.cerrar(); });
+    });
+    // Si el usuario hace scroll horizontal de la barra con algún menú
+    // abierto, los botones se mueven pero los menús (fuera del contenedor
+    // con scroll) no los seguirían — más simple y predecible cerrarlos.
+    var navInnerEl = el.querySelector(".topnav-inner");
+    if (navInnerEl) {
+      navInnerEl.addEventListener("scroll", function () {
+        controles.forEach(function (c) { c.cerrar(); });
       });
-      document.addEventListener("click", function () {
-        dropdownMenu.classList.remove("open");
-        dropdownToggle.setAttribute("aria-expanded", "false");
-      });
-      // Si el usuario hace scroll horizontal de la barra con el menú
-      // abierto, el botón se mueve pero el menú (fuera del contenedor con
-      // scroll) no lo seguiría — más simple y predecible cerrarlo.
-      var navInnerEl = el.querySelector(".topnav-inner");
-      if (navInnerEl) {
-        navInnerEl.addEventListener("scroll", function () {
-          dropdownMenu.classList.remove("open");
-          dropdownToggle.setAttribute("aria-expanded", "false");
-        });
-      }
     }
 
     // Si el botón/enlace activo (p.ej. el último, "Empresas") queda fuera del
     // área visible en móvil/tablet, lo centramos en el scroll al cargar la
     // página — nunca debe quedar oculto o a medio cortar.
     var nav = el.querySelector(".topnav-inner");
-    // Ojo: buscar "a.active" solo dentro de nav, no de el (#topnav) — el
-    // menú desplegable también cuelga de #topnav como hermano de nav, y su
-    // enlace activo (p.ej. "Álava") coincidiría antes que el propio botón.
-    var activeLink = (nav && nav.querySelector("a.active")) || el.querySelector(".topnav-dropdown > button.active");
+    // Ojo: buscar "a.active" solo dentro de nav, no de el (#topnav) — los
+    // menús desplegables también cuelgan de #topnav como hermanos de nav, y
+    // su enlace activo (p.ej. "Álava") coincidiría antes que el propio botón.
+    var activeLink = (nav && nav.querySelector("a.active")) || (nav && nav.querySelector(".topnav-dropdown > button.active"));
     if (nav && activeLink && nav.scrollWidth > nav.clientWidth) {
       var linkLeft = activeLink.offsetLeft;
       var linkRight = linkLeft + activeLink.offsetWidth;
