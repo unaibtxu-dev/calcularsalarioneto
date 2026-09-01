@@ -15,9 +15,16 @@
   var salidaEl = document.getElementById("comparador-salida");
   if (!form || !salidaEl) return;
 
+  var salarioParam = Fmt.parseEs(new URLSearchParams(location.search).get("salario") || "");
+  var salarioInicial = Number.isFinite(salarioParam) && salarioParam > 0 ? Fmt.formatEsInput(salarioParam) : "30.000";
+
+  function buildShareUrl(salario) {
+    return location.origin + location.pathname + "?salario=" + Math.round(salario);
+  }
+
   form.innerHTML =
     '<div class="field"><label for="cf-salario">Salario bruto anual</label>' +
-    '<input type="text" inputmode="decimal" id="cf-salario" data-format="es" value="30.000" placeholder="30.000"></div>' +
+    '<input type="text" inputmode="decimal" id="cf-salario" data-format="es" value="' + salarioInicial + '" placeholder="30.000"></div>' +
     '<div class="field"><label for="cf-hijos">Hijos a cargo</label>' +
     '<input type="number" min="0" step="1" id="cf-hijos" value="0"></div>' +
     '<div class="field"><span class="field-label">Pagas al año</span>' +
@@ -91,6 +98,10 @@
     condiciones.push("normativa 2026");
 
     var html = '<div class="resumen-condiciones"><span class="pill">' + condiciones.join(" · ") + "</span></div>";
+    html += '<div class="comparador-compartir">' +
+      '<button type="button" class="comparador-compartir-btn" id="cf-copiar">Copiar enlace</button>' +
+      (typeof navigator !== "undefined" && navigator.share ? '<button type="button" class="comparador-compartir-btn" id="cf-compartir">Compartir</button>' : "") +
+      "</div>";
     html += '<div class="comparador-grid">';
     resultados.forEach(function (item) {
       var r = item.r;
@@ -125,6 +136,28 @@
     html += '<p class="field-hint">Estimación con la normativa de 2026. Tu situación real (situación familiar, tipo de contrato, discapacidad) puede cambiar el resultado — usa la calculadora completa de cada territorio para tu caso exacto.</p>';
 
     salidaEl.innerHTML = html;
+
+    var copiarBtn = document.getElementById("cf-copiar");
+    if (copiarBtn) {
+      copiarBtn.addEventListener("click", function () {
+        var url = buildShareUrl(salario);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(function () {
+            var original = copiarBtn.textContent;
+            copiarBtn.textContent = "¡Copiado!";
+            setTimeout(function () {
+              copiarBtn.textContent = original;
+            }, 1500);
+          });
+        }
+      });
+    }
+    var compartirBtn = document.getElementById("cf-compartir");
+    if (compartirBtn) {
+      compartirBtn.addEventListener("click", function () {
+        navigator.share({ title: document.title, url: buildShareUrl(salario) }).catch(function () {});
+      });
+    }
   }
 
   calcular();

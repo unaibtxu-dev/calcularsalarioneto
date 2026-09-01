@@ -595,6 +595,25 @@ details.advanced .advanced-body {
   font-weight: 600;
 }
 
+.comparador-compartir {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 4px 0 10px;
+}
+
+.comparador-compartir-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+}
+
 .notice {
   display: flex;
   gap: 8px;
