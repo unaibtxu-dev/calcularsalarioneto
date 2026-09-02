@@ -28,7 +28,8 @@ const PAGES = [
   "privacidad.html",
   "aviso-legal.html",
   "sueldos.html",
-  "fiscalidad-foral.html"
+  "fiscalidad-foral.html",
+  "retencion-irpf-nomina-vs-declaracion-renta.html"
 ];
 
 // Páginas de calculadora usan WebApplication; páginas informativas (legal,
