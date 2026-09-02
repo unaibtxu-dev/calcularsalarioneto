@@ -603,6 +603,51 @@ details.advanced .advanced-body {
   margin: 4px 0 10px;
 }
 
+/* Tabla comparativa de /sueldos: el scroll horizontal queda contenido en
+   esta caja (nunca en la página), así en móvil no hay overflow incómodo,
+   solo el propio bloque de la tabla se desliza si hace falta. */
+.tabla-scroll {
+  overflow-x: auto;
+  margin: 14px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabla-sueldos {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.tabla-sueldos th,
+.tabla-sueldos td {
+  padding: 8px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+
+.tabla-sueldos th:first-child,
+.tabla-sueldos td:first-child {
+  text-align: left;
+}
+
+.tabla-sueldos thead th {
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.tabla-sueldos tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla-sueldos td:first-child a {
+  font-weight: 700;
+}
+
 /* Reserva el alto medido del resultado del comparador para evitar el salto
    de layout mientras carga el JS que lo rellena; pages/fiscalidad-foral.js
    quita esta clase en cuanto ejecuta el primer calcular(), así que nunca
