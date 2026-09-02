@@ -19,7 +19,8 @@ var App = (function () {
   // "Calculadoras" y "Navarra y País Vasco" sí son desplegables, ver abajo.
   var CATEGORIAS = [
     { id: "sueldos", href: "/sueldos", label: "Sueldos", icon: "💶" },
-    { id: "empresas", href: "/coste-empresa", label: "Empresas", icon: "🏢" }
+    { id: "empresas", href: "/coste-empresa", label: "Empresas", icon: "🏢" },
+    { id: "guias", href: "/guias", label: "Guías", icon: "📘" }
   ];
 
   function categoriaLinkHTML(cat, active) {
@@ -121,6 +122,7 @@ var App = (function () {
     html += categoriaLinkHTML(CATEGORIAS[0], activeId === "sueldos");
     html += dropdownButtonHTML("🏔️", "Navarra y País Vasco", regionActiva);
     html += categoriaLinkHTML(CATEGORIAS[1], empresasActiva);
+    html += categoriaLinkHTML(CATEGORIAS[2], activeId === "guias");
     html += "</nav>";
     // Los menús se renderizan fuera de .topnav-inner: ese contenedor tiene
     // overflow-x:auto, y por la propia especificación CSS un

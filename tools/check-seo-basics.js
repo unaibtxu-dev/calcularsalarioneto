@@ -31,7 +31,8 @@ const PAGES = [
   "fiscalidad-foral.html",
   "retencion-irpf-nomina-vs-declaracion-renta.html",
   "12-pagas-vs-14-pagas.html",
-  "que-se-descuenta-de-una-nomina.html"
+  "que-se-descuenta-de-una-nomina.html",
+  "guias.html"
 ];
 
 // Páginas de calculadora usan WebApplication; páginas informativas (legal,
