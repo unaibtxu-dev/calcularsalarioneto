@@ -57,13 +57,27 @@ var App = (function () {
     function posicionar() {
       var toggleRect = toggle.getBoundingClientRect();
       var navRect = el.getBoundingClientRect();
-      menu.style.left = (toggleRect.left - navRect.left) + "px";
+      var margen = 8;
+      // El botón puede estar solo parcialmente visible (el menú horizontal
+      // del nav permite scroll), así que el menú desplegable no puede
+      // anclarse siempre al borde izquierdo del botón: en pantallas
+      // estrechas eso lo empuja fuera del viewport. Se acota para que quede
+      // siempre dentro del ancho visible, sin depender de scroll de página.
+      var left = toggleRect.left - navRect.left;
+      var maxLeft = window.innerWidth - margen - navRect.left - menu.offsetWidth;
+      left = Math.min(left, Math.max(margen - navRect.left, maxLeft));
+      left = Math.max(left, margen - navRect.left);
+      menu.style.left = left + "px";
     }
     function abrir() {
       clearTimeout(closeTimer);
       cerrarOtros();
-      posicionar();
+      // Añadir "open" antes de posicionar: mientras el menú tiene
+      // display:none su offsetWidth es 0 y posicionar() no podría acotar
+      // el left contra el ancho real. Ocurre en el mismo tick, antes de
+      // pintar, así que no hay parpadeo en la posición incorrecta.
       menu.classList.add("open");
+      posicionar();
       toggle.setAttribute("aria-expanded", "true");
     }
     function cerrar() {

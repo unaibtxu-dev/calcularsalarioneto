@@ -614,7 +614,11 @@ details.advanced .advanced-body {
 .comparador-compartir-btn {
   background: none;
   border: none;
-  padding: 0;
+  /* Área táctil >= 40px de alto (antes 18px, por debajo del mínimo
+     accesible) sin agrandar visualmente el botón de más: el margen
+     negativo compensa el padding para no separar el resto del layout. */
+  padding: 11px 6px;
+  margin: -11px -6px;
   font-family: inherit;
   font-size: 0.85rem;
   font-weight: 600;
