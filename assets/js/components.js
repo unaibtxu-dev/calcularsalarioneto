@@ -612,6 +612,61 @@ var App = (function () {
     "Cálculo de la retención de nómina 2026 (RD 439/2007, arts. 80-89) + Seguridad Social. " +
     "No es el resultado de tu declaración de la renta: esa usa la escala real estado + autonómica y puede incluir deducciones adicionales.";
 
+  // Analítica mínima, reutilizando Cloudflare Web Analytics (ya instalado
+  // en todas las páginas vía beacon, sin tocar aquí). Ese beacon solo
+  // registra pageviews reales, así que "cálculo realizado" y "clic en
+  // compartir" se miden como una pageview virtual: se empuja una URL
+  // sintética (que el beacon detecta como navegación) y se revierte al
+  // instante a la URL real con history.replaceState, sin que el usuario
+  // vea ningún cambio ni se pierda el ?utm_source/medium/campaign que
+  // traía la página (viaja intacto en location.search en ambos pasos).
+  // No añade ningún servicio nuevo ni envía nada a un servidor propio.
+  function trackEvent(nombre) {
+    if (typeof history === "undefined" || !history.pushState || typeof location === "undefined") return;
+    var actual = location.pathname + location.search + location.hash;
+    try {
+      history.pushState(null, "", "/_evento/" + nombre + location.search);
+      history.replaceState(null, "", actual);
+    } catch (e) {
+      /* Entornos sin History API utilizable: no es crítico, se ignora. */
+    }
+  }
+
+  if (typeof document !== "undefined" && document.addEventListener) {
+    // "Clic en compartir": delegado en document porque los botones
+    // #cf-copiar/#cf-compartir del comparador foral se insertan dinámicamente.
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest && e.target.closest("#cf-copiar, #cf-compartir");
+      if (btn) trackEvent("compartir");
+    });
+
+    // "Cálculo realizado": se observa el contenido de los contenedores de
+    // resultado ya existentes (#resultado en las calculadoras, #comparador-
+    // salida en el comparador foral) en vez de tocar cada pages/*.js. Se
+    // limita a como mucho un evento cada 2s por página para no inundar la
+    // analítica con cada tecla mientras el usuario escribe su salario.
+    var ultimoTrack = 0;
+    function alDetectarResultado() {
+      var contenedor = document.getElementById("resultado") || document.getElementById("comparador-salida");
+      if (!contenedor) return;
+      var obs = new MutationObserver(function () {
+        if (!contenedor.textContent.trim()) return; // se vació (input inválido/borrado): no cuenta
+        var ahora = Date.now();
+        if (ahora - ultimoTrack < 2000) return;
+        ultimoTrack = ahora;
+        trackEvent("calculo");
+      });
+      obs.observe(contenedor, { childList: true, subtree: true });
+    }
+    if (typeof MutationObserver !== "undefined") {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", alDetectarResultado);
+      } else {
+        alDetectarResultado();
+      }
+    }
+  }
+
   function wireSegmented(container) {
     container.querySelectorAll(".segmented").forEach(function (wrap) {
       wrap.querySelectorAll("button").forEach(function (btn) {
