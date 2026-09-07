@@ -12,3 +12,9 @@
 
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
+
+/README.md
+  X-Robots-Tag: noindex, nofollow
+
+/validacion-aeat.md
+  X-Robots-Tag: noindex, nofollow
