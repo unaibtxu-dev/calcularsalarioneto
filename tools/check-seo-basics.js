@@ -29,7 +29,6 @@ const PAGES = [
   "aviso-legal.html",
   "sueldos.html",
   "fiscalidad-foral.html",
-  "retencion-irpf-nomina-vs-declaracion-renta.html",
   "12-pagas-vs-14-pagas.html",
   "que-se-descuenta-de-una-nomina.html",
   "guias.html",
