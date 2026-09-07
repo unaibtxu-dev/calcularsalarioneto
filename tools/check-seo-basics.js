@@ -32,7 +32,8 @@ const PAGES = [
   "retencion-irpf-nomina-vs-declaracion-renta.html",
   "12-pagas-vs-14-pagas.html",
   "que-se-descuenta-de-una-nomina.html",
-  "guias.html"
+  "guias.html",
+  "subida-sueldo-5000.html"
 ];
 
 // Páginas de calculadora usan WebApplication; páginas informativas (legal,
