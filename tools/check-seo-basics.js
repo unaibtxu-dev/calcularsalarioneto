@@ -33,7 +33,8 @@ const PAGES = [
   "12-pagas-vs-14-pagas.html",
   "que-se-descuenta-de-una-nomina.html",
   "guias.html",
-  "subida-sueldo-5000.html"
+  "subida-sueldo-5000.html",
+  "retencion-irpf-vs-renta.html"
 ];
 
 // Páginas de calculadora usan WebApplication; páginas informativas (legal,
