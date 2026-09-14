@@ -119,6 +119,32 @@ describe("número de pagas variable (12-20): nunca cambia bruto/SS/IRPF/neto anu
   });
 });
 
+// Regresión del bug reportado en producción: con régimen común, 30.000€,
+// soltero/a sin hijos, el "neto por paga" mostrado seguía calculándose
+// sobre 12 pagas fijas (bruto/12) en vez de sobre el numPagas real
+// seleccionado, aunque el neto anual (23.124€) ya era correcto. Estos tests
+// fijan el valor EXACTO por paga que debe mostrarse, no solo que el neto
+// anual no cambie (esa comprobación por sí sola no habría detectado el bug).
+describe("valor exacto de 'neto por paga' (caso del bug: 30.000€, común, soltero, 0 hijos)", () => {
+  const caso = { brutoAnual: 30000, situacionFamiliar: "otro", numHijos: 0, territorio: "comun", tipoContrato: "general" };
+  const esperado = {
+    12: 1927.00,
+    14: 1651.71,
+    15: 1541.60,
+    16: 1445.25,
+    18: 1284.67,
+    20: 1156.20
+  };
+
+  for (const [numPagas, netoPorPagaEsperado] of Object.entries(esperado)) {
+    test(`numPagas=${numPagas}: netoPorPaga = netoAnual/${numPagas} = ${netoPorPagaEsperado}€`, () => {
+      const r = TaxEngine.brutoToNeto(Object.assign({}, caso, { numPagas: Number(numPagas) }), C);
+      assert.equal(r.netoAnual, 23124);
+      assert.equal(r.netoPorPaga, netoPorPagaEsperado);
+    });
+  }
+});
+
 describe("tabla de retención cero (art. 81.1 RIRPF)", () => {
   test("soltero sin hijos por debajo del umbral -> tipo 0", () => {
     const r = TaxEngine.brutoToNeto({ brutoAnual: 15000, numPagas: 12, situacionFamiliar: "otro", numHijos: 0 }, C);
