@@ -241,6 +241,74 @@ var App = (function () {
     return html;
   }
 
+  var NUM_PAGAS_MIN = 12;
+  var NUM_PAGAS_MAX = 20;
+  var NUM_PAGAS_HINT =
+    "El importe por paga supone que las pagas tienen el mismo importe. Si tus pagas extraordinarias tienen " +
+    "importes diferentes según convenio, consulta principalmente el neto anual.";
+
+  // Selector de pagas al año, compartido por el formulario genérico
+  // (formularioHTML) y por el comparador foral (fiscalidad-foral.js), para
+  // que ambos validen y lean el valor exactamente igual. "Otro" revela un
+  // campo numérico acotado a [12,20] — fuera de ese rango no tiene sentido
+  // como número de pagas real, y por encima empieza a ser una periodicidad
+  // distinta (quincenal, etc.) que esta calculadora no modela.
+  function pagasFieldHTML(idPrefix) {
+    return (
+      '<div class="field"><span class="field-label">Pagas al año</span>' +
+      segmentedHTML("numPagas", "Pagas al año", [
+        { value: "12", label: "12 pagas" },
+        { value: "14", label: "14 pagas" },
+        { value: "15", label: "15 pagas" },
+        { value: "16", label: "16 pagas" },
+        { value: "otro", label: "Otro" }
+      ], "12") +
+      '<div class="field" data-pagas-otro-wrap hidden>' +
+      '<label for="' + idPrefix + '-pagas-otro">Número de pagas (12-20)</label>' +
+      '<input type="number" min="' + NUM_PAGAS_MIN + '" max="' + NUM_PAGAS_MAX + '" step="1" inputmode="numeric" ' +
+      'data-field="numPagasOtro" id="' + idPrefix + '-pagas-otro" value="' + NUM_PAGAS_MIN + '">' +
+      "</div>" +
+      '<div class="field-hint">' + NUM_PAGAS_HINT + "</div>" +
+      "</div>"
+    );
+  }
+
+  function clampNumPagasOtro(input) {
+    var v = Math.trunc(Number(input.value));
+    if (!Number.isFinite(v)) v = NUM_PAGAS_MIN;
+    v = Math.max(NUM_PAGAS_MIN, Math.min(NUM_PAGAS_MAX, v));
+    input.value = v;
+    return v;
+  }
+
+  // Muestra/oculta el campo "Otro" según la opción activa del segmentado, y
+  // acota su valor al perder el foco. La lectura del valor final vive en
+  // leerNumPagas, para que el mismo criterio se use al calcular.
+  function wirePagasField(container) {
+    var wrap = container.querySelector('.segmented[data-field="numPagas"]');
+    var otroWrap = container.querySelector("[data-pagas-otro-wrap]");
+    var otroInput = container.querySelector('[data-field="numPagasOtro"]');
+    if (!wrap || !otroWrap || !otroInput) return;
+    function sync() {
+      otroWrap.hidden = wrap.getAttribute("data-value") !== "otro";
+    }
+    sync();
+    container.addEventListener("app:change", sync);
+    otroInput.addEventListener("blur", function () { clampNumPagasOtro(otroInput); });
+  }
+
+  function leerNumPagas(container) {
+    var wrap = container.querySelector('.segmented[data-field="numPagas"]');
+    if (!wrap) return 12;
+    var valor = wrap.getAttribute("data-value");
+    if (valor === "otro") {
+      var otroInput = container.querySelector('[data-field="numPagasOtro"]');
+      return otroInput ? clampNumPagasOtro(otroInput) : NUM_PAGAS_MIN;
+    }
+    var n = Number(valor);
+    return Number.isFinite(n) ? n : NUM_PAGAS_MIN;
+  }
+
   function presetsHTML(presets) {
     var html = '<div class="preset-row" role="group" aria-label="Importes rápidos">';
     presets.forEach(function (v) {
@@ -272,11 +340,7 @@ var App = (function () {
       (cfg.salarioPresets ? presetsHTML(cfg.salarioPresets) : "") +
       (cfg.salarioHint ? '<div class="field-hint">' + cfg.salarioHint + "</div>" : "") +
       "</div>" +
-      (cfg.showPagas === false
-        ? ""
-        : '<div class="field"><span class="field-label">Pagas al año</span>' +
-          segmentedHTML("numPagas", "Pagas al año", [{ value: "12", label: "12 pagas" }, { value: "14", label: "14 pagas" }], "12") +
-          "</div>") +
+      (cfg.showPagas === false ? "" : pagasFieldHTML(pre)) +
       '<div class="field"><label for="' + pre + '-sitfam">Situación familiar</label>' +
       '<select data-field="situacionFamiliar" id="' + pre + '-sitfam">' +
       '<option value="otro">Soltero/a o sin cónyuge a cargo</option>' +
@@ -330,6 +394,7 @@ var App = (function () {
     cfg.idPrefix = cfg.idPrefix || "f" + Math.random().toString(36).slice(2, 7);
     container.innerHTML = formularioHTML(cfg);
     wireSegmented(container);
+    wirePagasField(container);
     container.querySelectorAll("input, select").forEach(function (el) {
       el.addEventListener("input", function () { container.dispatchEvent(new Event("app:change")); });
       el.addEventListener("change", function () { container.dispatchEvent(new Event("app:change")); });
@@ -357,13 +422,12 @@ var App = (function () {
 
   function leerFormulario(container) {
     var salarioEl = container.querySelector('[data-field="salario"]');
-    var pagasWrap = container.querySelector('[data-field="numPagas"]');
     var salarioValor = salarioEl
       ? (salarioEl.dataset.format === "es" ? Fmt.parseEs(salarioEl.value) : salarioEl.valueAsNumber)
       : NaN;
     return {
       salario: salarioValor,
-      numPagas: pagasWrap ? Number(pagasWrap.getAttribute("data-value")) : 12,
+      numPagas: leerNumPagas(container),
       situacionFamiliar: container.querySelector('[data-field="situacionFamiliar"]').value,
       numHijos: Number(container.querySelector('[data-field="numHijos"]').value) || 0,
       territorio: container.querySelector('[data-field="territorio"]').value,
@@ -692,6 +756,9 @@ var App = (function () {
     bloqueoHTML: bloqueoHTML,
     segmentedHTML: segmentedHTML,
     wireSegmented: wireSegmented,
+    pagasFieldHTML: pagasFieldHTML,
+    wirePagasField: wirePagasField,
+    leerNumPagas: leerNumPagas,
     splitBarHTML: splitBarHTML,
     brutoToNetoNavarra: brutoToNetoNavarra,
     netoToBrutoNavarra: netoToBrutoNavarra,

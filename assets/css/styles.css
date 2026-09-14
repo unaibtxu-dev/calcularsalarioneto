@@ -327,6 +327,7 @@ input:focus-visible {
 
 .segmented {
   display: flex;
+  flex-wrap: wrap;
   background: var(--bg);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
@@ -335,7 +336,8 @@ input:focus-visible {
 }
 
 .segmented button {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 64px;
   border: none;
   background: transparent;
   padding: 12px 6px;

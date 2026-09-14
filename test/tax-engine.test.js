@@ -78,10 +78,44 @@ describe("casos límite", () => {
     assert.ok(r.irpf.tipoRetencion <= 47);
   });
 
-  test("numHijos/numPagas inválidos no revientan (se normalizan)", () => {
+  test("numHijos inválido no revienta (se normaliza)", () => {
     const r = TaxEngine.brutoToNeto({ brutoAnual: 30000, numPagas: 13, numHijos: -3 }, C);
     assert.ok(Number.isFinite(r.netoAnual));
-    assert.equal(r.numPagas, 12);
+    assert.equal(r.numPagas, 13);
+  });
+
+  test("numPagas fuera de [12,20] o no numérico se normaliza a 12", () => {
+    for (const numPagas of [0, 1, 11, 21, 100, NaN, undefined, "otro", -14]) {
+      const r = TaxEngine.brutoToNeto({ brutoAnual: 30000, numPagas }, C);
+      assert.equal(r.numPagas, 12, `numPagas=${numPagas}`);
+    }
+  });
+});
+
+describe("número de pagas variable (12-20): nunca cambia bruto/SS/IRPF/neto anual", () => {
+  const base = { brutoAnual: 30000, situacionFamiliar: "otro", numHijos: 1 };
+  const referencia = TaxEngine.brutoToNeto(Object.assign({}, base, { numPagas: 12 }), C);
+
+  for (const numPagas of [12, 13, 14, 15, 16, 18, 20]) {
+    test(`numPagas=${numPagas}: netoAnual, SS e IRPF idénticos a 12 pagas`, () => {
+      const r = TaxEngine.brutoToNeto(Object.assign({}, base, { numPagas }), C);
+      assert.equal(r.numPagas, numPagas);
+      assert.ok(Math.abs(r.netoAnual - referencia.netoAnual) < 0.01);
+      assert.ok(Math.abs(r.segSocial.anual - referencia.segSocial.anual) < 0.01);
+      assert.equal(r.irpf.tipoRetencion, referencia.irpf.tipoRetencion);
+      assert.equal(r.irpf.retencionAnual, referencia.irpf.retencionAnual);
+    });
+
+    test(`numPagas=${numPagas}: netoPorPaga distribuye el neto anual en partes iguales`, () => {
+      const r = TaxEngine.brutoToNeto(Object.assign({}, base, { numPagas }), C);
+      assert.ok(Math.abs(r.netoPorPaga * numPagas - r.netoAnual) < 0.01 * numPagas);
+    });
+  }
+
+  test("14 pagas mantiene exactamente el resultado actual (regresión)", () => {
+    const r = TaxEngine.brutoToNeto(Object.assign({}, base, { numPagas: 14 }), C);
+    assert.equal(r.netoAnual, referencia.netoAnual);
+    assert.equal(r.irpf.tipoRetencion, referencia.irpf.tipoRetencion);
   });
 });
 

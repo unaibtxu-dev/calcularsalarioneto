@@ -15,19 +15,20 @@
   });
 
   function pagaExtraDesglose(r, datos) {
-    if (datos.numPagas !== 14 || r.bloqueado) return "";
-    var pagaBruta = r.brutoAnual / 14;
+    if (!datos.numPagas || datos.numPagas <= 12 || r.bloqueado) return "";
+    var numExtras = datos.numPagas - 12;
+    var pagaBruta = r.brutoAnual / datos.numPagas;
     var ssMensual = r.segSocial.anual / 12;
     var retPaga = TaxEngine.round(pagaBruta * (r.irpf.tipoRetencion / 100));
     var netoOrdinaria = TaxEngine.round(pagaBruta - ssMensual - retPaga);
     var netoExtra = TaxEngine.round(pagaBruta - retPaga);
     return (
-      '<div class="section-title">Cómo se reparte en 14 pagas</div>' +
+      '<div class="section-title">Cómo se reparte en ' + datos.numPagas + " pagas</div>" +
       '<div class="result-grid">' +
       '<div class="result-tile"><div class="t-label">Nómina ordinaria (x12)</div><div class="t-value">' + Fmt.money(netoOrdinaria, true) + "</div></div>" +
-      '<div class="result-tile"><div class="t-label">Paga extra (x2)</div><div class="t-value">' + Fmt.money(netoExtra, true) + "</div></div>" +
+      '<div class="result-tile"><div class="t-label">Paga extra (x' + numExtras + ')</div><div class="t-value">' + Fmt.money(netoExtra, true) + "</div></div>" +
       "</div>" +
-      '<div class="field-hint">La paga extra no lleva descuento de Seguridad Social aparte: ya se prorratea dentro de las 12 nóminas ordinarias. El total anual es el mismo que con 12 pagas.</div>'
+      '<div class="field-hint">Las pagas extra no llevan descuento de Seguridad Social aparte: ya se prorratean dentro de las 12 nóminas ordinarias. El total anual es el mismo que con 12 pagas. Este reparto supone que todas las pagas tienen el mismo importe.</div>'
     );
   }
 

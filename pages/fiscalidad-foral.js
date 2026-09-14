@@ -27,9 +27,7 @@
     '<input type="text" inputmode="decimal" id="cf-salario" data-format="es" value="' + salarioInicial + '" placeholder="30.000"></div>' +
     '<div class="field"><label for="cf-hijos">Hijos a cargo</label>' +
     '<input type="number" min="0" step="1" id="cf-hijos" value="0"></div>' +
-    '<div class="field"><span class="field-label">Pagas al año</span>' +
-    App.segmentedHTML("numPagas", "Pagas al año", [{ value: "12", label: "12 pagas" }, { value: "14", label: "14 pagas" }], "12") +
-    "</div>" +
+    App.pagasFieldHTML("cf") +
     '<div class="field"><label for="cf-discapacidad">Discapacidad</label>' +
     '<select id="cf-discapacidad">' +
     '<option value="ninguna">Sin discapacidad reconocida</option>' +
@@ -38,7 +36,10 @@
     "</select></div>";
 
   App.wireSegmented(form);
+  App.wirePagasField(form);
   form.addEventListener("app:change", calcular);
+  document.getElementById("cf-pagas-otro").addEventListener("input", calcular);
+  document.getElementById("cf-pagas-otro").addEventListener("change", calcular);
   document.getElementById("cf-salario").addEventListener("input", calcular);
   document.getElementById("cf-salario").addEventListener("blur", function (e) {
     var parsed = Fmt.parseEs(e.target.value);
@@ -77,7 +78,7 @@
   function calcular() {
     var salario = Fmt.parseEs(document.getElementById("cf-salario").value);
     var numHijos = Number(document.getElementById("cf-hijos").value) || 0;
-    var numPagas = Number(form.querySelector('[data-field="numPagas"]').getAttribute("data-value"));
+    var numPagas = App.leerNumPagas(form);
     var discapacidadPropia = document.getElementById("cf-discapacidad").value;
 
     if (!Number.isFinite(salario) || salario <= 0) {
