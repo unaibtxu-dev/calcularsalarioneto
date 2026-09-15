@@ -1,18 +1,41 @@
 {
-  "_comentario": "Configuración editorial OPCIONAL para tools/seo-audit.js. El auditor básico (tools/check-seo-basics.js) funciona sin este archivo. Las claves son cleanUrl (la URL pública limpia, sin dominio). 'target' es el tema/consulta objetivo de la página, en lenguaje natural — no una keyword exacta. 'intent' es 'informational' o 'transactional'. 'related' declara relaciones editoriales explícitas (p. ej. guía <-> calculadora del mismo cluster) para poder comprobar automáticamente que existen. Los campos 'requiresOfficialSource'/'requiresMethodology'/'requiresDateContext'/'requiresDisclaimer' solo se comprueban si están presentes y en true.",
+  "_comentario": "Configuración editorial OPCIONAL para tools/seo-audit.js. El auditor básico (tools/check-seo-basics.js) funciona sin este archivo. Las claves son cleanUrl (la URL pública limpia, sin dominio). 'target' es el tema/consulta objetivo de la página, en lenguaje natural — no una keyword exacta. 'intent' es 'informational' o 'transactional'. 'related' declara relaciones editoriales explícitas (p. ej. guía <-> calculadora del mismo cluster) para poder comprobar automáticamente que existen. 'requiresDisclaimer' solo indica que la página debería tener un aviso de tipo 'no sustituye asesoramiento profesional' en su texto — no almacena el texto legal en sí, solo lo que se espera; 'disclaimerType' es orientativo (calculator/company-cost/foral/editorial), no cambia la comprobación. Los campos 'requiresOfficialSource'/'requiresMethodology'/'requiresDateContext'/'requiresDisclaimer' solo se comprueban si están presentes y en true. Las páginas institucionales (sobre-sueldo-claro, contacto, privacidad, cookies, aviso-legal, metodologia, guias) deliberadamente no llevan requiresDisclaimer.",
   "pages": {
+    "/": { "disclaimerType": "calculator", "requiresDisclaimer": true },
+    "/neto-a-bruto": { "disclaimerType": "calculator", "requiresDisclaimer": true },
+    "/comparar-ofertas": { "disclaimerType": "calculator", "requiresDisclaimer": true },
+    "/calculadora-subida-sueldo": { "disclaimerType": "calculator", "requiresDisclaimer": true },
+    "/coste-empresa": { "disclaimerType": "company-cost", "requiresDisclaimer": true },
+    "/calculadora-sueldo-neto-navarra": { "disclaimerType": "foral", "requiresDisclaimer": true },
+    "/calculadora-sueldo-neto-bizkaia": { "disclaimerType": "foral", "requiresDisclaimer": true },
+    "/calculadora-sueldo-neto-gipuzkoa": { "disclaimerType": "foral", "requiresDisclaimer": true },
+    "/calculadora-sueldo-neto-alava": {
+      "target": "calculadora sueldo neto Álava 2026",
+      "intent": "transactional",
+      "related": ["/guias/tabla-retenciones-irpf-alava-2026"],
+      "disclaimerType": "foral",
+      "requiresDisclaimer": true
+    },
+    "/fiscalidad-foral": { "disclaimerType": "foral", "requiresDisclaimer": true },
+    "/30000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
+    "/35000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
+    "/40000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
+    "/45000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
+    "/50000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
+    "/retencion-irpf-vs-renta": { "disclaimerType": "editorial", "requiresDisclaimer": true },
+    "/que-se-descuenta-de-una-nomina": { "disclaimerType": "editorial", "requiresDisclaimer": true },
+    "/12-pagas-vs-14-pagas": { "disclaimerType": "editorial", "requiresDisclaimer": true },
+    "/subida-sueldo-5000": { "disclaimerType": "editorial", "requiresDisclaimer": true },
+    "/sueldos": { "disclaimerType": "editorial", "requiresDisclaimer": true },
     "/guias/tabla-retenciones-irpf-alava-2026": {
       "target": "tabla retenciones IRPF Álava 2026",
       "intent": "informational",
       "related": ["/calculadora-sueldo-neto-alava"],
       "requiresOfficialSource": true,
       "requiresMethodology": true,
-      "requiresDateContext": true
-    },
-    "/calculadora-sueldo-neto-alava": {
-      "target": "calculadora sueldo neto Álava 2026",
-      "intent": "transactional",
-      "related": ["/guias/tabla-retenciones-irpf-alava-2026"]
+      "requiresDateContext": true,
+      "disclaimerType": "editorial",
+      "requiresDisclaimer": true
     }
   }
 }

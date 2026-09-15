@@ -37,7 +37,8 @@ function paginaFalsa(overrides) {
       hasTopnav: false,
       hasFooterContainer: false,
       relacionadasCall: null,
-      mainText: "Texto de prueba con suficientes palabras para no disparar el aviso de contenido escaso. ".repeat(6)
+      mainText: "Texto de prueba con suficientes palabras para no disparar el aviso de contenido escaso. ".repeat(6),
+      pagesJsSrc: ""
     },
     overrides
   );
@@ -219,6 +220,82 @@ describe("checkEnlazado / buildLinkGraph: reglas individuales", () => {
 });
 
 // -----------------------------------------------------------------------
+// CONFIANZA: disclaimer informativo (requiresDisclaimer)
+// -----------------------------------------------------------------------
+
+describe("checkConfianza: disclaimer informativo", () => {
+  test("detecta disclaimer presente en el HTML estático (guía/editorial)", () => {
+    const p = paginaFalsa({
+      cleanUrl: "/a",
+      mainText: "Contenido informativo: los ejemplos son orientativos y no sustituyen el asesoramiento fiscal profesional. " + paginaFalsa().mainText
+    });
+    const out = lib.checkConfianza({ facts: [p], graph: lib.buildLinkGraph([p], componentesVacios()), config: { pages: { "/a": { requiresDisclaimer: true } } } });
+    const m = buscar(out, "DISCLAIMER_OK");
+    assert.equal(m.length, 1);
+    assert.equal(m[0].severity, "ok");
+  });
+
+  test("detecta ausencia de disclaimer cuando requiresDisclaimer=true, y es WARNING (no ERROR)", () => {
+    const p = paginaFalsa({ cleanUrl: "/a" }); // mainText sin ninguna frase de disclaimer
+    const out = lib.checkConfianza({ facts: [p], graph: lib.buildLinkGraph([p], componentesVacios()), config: { pages: { "/a": { requiresDisclaimer: true } } } });
+    const m = buscar(out, "DISCLAIMER_MISSING");
+    assert.equal(m.length, 1);
+    assert.equal(m[0].severity, "warning");
+    assert.notEqual(m[0].severity, "error");
+  });
+
+  test("la ausencia de disclaimer (warning) no rompe el exit code", () => {
+    const findings = [{ severity: "warning", category: "trust", page: "/a", code: "DISCLAIMER_MISSING", message: "..." }];
+    assert.equal(findings.some((f) => f.severity === "error"), false);
+  });
+
+  test("reconoce un disclaimer que enlaza a /metodologia dentro de la misma frase", () => {
+    const p = paginaFalsa({
+      cleanUrl: "/a",
+      mainText: 'Es una estimación y no sustituye el asesoramiento profesional. Consulta nuestra metodología. ' + paginaFalsa().mainText,
+      hrefsRaw: ["/metodologia"]
+    });
+    const graph = lib.buildLinkGraph([p], componentesVacios());
+    assert.ok(graph.outbound.get("/a").literal.has("/metodologia"));
+    const out = lib.checkConfianza({ facts: [p], graph, config: { pages: { "/a": { requiresDisclaimer: true, requiresMethodology: true } } } });
+    assert.equal(buscar(out, "DISCLAIMER_OK").length, 1);
+    assert.equal(buscar(out, "METHODOLOGY_LINKED").length, 1);
+  });
+
+  test("no produce falso positivo cuando el disclaimer vive en pages/*.js vía App.DISCLAIMER (caso real de las calculadoras)", () => {
+    // Simula exactamente la arquitectura real: el HTML estático no contiene
+    // el disclaimer (se renderiza por JS en #resultado), pero el pages/*.js
+    // de la página sí referencia App.DISCLAIMER, y components.js contiene el
+    // texto real. No debería marcarse como ausente.
+    const p = paginaFalsa({ cleanUrl: "/a", mainText: "Salario bruto y neto. ".repeat(10), pagesJsSrc: '<p class="disclaimer">" + App.DISCLAIMER + "</p>' });
+    const out = lib.checkConfianza({ facts: [p], graph: lib.buildLinkGraph([p], componentesVacios()), config: { pages: { "/a": { requiresDisclaimer: true } } } });
+    // components.js real ya contiene "no sustituye" (verificado en otro test), así que esto debe dar OK.
+    assert.equal(buscar(out, "DISCLAIMER_OK").length, 1);
+    assert.equal(buscar(out, "DISCLAIMER_MISSING").length, 0);
+  });
+
+  test("una página sin requiresDisclaimer en la config no genera ningún finding de disclaimer (páginas institucionales)", () => {
+    const p = paginaFalsa({ cleanUrl: "/a" });
+    const out = lib.checkConfianza({ facts: [p], graph: lib.buildLinkGraph([p], componentesVacios()), config: { pages: {} } });
+    assert.equal(buscar(out, "DISCLAIMER_OK").length, 0);
+    assert.equal(buscar(out, "DISCLAIMER_MISSING").length, 0);
+  });
+
+  test("las páginas institucionales reales (/privacidad, /cookies, /contacto, /aviso-legal, /sobre-sueldo-claro) no requieren disclaimer fiscal en tools/seo-config.json", () => {
+    const config = lib.loadSeoConfig();
+    for (const url of ["/privacidad", "/cookies", "/contacto", "/aviso-legal", "/sobre-sueldo-claro", "/404"]) {
+      const cfg = config.pages[url];
+      assert.ok(!cfg || !cfg.requiresDisclaimer, url + " no debería requerir disclaimer fiscal");
+    }
+  });
+
+  test("assets/js/components.js (App.DISCLAIMER) sí contiene la frase de disclaimer real", () => {
+    const src = lib.leer("assets/js/components.js");
+    assert.match(src, /no sustituye/i);
+  });
+});
+
+// -----------------------------------------------------------------------
 // Severidad / exit code
 // -----------------------------------------------------------------------
 
@@ -302,5 +379,14 @@ describe("auditor sobre el proyecto real", () => {
     const out = lib.checkConfianza(ctx);
     assert.equal(buscar(out, "TRUST_PAGE_MISSING").length, 0);
     assert.equal(buscar(out, "TRUST_PAGE_UNREACHABLE").length, 0);
+  });
+
+  test("todas las páginas configuradas con requiresDisclaimer=true tienen su disclaimer detectado (0 DISCLAIMER_MISSING)", () => {
+    const ctx = lib.cargarTodo();
+    const out = lib.checkConfianza(ctx);
+    assert.equal(buscar(out, "DISCLAIMER_MISSING").length, 0);
+    const conRequisito = Object.values(ctx.config.pages).filter((c) => c.requiresDisclaimer).length;
+    assert.ok(conRequisito > 0, "el test no comprueba nada si no hay ninguna página configurada");
+    assert.equal(buscar(out, "DISCLAIMER_OK").length, conRequisito);
   });
 });

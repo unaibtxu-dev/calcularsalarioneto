@@ -717,7 +717,9 @@ var App = (function () {
 
   var DISCLAIMER =
     "Cálculo de la retención de nómina 2026 (RD 439/2007, arts. 80-89) + Seguridad Social. " +
-    "No es el resultado de tu declaración de la renta: esa usa la escala real estado + autonómica y puede incluir deducciones adicionales.";
+    "No es el resultado de tu declaración de la renta: esa usa la escala real estado + autonómica y puede incluir deducciones adicionales. " +
+    "Es una estimación orientativa y no sustituye el asesoramiento fiscal o laboral profesional. " +
+    'Consulta nuestra <a href="/metodologia">metodología</a> para conocer los criterios utilizados.';
 
   // Analítica mínima, reutilizando Cloudflare Web Analytics (ya instalado
   // en todas las páginas vía beacon, sin tocar aquí). Ese beacon solo

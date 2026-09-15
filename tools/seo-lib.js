@@ -206,7 +206,14 @@ function extractFacts(file) {
     hasTopnav: /id="topnav"/.test(html),
     hasFooterContainer: /<footer class="footer" id="footer"><\/footer>/.test(html),
     relacionadasCall,
-    mainText: textoVisible(html)
+    mainText: textoVisible(html),
+    // El resultado (y su disclaimer) de las calculadoras se renderiza por
+    // JS dentro de un contenedor vacío en el HTML estático — el propio
+    // "no sustituye asesoramiento" vive como texto en pages/*.js o en
+    // assets/js/components.js (App.DISCLAIMER), no en el HTML servido.
+    // Se expone aquí para que checkConfianza pueda buscarlo sin necesitar
+    // un navegador real.
+    pagesJsSrc: pagesJsSrc || ""
   };
 }
 
@@ -842,9 +849,17 @@ const DOMINIOS_OFICIALES = [
   "aepd.es"
 ];
 
+const DISCLAIMER_REGEX = /no sustituye[n]?|no constituye asesoramiento/i;
+
 function checkConfianza(ctx) {
   const out = [];
   const { facts, graph, config } = ctx;
+  // El disclaimer de la mayoría de calculadoras es una sola constante
+  // compartida (App.DISCLAIMER, en assets/js/components.js) referenciada
+  // desde cada pages/*.js — se lee una sola vez aquí para no repetir la
+  // lectura de disco por página.
+  const componentsJsSrc = existeArchivo("assets/js/components.js") ? leer("assets/js/components.js") : "";
+  const componentsTieneDisclaimer = DISCLAIMER_REGEX.test(componentsJsSrc);
 
   for (const destino of PAGINAS_CONFIANZA) {
     if (!existeArchivo(fileFromCleanUrl(destino))) {
@@ -900,7 +915,18 @@ function checkConfianza(ctx) {
     }
 
     if (cfg.requiresDisclaimer) {
-      const tieneDisclaimer = /(no sustituye|orientativ[oa]|no oficial|no constituye asesoramiento)/i.test(p.mainText);
+      // Deliberadamente NO se acepta la palabra suelta "orientativo/a": aparece
+      // como etiqueta decorativa en la cabecera de casi cualquier página
+      // ("Información orientativa") y por sí sola no es un disclaimer real.
+      // Se exige una frase que indique de forma explícita que el resultado
+      // no sustituye asesoramiento profesional — buscada tanto en el HTML
+      // estático (guías) como en el pages/*.js de la calculadora, directa o
+      // indirectamente a través de App.DISCLAIMER (assets/js/components.js).
+      const usaDisclaimerCompartido = p.pagesJsSrc.includes("App.DISCLAIMER");
+      const tieneDisclaimer =
+        DISCLAIMER_REGEX.test(p.mainText) ||
+        DISCLAIMER_REGEX.test(p.pagesJsSrc) ||
+        (usaDisclaimerCompartido && componentsTieneDisclaimer);
       out.push(
         tieneDisclaimer
           ? finding("ok", "trust", p.cleanUrl, "DISCLAIMER_OK", "Incluye un disclaimer de herramienta orientativa.")
