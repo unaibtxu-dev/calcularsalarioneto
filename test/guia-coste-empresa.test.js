@@ -98,8 +98,8 @@ describe("enlazado interno bidireccional guía <-> calculadora de coste de empre
     assert.ok(calculadoraHtml.includes('href="' + CLEAN_URL + '"'), "la calculadora debe enlazar a la nueva guía");
   });
 
-  test("la calculadora mantiene su objetivo transaccional: mismo H1, title y canonical de siempre", () => {
-    assert.match(calculadoraHtml, /<title>Calculadora de Coste de Empresa de un Trabajador 2026 \| SueldoClaro<\/title>/);
+  test("la calculadora mantiene su objetivo transaccional: mismo H1 y canonical de siempre", () => {
+    assert.match(calculadoraHtml, /<title>Calculadora de Coste de Empresa 2026 \| SueldoClaro<\/title>/);
     assert.match(calculadoraHtml, /<h1 class="hero-title">Calculadora del coste de un trabajador para la empresa<\/h1>/);
     assert.ok(calculadoraHtml.includes('<link rel="canonical" href="https://calcularsalarioneto.es/coste-empresa">'));
   });
