@@ -1,18 +1,24 @@
 "use strict";
 var App = (function () {
+  // Hrefs absolutos (con "/" inicial): PAGES/REGIONES se reutilizan desde
+  // App.renderNav/renderRelacionadas en páginas que pueden vivir a distinta
+  // profundidad de ruta (p. ej. /guias/algo), donde un href relativo como
+  // "neto-a-bruto" resolvería mal (a /guias/neto-a-bruto). Con "/" siempre
+  // apunta a la raíz del sitio, y no cambia nada para las páginas ya
+  // existentes en la raíz.
   var PAGES = [
     { id: "bruto-neto", href: "/", label: "Bruto a neto", icon: "💶", desc: "Cuánto cobras realmente cada mes a partir de tu salario bruto." },
-    { id: "neto-bruto", href: "neto-a-bruto", label: "Neto a bruto", icon: "🔄", desc: "El bruto que necesitas pactar para llegar al neto que quieres." },
-    { id: "comparar", href: "comparar-ofertas", label: "Comparar ofertas", icon: "⚖️", desc: "Compara el neto real de dos ofertas de trabajo." },
-    { id: "subida", href: "calculadora-subida-sueldo", label: "Subida salarial", icon: "📈", desc: "Cuánto de tu subida bruta llega de verdad a tu neto." },
-    { id: "coste-empresa", href: "coste-empresa", label: "Coste empresa", icon: "🏢", desc: "Lo que le cuesta a la empresa un trabajador, más allá del bruto." }
+    { id: "neto-bruto", href: "/neto-a-bruto", label: "Neto a bruto", icon: "🔄", desc: "El bruto que necesitas pactar para llegar al neto que quieres." },
+    { id: "comparar", href: "/comparar-ofertas", label: "Comparar ofertas", icon: "⚖️", desc: "Compara el neto real de dos ofertas de trabajo." },
+    { id: "subida", href: "/calculadora-subida-sueldo", label: "Subida salarial", icon: "📈", desc: "Cuánto de tu subida bruta llega de verdad a tu neto." },
+    { id: "coste-empresa", href: "/coste-empresa", label: "Coste empresa", icon: "🏢", desc: "Lo que le cuesta a la empresa un trabajador, más allá del bruto." }
   ];
 
   var REGIONES = [
-    { id: "navarra", href: "calculadora-sueldo-neto-navarra", label: "Navarra" },
-    { id: "bizkaia", href: "calculadora-sueldo-neto-bizkaia", label: "Bizkaia" },
-    { id: "gipuzkoa", href: "calculadora-sueldo-neto-gipuzkoa", label: "Gipuzkoa" },
-    { id: "alava", href: "calculadora-sueldo-neto-alava", label: "Álava" }
+    { id: "navarra", href: "/calculadora-sueldo-neto-navarra", label: "Navarra" },
+    { id: "bizkaia", href: "/calculadora-sueldo-neto-bizkaia", label: "Bizkaia" },
+    { id: "gipuzkoa", href: "/calculadora-sueldo-neto-gipuzkoa", label: "Gipuzkoa" },
+    { id: "alava", href: "/calculadora-sueldo-neto-alava", label: "Álava" }
   ];
 
   // Las 2 categorías del menú que son enlaces directos (no desplegables):

@@ -34,7 +34,8 @@ const PAGES = [
   "guias.html",
   "subida-sueldo-5000.html",
   "retencion-irpf-vs-renta.html",
-  "metodologia.html"
+  "metodologia.html",
+  "guias/tabla-retenciones-irpf-alava-2026.html"
 ];
 
 // Páginas de calculadora usan WebApplication; páginas informativas (legal,
