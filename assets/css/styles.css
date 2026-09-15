@@ -431,6 +431,10 @@ details.advanced .advanced-body {
   color: var(--text);
 }
 
+.btn + .btn {
+  margin-top: 8px;
+}
+
 .result-hero {
   text-align: center;
   padding: 6px 0 14px;
@@ -775,6 +779,23 @@ details.advanced .advanced-body {
 
 .hidden {
   display: none !important;
+}
+
+/* Bloque de cita destacada, reutilizable en páginas de contenido (p. ej.
+   "sobre nosotros") para una frase corta que resuma la filosofía del
+   proyecto, sin depender de una librería ni de estilos nuevos ajenos al
+   sistema de color existente. */
+.quote-block {
+  text-align: center;
+  padding: 4px 4px 2px;
+}
+
+.quote-text {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.35;
+  margin: 0 0 10px;
 }
 
 @media (min-width: 560px) {
