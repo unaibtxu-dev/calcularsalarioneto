@@ -678,6 +678,43 @@ var App = (function () {
     return '<div class="notice warn"><span>⚠️</span><span>' + motivo + "</span></div>";
   }
 
+  // Footer compartido por todo el sitio, con hrefs absolutos ("/" inicial)
+  // para que funcione igual en páginas de raíz y en rutas anidadas
+  // (p. ej. /guias/algo) — mismo motivo que llevó a hacer absolutos los
+  // hrefs de PAGES/REGIONES. Se auto-renderiza en cuanto el DOM está listo
+  // (igual patrón que el bloque de analítica más abajo), así que cada
+  // página solo necesita un <footer class="footer" id="footer"></footer>
+  // vacío: no hace falta tocar cada pages/*.js para invocarlo.
+  var FOOTER_LINKS = [
+    { href: "/", label: "Calculadoras" },
+    { href: "/guias", label: "Guías" },
+    { href: "/metodologia", label: "Metodología" },
+    { href: "/sobre-sueldo-claro", label: "Sobre SueldoClaro" },
+    { href: "/contacto", label: "Contacto" },
+    { href: "/privacidad", label: "Privacidad" },
+    { href: "/cookies", label: "Cookies" },
+    { href: "/aviso-legal", label: "Aviso legal" }
+  ];
+
+  function renderFooter(containerId) {
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML =
+      "Herramienta orientativa, no oficial. No sustituye a tu declaración de la renta ni a tu asesoría. · " +
+      FOOTER_LINKS.map(function (l) { return '<a href="' + l.href + '">' + l.label + "</a>"; }).join(" · ");
+  }
+
+  function autoRenderFooter() {
+    if (document.getElementById("footer")) renderFooter("footer");
+  }
+  if (typeof document !== "undefined" && document.addEventListener) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", autoRenderFooter);
+    } else {
+      autoRenderFooter();
+    }
+  }
+
   var DISCLAIMER =
     "Cálculo de la retención de nómina 2026 (RD 439/2007, arts. 80-89) + Seguridad Social. " +
     "No es el resultado de tu declaración de la renta: esa usa la escala real estado + autonómica y puede incluir deducciones adicionales.";
@@ -757,6 +794,7 @@ var App = (function () {
   return {
     renderNav: renderNav,
     renderRelacionadas: renderRelacionadas,
+    renderFooter: renderFooter,
     buildFormulario: buildFormulario,
     leerFormulario: leerFormulario,
     bloqueoHTML: bloqueoHTML,
