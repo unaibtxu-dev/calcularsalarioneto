@@ -82,8 +82,8 @@ describe("enlazado interno bidireccional guía <-> calculadora", () => {
     );
   });
 
-  test("la calculadora de Álava mantiene su title y H1 originales (no se ha canibalizado su foco)", () => {
-    assert.match(calculadoraHtml, /<title>Tabla de retenciones IRPF Álava 2026 \| Calculadora sueldo neto<\/title>/);
+  test("la calculadora de Álava mantiene su H1 (no se ha canibalizado su contenido) y su title es transaccional, no el de la guía", () => {
+    assert.match(calculadoraHtml, /<title>Calculadora de sueldo neto Álava 2026 \| IRPF y retenciones<\/title>/);
     assert.match(calculadoraHtml, /<h1 class="hero-title">Calculadora de sueldo neto en Álava<\/h1>/);
   });
 });
