@@ -5,7 +5,13 @@
     "/neto-a-bruto": { "disclaimerType": "calculator", "requiresDisclaimer": true },
     "/comparar-ofertas": { "disclaimerType": "calculator", "requiresDisclaimer": true },
     "/calculadora-subida-sueldo": { "disclaimerType": "calculator", "requiresDisclaimer": true },
-    "/coste-empresa": { "disclaimerType": "company-cost", "requiresDisclaimer": true },
+    "/coste-empresa": {
+      "target": "coste empresa trabajador 2026",
+      "intent": "transactional",
+      "related": ["/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026"],
+      "disclaimerType": "company-cost",
+      "requiresDisclaimer": true
+    },
     "/calculadora-sueldo-neto-navarra": { "disclaimerType": "foral", "requiresDisclaimer": true },
     "/calculadora-sueldo-neto-bizkaia": { "disclaimerType": "foral", "requiresDisclaimer": true },
     "/calculadora-sueldo-neto-gipuzkoa": { "disclaimerType": "foral", "requiresDisclaimer": true },
@@ -34,6 +40,15 @@
       "requiresOfficialSource": true,
       "requiresMethodology": true,
       "requiresDateContext": true,
+      "disclaimerType": "editorial",
+      "requiresDisclaimer": true
+    },
+    "/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026": {
+      "target": "cuánto cuesta un trabajador a la empresa 2026",
+      "intent": "informational",
+      "related": ["/coste-empresa"],
+      "requiresOfficialSource": true,
+      "requiresMethodology": true,
       "disclaimerType": "editorial",
       "requiresDisclaimer": true
     }

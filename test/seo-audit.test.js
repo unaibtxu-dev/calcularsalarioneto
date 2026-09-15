@@ -356,6 +356,38 @@ describe("cluster Álava: guía y calculadora se reconocen con intenciones disti
   });
 });
 
+describe("cluster coste-empresa: guía y calculadora se reconocen con intenciones distintas", () => {
+  const ctx = lib.cargarTodo();
+  const contenido = lib.checkContenido(ctx);
+  const enlazado = lib.checkEnlazado(ctx);
+
+  test("la guía se reconoce con intención informational y el tema representado", () => {
+    const m = contenido.filter((f) => f.page === "/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026" && f.code === "TARGET_REPRESENTED");
+    assert.equal(m.length, 1);
+    assert.match(m[0].message, /informational/);
+  });
+
+  test("la calculadora se reconoce con intención transactional y el tema representado", () => {
+    const m = contenido.filter((f) => f.page === "/coste-empresa" && f.code === "TARGET_REPRESENTED");
+    assert.equal(m.length, 1);
+    assert.match(m[0].message, /transactional/);
+  });
+
+  test("guía y calculadora NO comparten title ni H1 (no hay canibalización literal entre ellas)", () => {
+    const guia = ctx.facts.find((p) => p.cleanUrl === "/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026");
+    const calc = ctx.facts.find((p) => p.cleanUrl === "/coste-empresa");
+    assert.notEqual(guia.title.trim().toLowerCase(), calc.title.trim().toLowerCase());
+    assert.notEqual(guia.h1s[0].trim().toLowerCase(), calc.h1s[0].trim().toLowerCase());
+  });
+
+  test("la guía enlaza con la calculadora y viceversa (relación editorial configurada y cumplida)", () => {
+    const deGuia = enlazado.filter((f) => f.page === "/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026" && f.code === "RELATED_LINK_OK");
+    const deCalc = enlazado.filter((f) => f.page === "/coste-empresa" && f.code === "RELATED_LINK_OK");
+    assert.equal(deGuia.length, 1);
+    assert.equal(deCalc.length, 1);
+  });
+});
+
 // -----------------------------------------------------------------------
 // Sanidad: el auditor debe ejecutarse limpio sobre el proyecto real
 // -----------------------------------------------------------------------
