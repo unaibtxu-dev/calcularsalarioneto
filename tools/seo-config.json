@@ -1,0 +1,18 @@
+{
+  "_comentario": "Configuración editorial OPCIONAL para tools/seo-audit.js. El auditor básico (tools/check-seo-basics.js) funciona sin este archivo. Las claves son cleanUrl (la URL pública limpia, sin dominio). 'target' es el tema/consulta objetivo de la página, en lenguaje natural — no una keyword exacta. 'intent' es 'informational' o 'transactional'. 'related' declara relaciones editoriales explícitas (p. ej. guía <-> calculadora del mismo cluster) para poder comprobar automáticamente que existen. Los campos 'requiresOfficialSource'/'requiresMethodology'/'requiresDateContext'/'requiresDisclaimer' solo se comprueban si están presentes y en true.",
+  "pages": {
+    "/guias/tabla-retenciones-irpf-alava-2026": {
+      "target": "tabla retenciones IRPF Álava 2026",
+      "intent": "informational",
+      "related": ["/calculadora-sueldo-neto-alava"],
+      "requiresOfficialSource": true,
+      "requiresMethodology": true,
+      "requiresDateContext": true
+    },
+    "/calculadora-sueldo-neto-alava": {
+      "target": "calculadora sueldo neto Álava 2026",
+      "intent": "transactional",
+      "related": ["/guias/tabla-retenciones-irpf-alava-2026"]
+    }
+  }
+}
