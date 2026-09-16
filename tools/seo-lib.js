@@ -57,6 +57,7 @@ const PAGES = [
   "metodologia.html",
   "guias/tabla-retenciones-irpf-alava-2026.html",
   "guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026.html",
+  "guias/tabla-retenciones-irpf-navarra-2026.html",
   "cookies.html",
   "contacto.html",
   "sobre-sueldo-claro.html"

@@ -12,7 +12,13 @@
       "disclaimerType": "company-cost",
       "requiresDisclaimer": true
     },
-    "/calculadora-sueldo-neto-navarra": { "disclaimerType": "foral", "requiresDisclaimer": true },
+    "/calculadora-sueldo-neto-navarra": {
+      "target": "calculadora sueldo neto Navarra 2026",
+      "intent": "transactional",
+      "related": ["/guias/tabla-retenciones-irpf-navarra-2026"],
+      "disclaimerType": "foral",
+      "requiresDisclaimer": true
+    },
     "/calculadora-sueldo-neto-bizkaia": { "disclaimerType": "foral", "requiresDisclaimer": true },
     "/calculadora-sueldo-neto-gipuzkoa": { "disclaimerType": "foral", "requiresDisclaimer": true },
     "/calculadora-sueldo-neto-alava": {
@@ -49,6 +55,16 @@
       "related": ["/coste-empresa"],
       "requiresOfficialSource": true,
       "requiresMethodology": true,
+      "disclaimerType": "editorial",
+      "requiresDisclaimer": true
+    },
+    "/guias/tabla-retenciones-irpf-navarra-2026": {
+      "target": "tabla retenciones IRPF Navarra 2026",
+      "intent": "informational",
+      "related": ["/calculadora-sueldo-neto-navarra"],
+      "requiresOfficialSource": true,
+      "requiresMethodology": true,
+      "requiresDateContext": true,
       "disclaimerType": "editorial",
       "requiresDisclaimer": true
     }
