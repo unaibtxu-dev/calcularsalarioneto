@@ -20,7 +20,7 @@
 <meta name="twitter:title" content="Guías sobre nómina, salario e IRPF">
 <meta name="twitter:description" content="Guías claras sobre cómo funciona tu nómina: retención de IRPF, declaración de la renta, pagas extra y qué se descuenta de tu salario.">
 <link rel="icon" href="/assets/img/favicon.svg?v=2" type="image/svg+xml" sizes="any">
-<link rel="stylesheet" href="/assets/css/styles.css?v=13">
+<link rel="stylesheet" href="/assets/css/styles.css?v=14">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -38,7 +38,7 @@
 </script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4073412446458032" crossorigin="anonymous"></script>
 </head>
-<body>
+<body class="guias-page">
 <header class="hero">
   <div class="hero-inner">
     <div class="brand"><span class="brand-mark" aria-hidden="true">💶</span> SueldoClaro</div>
@@ -49,59 +49,109 @@
 </header>
 <div class="topnav" id="topnav"></div>
 <main class="container">
-  <section class="card" id="intro">
-    <p>Además de calcular tu sueldo, en SueldoClaro respondemos las dudas que más se repiten sobre cómo funciona una nómina por dentro. Estas son las guías disponibles por ahora:</p>
+  <section id="intro">
+    <p class="guias-intro-text">Información práctica para entender tu sueldo, el IRPF, las cotizaciones y los costes laborales. Guías basadas en los mismos criterios y metodología que utilizamos en nuestras calculadoras.</p>
+
+    <div class="guias-filtros" role="group" aria-label="Filtrar guías por categoría">
+      <button type="button" class="active" data-filtro="todas" aria-pressed="true">Todas</button>
+      <button type="button" data-filtro="Sueldo y nómina" aria-pressed="false">Sueldo y nómina</button>
+      <button type="button" data-filtro="IRPF y fiscalidad" aria-pressed="false">IRPF y fiscalidad</button>
+      <button type="button" data-filtro="Fiscalidad foral" aria-pressed="false">Fiscalidad foral</button>
+      <button type="button" data-filtro="Empresas y costes laborales" aria-pressed="false">Empresas y costes laborales</button>
+      <button type="button" data-filtro="Carrera y salario" aria-pressed="false">Carrera y salario</button>
+    </div>
   </section>
 
-  <section class="card" id="contenido">
-    <div class="breakdown">
-      <div class="breakdown-row">
-        <span class="name"><a href="/que-se-descuenta-de-una-nomina">¿Qué se descuenta de una nómina?</a></span>
-      </div>
-    </div>
-    <p class="field-hint">IRPF y Seguridad Social explicados por separado, y por qué no hay que confundir lo que cotiza el trabajador con lo que paga la empresa aparte.</p>
+  <section id="contenido">
+    <div class="guias-grid">
+      <article class="guia-card" data-categoria="Sueldo y nómina">
+        <div class="guia-card-media">
+          <img src="/assets/img/guias/que-se-descuenta-nomina-2026.webp" alt="Ilustración sobre los descuentos de una nómina: IRPF y Seguridad Social" width="720" height="405" fetchpriority="high">
+        </div>
+        <div class="guia-card-body">
+          <span class="guia-card-categoria">Sueldo y nómina</span>
+          <h2 class="guia-card-title"><a class="guia-card-link" href="/que-se-descuenta-de-una-nomina">¿Qué se descuenta de una nómina en 2026?</a></h2>
+          <p class="guia-card-desc">IRPF, Seguridad Social y los principales conceptos que reducen el salario bruto hasta llegar al sueldo neto.</p>
+          <p class="guia-card-meta">Actualizado 2026</p>
+          <span class="guia-card-cta" aria-hidden="true">Leer guía →</span>
+        </div>
+      </article>
 
-    <div class="breakdown">
-      <div class="breakdown-row">
-        <span class="name"><a href="/12-pagas-vs-14-pagas">12 pagas vs 14 pagas: ¿se cobra más?</a></span>
-      </div>
-    </div>
-    <p class="field-hint">Con el mismo salario bruto anual, 12 o 14 pagas no cambian cuánto ganas: solo cómo se reparte a lo largo del año.</p>
+      <article class="guia-card" data-categoria="Sueldo y nómina">
+        <div class="guia-card-media">
+          <img src="/assets/img/guias/12-vs-14-pagas-2026.webp" alt="Ilustración comparando el reparto de una nómina en 12 y en 14 pagas" width="720" height="405" loading="lazy">
+        </div>
+        <div class="guia-card-body">
+          <span class="guia-card-categoria">Sueldo y nómina</span>
+          <h2 class="guia-card-title"><a class="guia-card-link" href="/12-pagas-vs-14-pagas">12 pagas vs 14 pagas: ¿se cobra más?</a></h2>
+          <p class="guia-card-desc">Cómo cambia el importe de cada nómina y por qué el salario anual puede ser el mismo.</p>
+          <p class="guia-card-meta">Actualizado 2026</p>
+          <span class="guia-card-cta" aria-hidden="true">Leer guía →</span>
+        </div>
+      </article>
 
-    <div class="breakdown">
-      <div class="breakdown-row">
-        <span class="name"><a href="/subida-sueldo-5000">¿Cuánto te queda neto de una subida de 5.000 €?</a></span>
-      </div>
-    </div>
-    <p class="field-hint">Comparamos, entre 20.000 y 60.000 € brutos, cuánto de una subida salarial de 5.000 € acaba realmente en tu bolsillo.</p>
+      <article class="guia-card" data-categoria="IRPF y fiscalidad">
+        <div class="guia-card-media">
+          <img src="/assets/img/guias/retencion-irpf-vs-renta-2026.webp" alt="Ilustración sobre la diferencia entre la retención de nómina y la declaración de la renta" width="720" height="405" loading="lazy">
+        </div>
+        <div class="guia-card-body">
+          <span class="guia-card-categoria">IRPF y fiscalidad</span>
+          <h2 class="guia-card-title"><a class="guia-card-link" href="/retencion-irpf-vs-renta">Retención de nómina e IRPF final: por qué no son lo mismo</a></h2>
+          <p class="guia-card-desc">Qué diferencia hay entre lo que te retienen cada mes y el resultado final de la declaración.</p>
+          <p class="guia-card-meta">Actualizado 2026</p>
+          <span class="guia-card-cta" aria-hidden="true">Leer guía →</span>
+        </div>
+      </article>
 
-    <div class="breakdown">
-      <div class="breakdown-row">
-        <span class="name"><a href="/retencion-irpf-vs-renta">Retención de nómina e IRPF final: por qué no son lo mismo</a></span>
-      </div>
-    </div>
-    <p class="field-hint">Por qué la retención mensual y el IRPF definitivo de la declaración casi nunca coinciden, y qué tiene que ver con el régimen foral.</p>
+      <article class="guia-card" data-categoria="Fiscalidad foral">
+        <div class="guia-card-media">
+          <img src="/assets/img/guias/irpf-alava-2026.webp" alt="Ilustración sobre la tabla de retenciones IRPF de Álava" width="720" height="405" loading="lazy">
+        </div>
+        <div class="guia-card-body">
+          <span class="guia-card-categoria">Fiscalidad foral</span>
+          <h2 class="guia-card-title"><a class="guia-card-link" href="/guias/tabla-retenciones-irpf-alava-2026">Tabla de retenciones IRPF de Álava 2026</a></h2>
+          <p class="guia-card-desc">Porcentajes, tramos y ejemplos para entender las retenciones aplicables en Álava.</p>
+          <p class="guia-card-meta">Vigente desde 2026</p>
+          <span class="guia-card-cta" aria-hidden="true">Leer guía →</span>
+        </div>
+      </article>
 
-    <div class="breakdown">
-      <div class="breakdown-row">
-        <span class="name"><a href="/metodologia">Metodología de cálculo: cómo funciona SueldoClaro</a></span>
-      </div>
-    </div>
-    <p class="field-hint">Qué calculamos, con qué normativa y tablas oficiales, y qué limitaciones tiene la estimación frente a la declaración de la renta.</p>
+      <article class="guia-card" data-categoria="Empresas y costes laborales">
+        <div class="guia-card-media">
+          <img src="/assets/img/guias/coste-trabajador-empresa-2026.webp" alt="Ilustración sobre el coste de un trabajador para la empresa" width="720" height="405" loading="lazy">
+        </div>
+        <div class="guia-card-body">
+          <span class="guia-card-categoria">Empresas y costes laborales</span>
+          <h2 class="guia-card-title"><a class="guia-card-link" href="/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026">¿Cuánto cuesta un trabajador a la empresa en 2026?</a></h2>
+          <p class="guia-card-desc">Salario bruto, cotizaciones empresariales y ejemplos de coste total según distintos salarios.</p>
+          <p class="guia-card-meta">Normativa 2026</p>
+          <span class="guia-card-cta" aria-hidden="true">Leer guía →</span>
+        </div>
+      </article>
 
-    <div class="breakdown">
-      <div class="breakdown-row">
-        <span class="name"><a href="/guias/tabla-retenciones-irpf-alava-2026">Tabla de retenciones IRPF de Álava 2026</a></span>
-      </div>
-    </div>
-    <p class="field-hint">Consulta los porcentajes vigentes según tu rendimiento anual y tu número de descendientes, y cómo se aplican.</p>
+      <article class="guia-card" data-categoria="Carrera y salario">
+        <div class="guia-card-media">
+          <img src="/assets/img/guias/subida-sueldo-5000-2026.webp" alt="Ilustración sobre una subida de sueldo de 5.000 euros y su efecto en el neto" width="720" height="405" loading="lazy">
+        </div>
+        <div class="guia-card-body">
+          <span class="guia-card-categoria">Carrera y salario</span>
+          <h2 class="guia-card-title"><a class="guia-card-link" href="/subida-sueldo-5000">De una subida de 5.000 €, ¿cuánto llega realmente a tu bolsillo?</a></h2>
+          <p class="guia-card-desc">Ejemplos para entender cuánto de una subida bruta termina convirtiéndose en sueldo neto.</p>
+          <p class="guia-card-meta">Actualizado 2026</p>
+          <span class="guia-card-cta" aria-hidden="true">Leer guía →</span>
+        </div>
+      </article>
 
-    <div class="breakdown">
-      <div class="breakdown-row">
-        <span class="name"><a href="/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026">¿Cuánto cuesta un trabajador a la empresa en 2026?</a></span>
-      </div>
+      <article class="guia-card">
+        <div class="guia-card-media sin-imagen" aria-hidden="true">📘</div>
+        <div class="guia-card-body">
+          <h2 class="guia-card-title"><a class="guia-card-link" href="/metodologia">Metodología de cálculo: cómo funciona SueldoClaro</a></h2>
+          <p class="guia-card-desc">Qué calculamos, con qué normativa y tablas oficiales, y qué limitaciones tiene la estimación frente a la declaración de la renta.</p>
+          <p class="guia-card-meta">Actualizado 2026</p>
+          <span class="guia-card-cta" aria-hidden="true">Leer guía →</span>
+        </div>
+      </article>
     </div>
-    <p class="field-hint">Qué cotizaciones paga la empresa además del salario bruto, con ejemplos reales por salario y la diferencia con el sueldo neto del trabajador.</p>
 
     <p>Si tu duda es sobre una cifra concreta, tienes la <a href="/">calculadora de bruto a neto</a> para calcularla con tu propio salario y situación.</p>
   </section>
@@ -111,6 +161,29 @@
 <footer class="footer" id="footer"></footer>
 <script src="/assets/js/format.js?v=2"></script>
 <script src="/assets/js/components.js?v=13"></script>
-<script>App.renderNav("guias"); App.renderRelacionadas("relacionadas");</script>
+<script>
+App.renderNav("guias");
+App.renderRelacionadas("relacionadas");
+
+(function () {
+  var filtros = document.querySelectorAll(".guias-filtros button");
+  var cards = document.querySelectorAll(".guia-card");
+  Array.prototype.forEach.call(filtros, function (btn) {
+    btn.addEventListener("click", function () {
+      Array.prototype.forEach.call(filtros, function (b) {
+        b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-pressed", "true");
+      var categoria = btn.getAttribute("data-filtro");
+      Array.prototype.forEach.call(cards, function (card) {
+        var coincide = categoria === "todas" || card.getAttribute("data-categoria") === categoria;
+        card.hidden = !coincide;
+      });
+    });
+  });
+})();
+</script>
 </body>
 </html>
