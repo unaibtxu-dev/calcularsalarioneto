@@ -363,3 +363,62 @@ describe("/guias: microanimaciones del filtro", () => {
     assert.match(stylesCss, /@media \(prefers-reduced-motion:\s*reduce\)\s*\{\s*\.guias-filtros button\s*\{\s*transition:\s*none;/);
   });
 });
+
+// -----------------------------------------------------------------------
+// CTA de cierre (sustituye al texto suelto entre la cuadrícula y "Otras
+// herramientas"). Solo se comprueba este bloque: no se ha tocado nada más
+// de la página en esta tarea.
+// -----------------------------------------------------------------------
+describe("/guias: CTA final hacia la calculadora principal", () => {
+  const stylesCss = fs.readFileSync(path.join(ROOT, "assets", "css", "styles.css"), "utf8");
+
+  test("el texto suelto anterior ya no existe", () => {
+    assert.ok(!guiasHtml.includes("Si tu duda es sobre una cifra concreta"));
+  });
+
+  test("el CTA tiene título (H2, no H1), descripción y botón con el contenido exacto pedido", () => {
+    assert.match(guiasHtml, /<div class="guias-cta">/);
+    assert.match(guiasHtml, /<h2 class="guias-cta-titulo">¿Quieres calcular tu caso concreto\?<\/h2>/);
+    assert.match(guiasHtml, /<p class="guias-cta-desc">Introduce tu salario y situación personal en nuestra calculadora de sueldo neto\.<\/p>/);
+    const h1s = guiasHtml.match(/<h1[^>]*>/g) || [];
+    assert.equal(h1s.length, 1, "no debe añadirse un segundo H1");
+  });
+
+  test("el botón es un <a> real hacia / y reutiliza la clase .btn existente", () => {
+    assert.match(guiasHtml, /<a class="btn" href="\/">Abrir calculadora<\/a>/);
+  });
+
+  test("el icono reutiliza el mismo emoji que ya usa el sitio para la calculadora de bruto a neto (/)", () => {
+    assert.match(guiasHtml, /<span class="guias-cta-icono" aria-hidden="true">💶<\/span>/);
+  });
+
+  test("el CTA está dentro de #contenido, después de la cuadrícula y antes de \"Otras herramientas\"", () => {
+    const seccionContenido = guiasHtml.match(/<section id="contenido">[\s\S]*?<\/section>/)[0];
+    assert.match(seccionContenido, /<\/div>\s*<div class="guias-cta">/);
+    const posCta = guiasHtml.indexOf('<div class="guias-cta">');
+    const posRelacionadas = guiasHtml.indexOf('id="relacionadas"');
+    assert.ok(posCta > 0 && posCta < posRelacionadas, "el CTA debe ir antes de la sección de relacionadas");
+  });
+
+  test("el CTA no tiene data-categoria y por tanto el filtro de categorías no lo afecta", () => {
+    const inicio = guiasHtml.indexOf('<div class="guias-cta">');
+    const fin = guiasHtml.indexOf("Abrir calculadora</a>", inicio);
+    assert.ok(inicio !== -1 && fin !== -1, "no se encuentra el bloque del CTA");
+    const bloqueCta = guiasHtml.slice(inicio, fin);
+    assert.ok(!bloqueCta.includes("data-categoria"));
+    assert.ok(!bloqueCta.includes("guia-card"), "el CTA no debe reutilizar la clase .guia-card (no es una tarjeta de guía filtrable)");
+  });
+
+  test("CSS del CTA está scopeado (.guias-cta / .guias-cta-*), sin reglas globales nuevas", () => {
+    assert.match(stylesCss, /\.guias-cta\s*\{/);
+    assert.match(stylesCss, /\.guias-cta-titulo\s*\{/);
+    assert.match(stylesCss, /\.guias-cta-desc\s*\{/);
+  });
+
+  test("en escritorio (min-width 560px) el CTA se dispone en fila y el botón deja de ser 100% ancho", () => {
+    const bloqueMedia = stylesCss.match(/@media \(min-width: 560px\)\s*\{\s*\.guias-cta\s*\{[\s\S]*?\n  \}\n\n  \.guias-cta \.btn[\s\S]*?\n  \}\n\}/);
+    assert.ok(bloqueMedia, "falta el ajuste responsive del CTA a partir de 560px");
+    assert.match(bloqueMedia[0], /flex-direction:\s*row/);
+    assert.match(bloqueMedia[0], /width:\s*auto/);
+  });
+});

@@ -884,6 +884,64 @@ details.advanced .advanced-body {
   }
 }
 
+/* CTA de cierre de /guias (sustituye al texto suelto que había entre la
+   cuadrícula y "Otras herramientas"). Reutiliza el mismo lenguaje visual
+   que .guia-card (superficie blanca, radio y sombra ya definidos) y el
+   botón .btn ya existente, solo con el ancho adaptado para no ocupar el
+   100% en la fila horizontal de escritorio. */
+.guias-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+  margin: 4px 0 20px;
+}
+
+.guias-cta-icono {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.guias-cta-texto {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.guias-cta-titulo {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+
+.guias-cta-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.guias-cta .btn {
+  width: 100%;
+}
+
+@media (min-width: 560px) {
+  .guias-cta {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .guias-cta .btn {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
 .guia-card {
   position: relative;
   display: flex;
