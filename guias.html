@@ -20,7 +20,7 @@
 <meta name="twitter:title" content="Guías sobre nómina, salario e IRPF">
 <meta name="twitter:description" content="Guías claras sobre cómo funciona tu nómina: retención de IRPF, declaración de la renta, pagas extra y qué se descuenta de tu salario.">
 <link rel="icon" href="/assets/img/favicon.svg?v=2" type="image/svg+xml" sizes="any">
-<link rel="stylesheet" href="/assets/css/styles.css?v=15">
+<link rel="stylesheet" href="/assets/css/styles.css?v=16">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -167,7 +167,116 @@ App.renderRelacionadas("relacionadas");
 
 (function () {
   var filtros = document.querySelectorAll(".guias-filtros button");
-  var cards = document.querySelectorAll(".guia-card");
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".guia-card"));
+
+  // Duraciones cortas y sin rebote (250-350ms en el caso habitual, nunca
+  // más de ~400ms incluso en el peor caso con stagger). El motion se
+  // resuelve solo con opacity/transform (Web Animations API nativa, sin
+  // librerías) para que sea barato de animar y no dispare layout thrashing.
+  var DURACION_SALIDA = 140;
+  var DURACION_ENTRADA = 180;
+  var DESPLAZAMIENTO_PX = 8;
+  var STAGGER_PASO_MS = 25;
+  var STAGGER_INDICE_MAX = 4; // a partir de aquí no se añade más retraso
+
+  // Animaciones en curso por tarjeta, para poder cancelarlas limpiamente
+  // si el usuario pulsa otro filtro antes de que termine la transición
+  // anterior (ver "clics rápidos"): nunca debe quedar una tarjeta a medio
+  // animar, con opacity:0 permanente o con su "hidden" desincronizado.
+  var animacionesActivas = new Map();
+
+  function prefiereMenosMovimiento() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function cancelarAnimacion(card) {
+    var anim = animacionesActivas.get(card);
+    if (!anim) return;
+    anim.cancel();
+    card.style.opacity = "";
+    card.style.transform = "";
+    animacionesActivas.delete(card);
+  }
+
+  function animarSalida(card, alTerminar) {
+    cancelarAnimacion(card);
+    var anim = card.animate([{ opacity: 1 }, { opacity: 0 }], { duration: DURACION_SALIDA, easing: "ease-in", fill: "forwards" });
+    animacionesActivas.set(card, anim);
+    anim.onfinish = function () {
+      anim.cancel();
+      card.hidden = true;
+      card.style.opacity = "";
+      animacionesActivas.delete(card);
+      alTerminar();
+    };
+  }
+
+  function animarEntrada(card, indice) {
+    cancelarAnimacion(card);
+    card.hidden = false;
+    // Estado inicial aplicado antes de animar (todavía en el mismo tick),
+    // así que nunca se ve un parpadeo con la tarjeta ya visible del todo.
+    card.style.opacity = "0";
+    card.style.transform = "translateY(" + DESPLAZAMIENTO_PX + "px)";
+    var retraso = Math.min(indice, STAGGER_INDICE_MAX) * STAGGER_PASO_MS;
+    var anim = card.animate(
+      [
+        { opacity: 0, transform: "translateY(" + DESPLAZAMIENTO_PX + "px)" },
+        { opacity: 1, transform: "translateY(0)" }
+      ],
+      { duration: DURACION_ENTRADA, delay: retraso, easing: "ease-out", fill: "forwards" }
+    );
+    animacionesActivas.set(card, anim);
+    anim.onfinish = function () {
+      anim.cancel();
+      card.style.opacity = "";
+      card.style.transform = "";
+      animacionesActivas.delete(card);
+    };
+  }
+
+  function aplicarFiltro(categoria) {
+    var reducido = prefiereMenosMovimiento();
+    var saliendo = [];
+    var entrando = [];
+
+    cards.forEach(function (card) {
+      var coincide = categoria === "todas" || card.getAttribute("data-categoria") === categoria;
+      if (coincide && card.hidden) entrando.push(card);
+      else if (!coincide && !card.hidden) saliendo.push(card);
+      // Si ya está en el estado correcto (visible y coincide, u oculta y no
+      // coincide) no se toca: evita reiniciar animaciones innecesarias.
+    });
+
+    if (reducido) {
+      // Sin animación: cambio instantáneo, sin desplazamientos ni stagger,
+      // pero el filtro sigue funcionando exactamente igual.
+      cards.forEach(cancelarAnimacion);
+      saliendo.forEach(function (card) { card.hidden = true; });
+      entrando.forEach(function (card) { card.hidden = false; });
+      return;
+    }
+
+    function iniciarEntradas() {
+      entrando.forEach(function (card, indice) {
+        animarEntrada(card, indice);
+      });
+    }
+
+    if (saliendo.length === 0) {
+      iniciarEntradas();
+      return;
+    }
+
+    var pendientes = saliendo.length;
+    saliendo.forEach(function (card) {
+      animarSalida(card, function () {
+        pendientes -= 1;
+        if (pendientes === 0) iniciarEntradas();
+      });
+    });
+  }
+
   Array.prototype.forEach.call(filtros, function (btn) {
     btn.addEventListener("click", function () {
       Array.prototype.forEach.call(filtros, function (b) {
@@ -176,11 +285,7 @@ App.renderRelacionadas("relacionadas");
       });
       btn.classList.add("active");
       btn.setAttribute("aria-pressed", "true");
-      var categoria = btn.getAttribute("data-filtro");
-      Array.prototype.forEach.call(cards, function (card) {
-        var coincide = categoria === "todas" || card.getAttribute("data-categoria") === categoria;
-        card.hidden = !coincide;
-      });
+      aplicarFiltro(btn.getAttribute("data-filtro"));
     });
   });
 })();

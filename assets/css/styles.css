@@ -856,6 +856,7 @@ details.advanced .advanced-body {
   border-radius: 999px;
   cursor: pointer;
   min-height: 36px;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
 }
 
 .guias-filtros button.active {
@@ -993,6 +994,16 @@ details.advanced .advanced-body {
   .guia-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 2px 4px rgba(11, 31, 58, 0.08), 0 14px 28px rgba(11, 31, 58, 0.12);
+  }
+}
+
+/* El JS del filtro de /guias ya comprueba prefers-reduced-motion antes de
+   animar la entrada/salida de tarjetas (fade + translateY), así que aquí
+   solo hace falta anular la transición de color de las píldoras — lo
+   único puramente CSS que se anima en este componente. */
+@media (prefers-reduced-motion: reduce) {
+  .guias-filtros button {
+    transition: none;
   }
 }
 

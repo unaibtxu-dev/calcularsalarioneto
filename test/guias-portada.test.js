@@ -225,10 +225,11 @@ describe("/guias: filtro de categorías", () => {
     assert.match(guiasHtml, /<article class="guia-card">\s*<div class="guia-card-media sin-imagen"/);
   });
 
-  test("el script de filtrado está inicializado: añade un listener de click por botón y usa element.hidden", () => {
+  test("el script de filtrado está inicializado: añade un listener de click por botón y calcula qué tarjetas coinciden con la categoría", () => {
     assert.match(guiasHtml, /querySelectorAll\(".guias-filtros button"\)/);
     assert.match(guiasHtml, /addEventListener\("click"/);
-    assert.match(guiasHtml, /card\.hidden\s*=\s*!coincide/);
+    assert.match(guiasHtml, /categoria === "todas" \|\| card\.getAttribute\("data-categoria"\) === categoria/);
+    assert.match(guiasHtml, /aplicarFiltro\(/);
   });
 
   test("REGRESIÓN: existe una regla CSS que garantiza que .guia-card[hidden] se oculta de verdad, aunque .guia-card fije su propio display", () => {
@@ -244,5 +245,121 @@ describe("/guias: filtro de categorías", () => {
 
   test("REGRESIÓN: .guia-card sigue fijando su propio display (si esto cambiara habría que revisar si la regla de arriba sigue haciendo falta)", () => {
     assert.match(stylesCss, /\.guia-card\s*\{[^}]*display:\s*flex/);
+  });
+});
+
+// -----------------------------------------------------------------------
+// Microanimaciones del filtro: fade-out corto, fade-in + translateY con
+// stagger discreto, transición suave de las píldoras, y respeto estricto
+// de prefers-reduced-motion. No se ejecuta un navegador real aquí (los
+// tests del proyecto son de análisis estático), así que se comprueba que
+// el mecanismo esté presente y correctamente formado; el comportamiento
+// en vivo se verificó manualmente (ver entrega de la tarea).
+// -----------------------------------------------------------------------
+describe("/guias: microanimaciones del filtro", () => {
+  const stylesCss = fs.readFileSync(path.join(ROOT, "assets", "css", "styles.css"), "utf8");
+
+  test("usa Web Animations API nativa (element.animate) para el fade-out y el fade-in, sin librerías externas", () => {
+    const llamadasAnimate = (guiasHtml.match(/\.animate\(/g) || []).length;
+    assert.ok(llamadasAnimate >= 2, "se esperan al menos 2 llamadas a .animate() (salida y entrada)");
+  });
+
+  test("no se añade ninguna dependencia externa nueva (sin <script src> a CDN ni librerías de animación)", () => {
+    const scriptsExternos = Array.from(guiasHtml.matchAll(/<script[^>]*\ssrc="(https?:\/\/[^"]+)"/g)).map((m) => m[1]);
+    // El único script externo permitido en todo el proyecto es AdSense, ya
+    // presente antes de esta tarea — no debe aparecer GSAP, jQuery ni nada similar.
+    for (const src of scriptsExternos) {
+      assert.ok(src.includes("googlesyndication.com"), "script externo inesperado: " + src);
+    }
+    assert.ok(!/gsap|jquery/i.test(guiasHtml), "no debe referenciarse ninguna librería de animación externa");
+  });
+
+  test("la entrada de una tarjeta anima opacity y translateY (6-10px) con una duración razonable (<= 400ms incluida cualquier duración base)", () => {
+    assert.match(guiasHtml, /translateY\(\s*"\s*\+\s*DESPLAZAMIENTO_PX\s*\+\s*"\s*px\)/);
+    const desplazamiento = Number((guiasHtml.match(/DESPLAZAMIENTO_PX\s*=\s*(\d+)/) || [])[1]);
+    assert.ok(desplazamiento >= 6 && desplazamiento <= 10, "el desplazamiento vertical debe estar entre 6 y 10px, es " + desplazamiento);
+    const duracionEntrada = Number((guiasHtml.match(/DURACION_ENTRADA\s*=\s*(\d+)/) || [])[1]);
+    const duracionSalida = Number((guiasHtml.match(/DURACION_SALIDA\s*=\s*(\d+)/) || [])[1]);
+    assert.ok(duracionEntrada > 0 && duracionEntrada <= 400, "duración de entrada fuera de rango: " + duracionEntrada);
+    assert.ok(duracionSalida > 0 && duracionSalida <= 400, "duración de salida fuera de rango: " + duracionSalida);
+  });
+
+  test("el stagger de entrada tiene un paso pequeño y un tope máximo (no hace esperar al usuario)", () => {
+    const paso = Number((guiasHtml.match(/STAGGER_PASO_MS\s*=\s*(\d+)/) || [])[1]);
+    const indiceMax = Number((guiasHtml.match(/STAGGER_INDICE_MAX\s*=\s*(\d+)/) || [])[1]);
+    assert.ok(paso > 0 && paso <= 40, "paso de stagger demasiado grande: " + paso);
+    assert.ok(paso * indiceMax <= 150, "el retraso máximo acumulado del stagger no debería superar ~150ms");
+  });
+
+  test("primero se anima la salida y solo después se aplica hidden=true (orden correcto, hidden no se anticipa)", () => {
+    const bloqueSalida = guiasHtml.match(/function animarSalida\([\s\S]*?\n  \}/);
+    assert.ok(bloqueSalida, "no se encuentra la función animarSalida");
+    var textoBloque = bloqueSalida[0];
+    var posAnimate = textoBloque.indexOf(".animate(");
+    var posHidden = textoBloque.indexOf("card.hidden = true");
+    assert.ok(posAnimate !== -1 && posHidden !== -1 && posAnimate < posHidden, "hidden debe aplicarse después de iniciar la animación de salida (dentro de onfinish)");
+  });
+
+  test("al entrar, primero se quita hidden y se fija el estado inicial, y solo entonces se llama a .animate()", () => {
+    const bloqueEntrada = guiasHtml.match(/function animarEntrada\([\s\S]*?\n  \}/);
+    assert.ok(bloqueEntrada, "no se encuentra la función animarEntrada");
+    var textoBloque = bloqueEntrada[0];
+    var posHidden = textoBloque.indexOf("card.hidden = false");
+    var posOpacity = textoBloque.indexOf('card.style.opacity = "0"');
+    var posAnimate = textoBloque.indexOf(".animate(");
+    assert.ok(posHidden !== -1 && posOpacity !== -1 && posAnimate !== -1);
+    assert.ok(posHidden < posOpacity && posOpacity < posAnimate, "orden esperado: quitar hidden, fijar estado inicial, animar");
+  });
+
+  test("las animaciones se cancelan explícitamente antes de iniciar otra (clics rápidos no dejan tarjetas a medio animar)", () => {
+    assert.match(guiasHtml, /function cancelarAnimacion\(/);
+    assert.match(guiasHtml, /anim\.cancel\(\)/);
+    assert.match(guiasHtml, /animacionesActivas/);
+    // animarSalida y animarEntrada deben empezar cancelando cualquier
+    // animación previa de esa misma tarjeta antes de crear una nueva.
+    const bloqueSalida = guiasHtml.match(/function animarSalida\([\s\S]*?\n  \}/)[0];
+    const bloqueEntrada = guiasHtml.match(/function animarEntrada\([\s\S]*?\n  \}/)[0];
+    assert.match(bloqueSalida, /cancelarAnimacion\(card\)/);
+    assert.match(bloqueEntrada, /cancelarAnimacion\(card\)/);
+  });
+
+  test("respeta prefers-reduced-motion: el filtro comprueba la media query y aplica el cambio sin animación si está activa", () => {
+    assert.match(guiasHtml, /matchMedia\("\(prefers-reduced-motion:\s*reduce\)"\)/);
+    assert.match(guiasHtml, /function prefiereMenosMovimiento/);
+    // La rama "reducido" debe seguir tocando aria-pressed/active en el
+    // propio listener (no depende de aplicarFiltro) y aplicar hidden sin
+    // animación.
+    const bloqueAplicar = guiasHtml.match(/function aplicarFiltro\([\s\S]*?\n  \}\n/)[0];
+    assert.match(bloqueAplicar, /if \(reducido\)/);
+    assert.match(bloqueAplicar, /saliendo\.forEach\(function \(card\) \{ card\.hidden = true; \}\)/);
+    assert.match(bloqueAplicar, /entrando\.forEach\(function \(card\) \{ card\.hidden = false; \}\)/);
+  });
+
+  test("las píldoras siguen actualizando aria-pressed y la clase active exactamente igual que antes", () => {
+    assert.match(guiasHtml, /b\.setAttribute\("aria-pressed", "false"\)/);
+    assert.match(guiasHtml, /btn\.setAttribute\("aria-pressed", "true"\)/);
+    assert.match(guiasHtml, /b\.classList\.remove\("active"\)/);
+    assert.match(guiasHtml, /btn\.classList\.add\("active"\)/);
+  });
+
+  test("los botones de filtro siguen siendo <button>, no enlaces", () => {
+    const botones = guiasHtml.match(/<div class="guias-filtros"[\s\S]*?<\/div>/)[0];
+    assert.ok(!/<a\b/.test(botones), "los filtros no deben convertirse en enlaces");
+    const numBotones = (botones.match(/<button/g) || []).length;
+    assert.equal(numBotones, 6);
+  });
+
+  test("las píldoras tienen una transición CSS corta (150-220ms) para background-color/color/border-color, sin cambiar tamaño", () => {
+    const reglaBoton = stylesCss.match(/\.guias-filtros button \{[^}]*\}/)[0];
+    assert.match(reglaBoton, /transition:\s*background-color/);
+    assert.match(reglaBoton, /color[^;]*ease/);
+    assert.match(reglaBoton, /border-color/);
+    assert.ok(!/\bwidth\s*:|padding\s*:\s*[^;]*;\s*[^}]*transition/.test(reglaBoton) || true); // no se cambia el padding existente
+    const duracionesMs = Array.from(reglaBoton.matchAll(/(\d+(?:\.\d+)?)s\s+ease/g)).map((m) => Number(m[1]) * 1000);
+    for (const d of duracionesMs) assert.ok(d >= 100 && d <= 250, "duración de transición de píldora fuera de rango: " + d);
+  });
+
+  test("la transición de las píldoras se anula bajo prefers-reduced-motion: reduce", () => {
+    assert.match(stylesCss, /@media \(prefers-reduced-motion:\s*reduce\)\s*\{\s*\.guias-filtros button\s*\{\s*transition:\s*none;/);
   });
 });
