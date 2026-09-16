@@ -170,3 +170,79 @@ describe("/guias: no se ha tocado ninguna guía existente", () => {
     });
   }
 });
+
+// -----------------------------------------------------------------------
+// Filtro de categorías — bug real reproducido en producción: el JS movía
+// bien el atributo "hidden" en el DOM, pero .guia-card fijaba su propio
+// "display: flex" con la misma especificidad que la regla [hidden] del
+// user-agent, y al ganar la hoja de estilos del autor en la cascada, las
+// tarjetas "ocultas" seguían viéndose. Estos tests cubren tanto los datos
+// (categorías válidas en botones/tarjetas) como la regresión de CSS.
+// -----------------------------------------------------------------------
+describe("/guias: filtro de categorías", () => {
+  const CATEGORIAS_VALIDAS = ["Sueldo y nómina", "IRPF y fiscalidad", "Fiscalidad foral", "Empresas y costes laborales", "Carrera y salario"];
+  const stylesCss = fs.readFileSync(path.join(ROOT, "assets", "css", "styles.css"), "utf8");
+
+  test("cada botón de filtro tiene una categoría válida (o 'todas')", () => {
+    const botones = Array.from(guiasHtml.matchAll(/<button type="button"[^>]*data-filtro="([^"]+)"/g)).map((m) => m[1]);
+    assert.equal(botones.length, 6, "deben existir 6 botones: Todas + 5 categorías");
+    assert.equal(botones[0], "todas");
+    for (const cat of botones.slice(1)) {
+      assert.ok(CATEGORIAS_VALIDAS.includes(cat), "categoría de botón no reconocida: " + cat);
+    }
+  });
+
+  test("existen las 5 categorías esperadas, cada una exactamente una vez como botón", () => {
+    const botones = Array.from(guiasHtml.matchAll(/data-filtro="([^"]+)"/g)).map((m) => m[1]);
+    for (const cat of CATEGORIAS_VALIDAS) {
+      assert.equal(botones.filter((b) => b === cat).length, 1, "la categoría " + cat + " debería tener exactamente un botón");
+    }
+  });
+
+  test("cada tarjeta con data-categoria usa una categoría reconocida por algún botón (sin categorías huérfanas)", () => {
+    const categoriasEnTarjetas = Array.from(guiasHtml.matchAll(/<article class="guia-card" data-categoria="([^"]+)"/g)).map((m) => m[1]);
+    for (const cat of categoriasEnTarjetas) {
+      assert.ok(CATEGORIAS_VALIDAS.includes(cat), "la tarjeta usa una categoría sin botón de filtro: " + cat);
+    }
+  });
+
+  test("el reparto de tarjetas por categoría coincide con el esperado", () => {
+    const REPARTO_ESPERADO = {
+      "Sueldo y nómina": 2,
+      "IRPF y fiscalidad": 1,
+      "Fiscalidad foral": 1,
+      "Empresas y costes laborales": 1,
+      "Carrera y salario": 1
+    };
+    for (const [cat, n] of Object.entries(REPARTO_ESPERADO)) {
+      const re = new RegExp('<article class="guia-card" data-categoria="' + cat.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + '"', "g");
+      const matches = guiasHtml.match(re) || [];
+      assert.equal(matches.length, n, cat + " debería tener " + n + " tarjeta(s), encontradas " + matches.length);
+    }
+  });
+
+  test("la tarjeta de metodología no tiene data-categoria (se oculta con cualquier filtro específico, visible solo en Todas)", () => {
+    assert.match(guiasHtml, /<article class="guia-card">\s*<div class="guia-card-media sin-imagen"/);
+  });
+
+  test("el script de filtrado está inicializado: añade un listener de click por botón y usa element.hidden", () => {
+    assert.match(guiasHtml, /querySelectorAll\(".guias-filtros button"\)/);
+    assert.match(guiasHtml, /addEventListener\("click"/);
+    assert.match(guiasHtml, /card\.hidden\s*=\s*!coincide/);
+  });
+
+  test("REGRESIÓN: existe una regla CSS que garantiza que .guia-card[hidden] se oculta de verdad, aunque .guia-card fije su propio display", () => {
+    // No basta con que exista .guia-card { display: flex }: hace falta una
+    // regla con más especificidad (o !important) para [hidden] que gane
+    // siempre, sin depender del orden de aparición en la hoja de estilos.
+    assert.match(
+      stylesCss,
+      /\.guia-card\[hidden\]\s*\{[^}]*display:\s*none\s*!important/,
+      "falta la regla .guia-card[hidden] { display: none !important; } que corrige el bug de especificidad CSS"
+    );
+  });
+
+  test("REGRESIÓN: .guia-card sigue fijando su propio display (si esto cambiara habría que revisar si la regla de arriba sigue haciendo falta)", () => {
+    assert.match(stylesCss, /\.guia-card\s*\{[^}]*display:\s*flex/);
+  });
+});

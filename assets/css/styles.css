@@ -893,6 +893,16 @@ details.advanced .advanced-body {
   overflow: hidden;
 }
 
+/* .guia-card fija su propio "display: flex" con la misma especificidad que
+   la regla [hidden] { display: none } del user-agent — al tener igual
+   especificidad, la hoja de estilos del autor gana en la cascada y el
+   atributo hidden (usado por el filtro de categorías) queda visualmente
+   sin efecto. Se resuelve aquí, scopeado solo a .guia-card, sin tocar la
+   regla global .hidden ni ningún otro [hidden] del resto del sitio. */
+.guia-card[hidden] {
+  display: none !important;
+}
+
 .guia-card-media {
   aspect-ratio: 16 / 9;
   background: var(--bg);
