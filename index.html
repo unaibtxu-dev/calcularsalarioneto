@@ -51,42 +51,42 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "¿Cuánto se paga de Seguridad Social en 2026?",
+      "name": "¿Es fiable esta calculadora?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Con contrato indefinido se descuenta un 6,50% del salario bruto: 4,70% de contingencias comunes, 1,55% de desempleo, 0,10% de formación profesional y 0,15% de MEI. Con contrato temporal es un 6,55%, porque el tipo de desempleo sube al 1,60%. La base de cotización tiene un tope máximo de 5.101,20 euros al mes."
+        "text": "Implementa el procedimiento general de retenciones del Reglamento del IRPF y sus resultados están contrastados contra el simulador oficial de la Agencia Tributaria, coincidiendo de forma exacta en los casos verificados. El cálculo de Navarra está contrastado contra el calculador de la Hacienda Foral. Aun así, es una herramienta orientativa y no sustituye a tu asesoría."
       }
     },
     {
       "@type": "Question",
-      "name": "¿Cobras más con 12 o con 14 pagas?",
+      "name": "¿Guardáis mi salario o mis datos?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "El total anual es exactamente el mismo. Solo cambia cómo se reparte. La Seguridad Social se prorratea siempre entre 12 meses por ley, así que las pagas extra no llevan descuento adicional de Seguridad Social. Con 14 pagas cobras menos cada mes ordinario pero recibes dos pagas extra casi íntegras."
+        "text": "No. Todo el cálculo se ejecuta en tu propio navegador. Tu salario no se envía a ningún servidor ni se almacena en ninguna parte."
       }
     },
     {
       "@type": "Question",
-      "name": "¿Afecta la comunidad autónoma al sueldo neto?",
+      "name": "¿Por qué mi nómina real no coincide exactamente?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "En la nómina no. La retención mensual usa una escala estatal única, igual en toda España, y el algoritmo oficial de la Agencia Tributaria no incluye ningún campo de comunidad autónoma. La comunidad solo interviene en la declaración de la renta anual. Las excepciones que sí cambian la nómina son Navarra, País Vasco y Ceuta y Melilla."
+        "text": "Las causas más habituales son: que tu empresa aplique un convenio con complementos o pagas adicionales, que hayas cambiado de trabajo durante el año, que tengas retribución en especie, o que la empresa haya regularizado tu retención a mitad de año. Esta calculadora modela un escenario estable durante todo el año."
       }
     },
     {
       "@type": "Question",
-      "name": "¿A partir de qué sueldo empiezan a retener IRPF?",
+      "name": "¿Puedo pedir que me retengan más?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Para un trabajador soltero y sin hijos el umbral está en 15.876 euros brutos anuales. Con cónyuge a cargo de rentas bajas sube a 17.197 euros, y aumenta con cada hijo. Por debajo de esos importes la retención es del 0% y solo se descuenta la Seguridad Social."
+        "text": "Sí. Puedes solicitar a tu empresa un tipo de retención superior al que te corresponde. Es habitual entre quienes prefieren cobrar algo menos cada mes para evitar que la declaración les salga a pagar. Lo que no puedes es pedir que te retengan menos del mínimo legal."
       }
     },
     {
       "@type": "Question",
-      "name": "¿Por qué cambia la retención al cambiar de trabajo?",
+      "name": "¿Cuánto le cuesta a la empresa mi sueldo?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Porque el tipo de retención se calcula sobre la previsión de lo que vas a ganar en el año, no sobre lo ya ganado. Una empresa a la que entras a mitad de año calcula la retención según lo que va a pagarte ella, que suele ser menos que un año completo. Por eso a veces te retienen menos de lo que corresponde y la declaración sale a pagar."
+        "text": "Bastante más que tu bruto. La empresa paga un 23,60% de contingencias comunes, entre un 5,50% y un 6,70% de desempleo, un 0,60% de formación, un 0,75% de MEI, un 0,20% de FOGASA y un porcentaje variable de accidentes de trabajo según su actividad. Puedes calcularlo en nuestra herramienta de coste de empresa."
       }
     }
   ]
@@ -115,6 +115,7 @@
     <h2 class="section-title">¿Qué diferencia hay entre el salario bruto y el neto?</h2>
     <p>El <strong>salario bruto</strong> es el importe total que tu empresa se compromete a pagarte, antes de impuestos y cotizaciones. Es la cifra que aparece en el contrato y en las ofertas de empleo. El <strong>salario neto</strong> es lo que realmente llega a tu cuenta cada mes, una vez restados los descuentos obligatorios.</p>
     <p>La diferencia entre ambos no es un porcentaje fijo. Depende de cuánto ganes, de tu situación familiar, del número de pagas y de tu tipo de contrato. Para un sueldo medio en España la diferencia suele moverse entre el 20% y el 25%, pero en salarios altos puede superar el 35%, y en salarios cercanos al SMI puede ser de apenas un 6%, porque no hay retención de IRPF. Si quieres ver este mismo desglose ya calculado para los importes más habituales, tienes la referencia en <a href="/sueldos">sueldos por importe</a>.</p>
+    <p>Si ya conoces tu neto y quieres estimar el bruto equivalente, puedes usar la calculadora de <a href="/neto-a-bruto">neto a bruto</a>.</p>
 
     <h2 class="section-title">¿Cómo se calcula tu nómina paso a paso?</h2>
     <p>El cálculo tiene dos bloques independientes que se restan del bruto anual:</p>
@@ -195,7 +196,7 @@
     <p>Es importante entenderlo: la retención de nómina es un <strong>adelanto a cuenta</strong> del IRPF, no el impuesto definitivo. Tu declaración anual usa la escala real estatal más la autonómica, incluye todas tus rentas —no solo el trabajo— y puede aplicar deducciones que aquí no intervienen.</p>
     <p>Por eso el resultado de esta calculadora te dice cuánto vas a cobrar cada mes, pero no si te va a salir a pagar o a devolver en junio. Si quieres entender esta diferencia con más detalle, tienes la guía completa en <a href="/retencion-irpf-vs-renta">retención de nómina vs. declaración de la renta</a>.</p>
 
-    <p><strong>Fuentes oficiales:</strong> <a href="https://sede.agenciatributaria.gob.es/" target="_blank" rel="noopener">Agencia Tributaria</a> · <a href="https://www.seg-social.es/" target="_blank" rel="noopener">Seguridad Social</a>.</p>
+    <p><strong>Fuentes oficiales:</strong> <a href="https://sede.agenciatributaria.gob.es/" target="_blank" rel="noopener">Agencia Tributaria</a> · <a href="https://www.seg-social.es/" target="_blank" rel="noopener">Seguridad Social</a>. Consulta también nuestra <a href="/metodologia">metodología de cálculo</a>.</p>
   </section>
 
   <section class="card" id="faq">
