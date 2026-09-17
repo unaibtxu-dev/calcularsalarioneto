@@ -155,3 +155,81 @@ describe("guía: sin placeholders ni enlaces vacíos", () => {
     }
   });
 });
+
+// -----------------------------------------------------------------------
+// Regresión: la auditoría del cluster confirmó que los ejemplos estáticos
+// de /coste-empresa (20k-50k) coinciden con el motor, pero solo 30.000 €
+// tenía test dedicado. Estos tests cubren el resto sin cambiar cómo están
+// implementados (siguen siendo texto escrito a mano en el HTML).
+// -----------------------------------------------------------------------
+describe("calculadora /coste-empresa: los ejemplos estáticos (20k-50k) coinciden con el motor real", () => {
+  const atep = Constants2026.segSocial.atEpRangoOrientativo.oficinasAdministrativo;
+
+  function parseEuro(texto) {
+    return Number(texto.replace(/[.]/g, "").replace(",", "."));
+  }
+
+  const casos = [20000, 25000, 30000, 35000, 40000, 50000];
+  casos.forEach((bruto) => {
+    test(`${bruto}€: coste total y diferencia publicados coinciden con TaxEngine.calcularSegSocialEmpresa`, () => {
+      const normalizado = TaxEngine.normalizarInput({ brutoAnual: bruto, numPagas: 12, tipoContrato: "general" });
+      const empresa = TaxEngine.calcularSegSocialEmpresa(normalizado, Constants2026, atep);
+      // Los importes se publican en euros enteros (sin decimales), igual que
+      // los formatea Fmt.money(x) en el resto del sitio: se redondean al
+      // euro más cercano para la comparación, no se trunca el resultado del
+      // motor (TaxEngine.round solo redondea a 2 decimales).
+      const costeTotalEsperado = Math.round(TaxEngine.round(bruto + empresa.anual));
+      const diferenciaEsperada = Math.round(costeTotalEsperado - bruto);
+
+      const brutoTexto = bruto.toLocaleString("es-ES");
+      const patron = "Bruto " + brutoTexto + " .{0,2}</span><span class=\"val\">cuesta ([0-9.,]+) .{0,2} [(]\\+([0-9.,]+) .{0,2}[)]";
+      const fila = calculadoraHtml.match(new RegExp(patron));
+      assert.ok(fila, `no se encontró la fila de ${bruto}€ en coste-empresa.html`);
+      assert.equal(parseEuro(fila[1]), costeTotalEsperado, `coste total publicado no coincide para ${bruto}€`);
+      assert.equal(parseEuro(fila[2]), diferenciaEsperada, `diferencia publicada no coincide para ${bruto}€`);
+    });
+  });
+});
+
+// -----------------------------------------------------------------------
+// Caso 1.500 €/mes (18.000 €/año) añadido a la tabla dinámica de ejemplos
+// de la guía, en respuesta a una consulta real de Search Console.
+// -----------------------------------------------------------------------
+describe("guía: caso 1.500 €/mes (18.000 €/año) en la tabla de ejemplos", () => {
+  test("el script incluye 18000 en SALARIOS_EJEMPLO, calculado con el mismo motor que el resto de filas", () => {
+    assert.match(guiaHtml, /var SALARIOS_EJEMPLO = \[18000, 25000, 30000, 35000, 40000, 50000\];/);
+    assert.ok(guiaHtml.includes("costeEmpresa(bruto)"), "la fila de 18.000 € debe pasar por la misma función costeEmpresa que el resto");
+  });
+
+  test("el equivalente mensual se deriva programáticamente de bruto/12 en la plantilla de la fila, no es un resultado escrito a mano", () => {
+    assert.match(guiaHtml, /Fmt\.money\(bruto \/ 12, true\)/);
+  });
+
+  test("18.000 € produce exactamente 1.500 €/mes y las cifras que da el motor real", () => {
+    const atep = Constants2026.segSocial.atEpRangoOrientativo.oficinasAdministrativo;
+    const bruto = 18000;
+    assert.equal(TaxEngine.round(bruto / 12), 1500);
+    const normalizado = TaxEngine.normalizarInput({ brutoAnual: bruto, numPagas: 12, tipoContrato: "general" });
+    const empresa = TaxEngine.calcularSegSocialEmpresa(normalizado, Constants2026, atep);
+    const costeTotal = TaxEngine.round(bruto + empresa.anual);
+    assert.equal(empresa.anual, 5787);
+    assert.equal(costeTotal, 23787);
+  });
+});
+
+// -----------------------------------------------------------------------
+// Enlazado adicional aprobado en esta fase: un segundo enlace calculadora
+// -> guía (con anchor distinto al ya existente) y un enlace a /metodologia.
+// -----------------------------------------------------------------------
+describe("calculadora /coste-empresa: enlazado adicional a la guía y a metodología", () => {
+  test("existen al menos dos enlaces hacia la guía, con anchors distintos", () => {
+    const ocurrencias = (calculadoraHtml.match(/href="\/guias\/cuanto-cuesta-un-trabajador-a-la-empresa-2026"/g) || []).length;
+    assert.ok(ocurrencias >= 2, "la calculadora debe enlazar al menos dos veces a la guía, encontradas: " + ocurrencias);
+    assert.ok(calculadoraHtml.includes(">guía sobre el coste de un trabajador<"), "falta el segundo anchor distinto hacia la guía");
+    assert.ok(calculadoraHtml.includes(">cuánto cuesta un trabajador a la empresa en 2026<"), "el anchor original hacia la guía no debería haberse eliminado");
+  });
+
+  test("enlaza a /metodologia", () => {
+    assert.ok(calculadoraHtml.includes('href="/metodologia"'), "falta el enlace a /metodologia en coste-empresa.html");
+  });
+});

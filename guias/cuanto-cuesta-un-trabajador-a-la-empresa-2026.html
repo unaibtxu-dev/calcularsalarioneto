@@ -216,12 +216,15 @@ document.querySelector("#tabla-cotizaciones-2026 tbody").innerHTML = filasCotiza
   .map(function (fila) { return "<tr><td>" + fila[0] + "</td><td>" + fila[1] + "</td><td>" + fila[2] + "</td></tr>"; })
   .join("");
 
-// Tabla de ejemplos por salario (25k-50k), todo calculado con el motor real
-var SALARIOS_EJEMPLO = [25000, 30000, 35000, 40000, 50000];
+// Tabla de ejemplos por salario (18k-50k), todo calculado con el motor real.
+// 18.000 € se añade porque equivale a 1.500 €/mes (18000/12, calculado aquí
+// mismo, no escrito a mano), un importe que se busca de forma habitual.
+var SALARIOS_EJEMPLO = [18000, 25000, 30000, 35000, 40000, 50000];
 document.querySelector("#tabla-ejemplos-coste tbody").innerHTML = SALARIOS_EJEMPLO.map(function (bruto) {
   var r = costeEmpresa(bruto);
+  var etiquetaBruto = Fmt.money(bruto) + (bruto === 18000 ? " (" + Fmt.money(bruto / 12, true) + "/mes)" : "");
   return (
-    "<tr><td>" + Fmt.money(bruto) + "</td>" +
+    "<tr><td>" + etiquetaBruto + "</td>" +
     "<td>" + Fmt.money(r.empresaAnual, true) + "</td>" +
     "<td>" + Fmt.money(r.costeTotal, true) + "</td>" +
     "<td>+" + Fmt.money(r.diferencia, true) + "</td></tr>"
