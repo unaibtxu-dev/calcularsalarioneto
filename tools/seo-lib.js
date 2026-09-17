@@ -59,6 +59,7 @@ const PAGES = [
   "guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026.html",
   "guias/tabla-retenciones-irpf-navarra-2026.html",
   "guias/tabla-retenciones-irpf-gipuzkoa-2026.html",
+  "guias/tabla-retenciones-irpf-bizkaia-2026.html",
   "cookies.html",
   "contacto.html",
   "sobre-sueldo-claro.html"
