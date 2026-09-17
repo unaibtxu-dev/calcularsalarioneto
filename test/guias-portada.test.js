@@ -18,10 +18,11 @@ const URLS_EXISTENTES = [
   "/metodologia",
   "/guias/tabla-retenciones-irpf-alava-2026",
   "/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026",
-  "/guias/tabla-retenciones-irpf-navarra-2026"
+  "/guias/tabla-retenciones-irpf-navarra-2026",
+  "/guias/tabla-retenciones-irpf-gipuzkoa-2026"
 ];
 
-// Guías con imagen propia (las 7 proporcionadas) y su fichero optimizado.
+// Guías con imagen propia (las 8 proporcionadas) y su fichero optimizado.
 const IMAGENES_POR_URL = {
   "/que-se-descuenta-de-una-nomina": "que-se-descuenta-nomina-2026.webp",
   "/12-pagas-vs-14-pagas": "12-vs-14-pagas-2026.webp",
@@ -29,7 +30,8 @@ const IMAGENES_POR_URL = {
   "/subida-sueldo-5000": "subida-sueldo-5000-2026.webp",
   "/guias/tabla-retenciones-irpf-alava-2026": "irpf-alava-2026.webp",
   "/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026": "coste-trabajador-empresa-2026.webp",
-  "/guias/tabla-retenciones-irpf-navarra-2026": "tabla-retenciones-irpf-navarra-2026.webp"
+  "/guias/tabla-retenciones-irpf-navarra-2026": "tabla-retenciones-irpf-navarra-2026.webp",
+  "/guias/tabla-retenciones-irpf-gipuzkoa-2026": "tabla-retenciones-irpf-gipuzkoa-2026.webp"
 };
 
 describe("/guias: ninguna guía existente desaparece", () => {
@@ -107,12 +109,12 @@ describe("/guias: imágenes locales, sin CLS, sin relleno de keywords", () => {
     const dir = path.join(ROOT, "assets", "img", "guias");
     assert.ok(fs.existsSync(dir));
     const originales = fs.readdirSync(dir).filter((f) => f.endsWith(".png"));
-    assert.equal(originales.length, 7);
+    assert.equal(originales.length, 8);
   });
 
   test("todas las imágenes de tarjeta salvo la primera usan loading=\"lazy\"", () => {
     const imgs = Array.from(guiasHtml.matchAll(/<img [^>]*src="\/assets\/img\/guias\/[^"]+\.webp"[^>]*>/g)).map((m) => m[0]);
-    assert.equal(imgs.length, 7);
+    assert.equal(imgs.length, 8);
     assert.ok(!imgs[0].includes('loading="lazy"'), "la primera imagen (candidata a LCP) no debería ser lazy");
     for (const img of imgs.slice(1)) {
       assert.match(img, /loading="lazy"/);
@@ -121,7 +123,7 @@ describe("/guias: imágenes locales, sin CLS, sin relleno de keywords", () => {
 
   test("ningún alt está vacío ni relleno de keywords repetidas", () => {
     const alts = Array.from(guiasHtml.matchAll(/<img [^>]*alt="([^"]*)"/g)).map((m) => m[1]);
-    assert.equal(alts.length, 7);
+    assert.equal(alts.length, 8);
     for (const alt of alts) {
       assert.ok(alt.trim().length > 10, "alt demasiado corto o vacío: " + JSON.stringify(alt));
       const palabras = alt.toLowerCase().split(/\s+/);
@@ -212,7 +214,7 @@ describe("/guias: filtro de categorías", () => {
     const REPARTO_ESPERADO = {
       "Sueldo y nómina": 2,
       "IRPF y fiscalidad": 1,
-      "Fiscalidad foral": 2,
+      "Fiscalidad foral": 3,
       "Empresas y costes laborales": 1,
       "Carrera y salario": 1
     };

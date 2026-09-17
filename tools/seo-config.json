@@ -20,7 +20,13 @@
       "requiresDisclaimer": true
     },
     "/calculadora-sueldo-neto-bizkaia": { "disclaimerType": "foral", "requiresDisclaimer": true },
-    "/calculadora-sueldo-neto-gipuzkoa": { "disclaimerType": "foral", "requiresDisclaimer": true },
+    "/calculadora-sueldo-neto-gipuzkoa": {
+      "target": "calculadora sueldo neto Gipuzkoa 2026",
+      "intent": "transactional",
+      "related": ["/guias/tabla-retenciones-irpf-gipuzkoa-2026"],
+      "disclaimerType": "foral",
+      "requiresDisclaimer": true
+    },
     "/calculadora-sueldo-neto-alava": {
       "target": "calculadora sueldo neto Álava 2026",
       "intent": "transactional",
@@ -62,6 +68,16 @@
       "target": "tabla retenciones IRPF Navarra 2026",
       "intent": "informational",
       "related": ["/calculadora-sueldo-neto-navarra"],
+      "requiresOfficialSource": true,
+      "requiresMethodology": true,
+      "requiresDateContext": true,
+      "disclaimerType": "editorial",
+      "requiresDisclaimer": true
+    },
+    "/guias/tabla-retenciones-irpf-gipuzkoa-2026": {
+      "target": "tabla retenciones IRPF Gipuzkoa 2026",
+      "intent": "informational",
+      "related": ["/calculadora-sueldo-neto-gipuzkoa"],
       "requiresOfficialSource": true,
       "requiresMethodology": true,
       "requiresDateContext": true,
