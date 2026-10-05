@@ -31,7 +31,8 @@ const IMAGENES_POR_URL = {
   "/retencion-irpf-vs-renta": "retencion-irpf-vs-renta-2026.webp",
   "/guias/tabla-retenciones-irpf-pais-vasco-2026": "irpf-alava-2026.webp",
   "/guias/tabla-retenciones-irpf-navarra-2026": "tabla-retenciones-irpf-navarra-2026.webp",
-  "/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026": "coste-trabajador-empresa-2026.webp"
+  "/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026": "coste-trabajador-empresa-2026.webp",
+  "/guias/elecciones-irpf-sueldo-neto": "elecciones-irpf-sueldo-neto.webp"
 };
 
 const SECCIONES_ESPERADAS = ["Sueldo y nómina", "Fiscalidad", "Empresa", "Cómo calculamos"];
@@ -106,8 +107,16 @@ describe("/guias: imágenes locales, sin CLS, sin relleno de keywords", () => {
   test("los originales sin optimizar se conservan en assets/img/guias, junto a los .webp", () => {
     const dir = path.join(ROOT, "assets", "img", "guias");
     assert.ok(fs.existsSync(dir));
-    const originales = fs.readdirSync(dir).filter((f) => f.endsWith(".png"));
-    assert.equal(originales.length, Object.keys(IMAGENES_POR_URL).length);
+    const archivos = fs.readdirSync(dir);
+    // El original es un .png, salvo en la guía electoral, cuyo original se
+    // recibió ya como .webp (1731x909) y se conserva como "-original.webp".
+    for (const webp of Object.values(IMAGENES_POR_URL)) {
+      const base = webp.replace(/\.webp$/, "");
+      assert.ok(
+        archivos.includes(base + ".png") || archivos.includes(base + "-original.webp"),
+        "falta el original sin optimizar de " + webp
+      );
+    }
   });
 
   test("todas las imágenes de tarjeta salvo la primera usan loading=\"lazy\"", () => {
@@ -300,5 +309,47 @@ describe("/guias: CTA final hacia la calculadora principal", () => {
     assert.ok(bloqueMedia, "falta el ajuste responsive del CTA a partir de 560px");
     assert.match(bloqueMedia[0], /flex-direction:\s*row/);
     assert.match(bloqueMedia[0], /width:\s*auto/);
+  });
+});
+
+// -----------------------------------------------------------------------
+// Guía electoral: imagen editorial y tarjeta social (Open Graph / X).
+// -----------------------------------------------------------------------
+describe("/guias/elecciones-irpf-sueldo-neto: imagen y etiquetas sociales", () => {
+  const guia = fs.readFileSync(path.join(ROOT, "guias", "elecciones-irpf-sueldo-neto.html"), "utf8");
+  const ORIGEN = "https://calcularsalarioneto.es";
+  const OG = "/assets/img/guias/elecciones-irpf-sueldo-neto-og.jpg";
+  const ALT = "Elecciones, IRPF y sueldo neto: qué puede cambiar en tu nómina";
+
+  test("og:image y twitter:image son URLs absolutas y apuntan a un fichero real de 1200x630", () => {
+    assert.ok(guia.includes('<meta property="og:image" content="' + ORIGEN + OG + '">'));
+    assert.ok(guia.includes('<meta name="twitter:image" content="' + ORIGEN + OG + '">'));
+    assert.ok(fs.existsSync(path.join(ROOT, OG)), "falta el fichero de la imagen social");
+    assert.match(guia, /<meta property="og:image:width" content="1200">/);
+    assert.match(guia, /<meta property="og:image:height" content="630">/);
+  });
+
+  test("twitter:card es summary_large_image y existen og:title/description/url/type y twitter:title/description", () => {
+    assert.ok(guia.includes('<meta name="twitter:card" content="summary_large_image">'));
+    for (const etiqueta of ['property="og:title"', 'property="og:description"', 'property="og:url"', 'property="og:type"', 'name="twitter:title"', 'name="twitter:description"']) {
+      assert.ok(guia.includes("<meta " + etiqueta), "falta " + etiqueta);
+    }
+  });
+
+  test("la imagen principal tiene alt, dimensiones y existe; no añade ningún H1", () => {
+    const m = guia.match(/<img src="(\/assets\/img\/guias\/elecciones-irpf-sueldo-neto-hero\.webp)"[^>]*>/);
+    assert.ok(m, "falta la imagen principal");
+    assert.ok(m[0].includes('alt="' + ALT + '"'));
+    assert.match(m[0], /width="1200"/);
+    assert.match(m[0], /height="630"/);
+    assert.ok(fs.existsSync(path.join(ROOT, m[1])));
+    assert.equal((guia.match(/<h1[^>]*>/g) || []).length, 1);
+  });
+
+  test("las imágenes optimizadas pesan poco (tarjeta y hero < 100 KB, imagen social < 200 KB)", () => {
+    const kb = (rel) => fs.statSync(path.join(ROOT, rel)).size / 1024;
+    assert.ok(kb("/assets/img/guias/elecciones-irpf-sueldo-neto.webp") < 100);
+    assert.ok(kb("/assets/img/guias/elecciones-irpf-sueldo-neto-hero.webp") < 100);
+    assert.ok(kb(OG) < 200);
   });
 });

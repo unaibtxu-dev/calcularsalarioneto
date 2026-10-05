@@ -1016,3 +1016,16 @@ details.advanced .advanced-body {
   outline: 2.5px solid var(--primary);
   outline-offset: 2px;
 }
+
+/* Imagen editorial de cabecera en una guía (/guias/elecciones-irpf-sueldo-neto). */
+.guia-figure {
+  margin: 0 0 16px;
+}
+
+.guia-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
