@@ -111,7 +111,26 @@
   <section class="card" id="formulario" style="min-height:440px"></section>
   <section class="card" id="resultado" style="min-height:560px" aria-live="polite" aria-atomic="true"></section>
 
-  <section class="card" id="contenido">
+  <section class="card" id="relacionadas"></section>
+
+  <section class="card" id="bloque-sueldos">
+    <h2 class="section-title">Compara tu sueldo con otros salarios</h2>
+    <p>¿Tu resultado es alto, bajo o normal? Consulta la tabla de referencia de sueldos brutos a netos, de 18.000 € a 60.000 €, con IRPF y Seguridad Social ya calculados para cada importe, en 12 y en 14 pagas.</p>
+    <a class="btn" href="/sueldos">Ver tabla de sueldos →</a>
+  </section>
+
+  <section class="card" id="bloque-territorial">
+    <h2 class="section-title">Calcula según tu territorio</h2>
+    <p>Navarra y el País Vasco tienen su propia normativa de retenciones, distinta de la estatal. Elige tu caso:</p>
+    <ul class="related-list">
+      <li><a href="/"><span class="related-icon" aria-hidden="true">🇪🇸</span><span><span class="related-title">Régimen común (estás aquí)</span><span class="related-desc">El resto de España: esta misma calculadora.</span></span></a></li>
+      <li><a href="/calculadora-sueldo-neto-pais-vasco"><span class="related-icon" aria-hidden="true">🏔️</span><span><span class="related-title">País Vasco</span><span class="related-desc">Álava, Bizkaia y Gipuzkoa.</span></span></a></li>
+      <li><a href="/calculadora-sueldo-neto-navarra"><span class="related-icon" aria-hidden="true">🏔️</span><span><span class="related-title">Navarra</span><span class="related-desc">Régimen foral navarro.</span></span></a></li>
+      <li><a href="/fiscalidad-foral"><span class="related-icon" aria-hidden="true">⚖️</span><span><span class="related-title">Comparar regímenes</span><span class="related-desc">Mismo sueldo, los tres regímenes a la vez.</span></span></a></li>
+    </ul>
+  </section>
+
+  <section class="card" id="fundamentos">
     <h2 class="section-title">¿Qué diferencia hay entre el salario bruto y el neto?</h2>
     <p>El <strong>salario bruto</strong> es el importe total que tu empresa se compromete a pagarte, antes de impuestos y cotizaciones. Es la cifra que aparece en el contrato y en las ofertas de empleo. El <strong>salario neto</strong> es lo que realmente llega a tu cuenta cada mes, una vez restados los descuentos obligatorios.</p>
     <p>La diferencia entre ambos no es un porcentaje fijo. Depende de cuánto ganes, de tu situación familiar, del número de pagas y de tu tipo de contrato. Para un sueldo medio en España la diferencia suele moverse entre el 20% y el 25%, pero en salarios altos puede superar el 35%, y en salarios cercanos al SMI puede ser de apenas un 6%, porque no hay retención de IRPF. Si quieres ver este mismo desglose ya calculado para los importes más habituales, tienes la referencia en <a href="/sueldos">sueldos por importe</a>.</p>
@@ -122,7 +141,9 @@
     <p><strong>1. Cotizaciones a la Seguridad Social.</strong> Se calculan sobre tu base de cotización, con unos tipos fijos que no dependen de tu situación personal. Son iguales para todo el mundo dentro del mismo tipo de contrato.</p>
     <p><strong>2. Retención del IRPF.</strong> Aquí sí influye tu situación personal y familiar. Se calcula un porcentaje único para todo el año, siguiendo el procedimiento general que recoge el Reglamento del IRPF (artículos 80 a 89 del RD 439/2007), y ese porcentaje se aplica a cada nómina.</p>
     <p>Lo que queda después de restar ambos es tu neto. Esta calculadora implementa literalmente ese procedimiento oficial, no una estimación aproximada por porcentajes medios. Si quieres el desglose completo de qué se descuenta y quién lo paga, tienes la guía <a href="/que-se-descuenta-de-una-nomina">¿qué se descuenta de una nómina?</a>.</p>
+  </section>
 
+  <section class="card" id="detalle-calculo">
     <h2 class="section-title">¿Cuánto se paga de Seguridad Social en 2026?</h2>
     <p>Los tipos a cargo del trabajador en 2026, según la Orden PJC/297/2026, son estos:</p>
     <div class="breakdown">
@@ -167,7 +188,9 @@
     <h2 class="section-title">¿A partir de qué sueldo empiezan a retenerte?</h2>
     <p>Por debajo de ciertos umbrales la retención es del 0%. Para un trabajador soltero y sin hijos, ese umbral está en <strong>15.876 € brutos anuales</strong>. Con cónyuge a cargo de rentas bajas sube a 17.197 €, y aumenta con cada hijo.</p>
     <p>Como el SMI de 2026 está en <strong>17.094 € anuales</strong>, un salario mínimo sin cargas familiares queda muy cerca de ese umbral: la retención resultante es cero o casi cero. Eso explica por qué en salarios bajos el neto se parece tanto al bruto — solo se descuenta la Seguridad Social.</p>
+  </section>
 
+  <section class="card" id="pagas-y-territorio">
     <h2 class="section-title">¿Cobras más con 12 o con 14 pagas?</h2>
     <p><strong>El total anual es exactamente el mismo.</strong> Lo único que cambia es cómo se reparte a lo largo del año.</p>
     <p>Mucha gente cree que con 14 pagas cobra más, y no es cierto. La confusión viene de que la Seguridad Social se prorratea siempre entre 12 meses por ley, independientemente de cómo te pague la empresa. Por eso las pagas extra no llevan un descuento adicional de Seguridad Social: ya está repartido en las nóminas ordinarias.</p>
@@ -182,7 +205,7 @@
     <h2 class="section-title">Navarra y País Vasco: los regímenes forales</h2>
     <p>Navarra y el País Vasco tienen haciendas propias con normativa de retenciones distinta de la estatal. No es un matiz: son tablas y reglas completamente diferentes.</p>
     <p><strong>Navarra está implementada</strong> en esta calculadora, con la tabla foral de retenciones de 2026, que funciona por tramos de rendimiento anual y número de descendientes, además de una minoración específica por discapacidad. Selecciona Navarra en "Personalizar cálculo" y el cálculo cambia al sistema foral, o usa directamente la <a href="calculadora-sueldo-neto-navarra">calculadora dedicada de Navarra</a>.</p>
-    <p><strong>El País Vasco también.</strong> Sus tres haciendas forales —Álava, Bizkaia y Gipuzkoa— tienen cada una su propia normativa, pero comparten exactamente la misma tabla de retenciones: verificado de forma independiente contra la fuente oficial de cada Diputación Foral, no asumido por cercanía territorial. Selecciona tu territorio concreto en "Personalizar cálculo" para obtener la cifra real, con su propia calculadora dedicada si prefieres: <a href="calculadora-sueldo-neto-bizkaia">Bizkaia</a>, <a href="calculadora-sueldo-neto-gipuzkoa">Gipuzkoa</a> o <a href="calculadora-sueldo-neto-alava">Álava</a>. Puedes ver los cuatro territorios forales juntos en <a href="/fiscalidad-foral">fiscalidad foral</a>.</p>
+    <p><strong>El País Vasco también.</strong> Sus tres haciendas forales —Álava, Bizkaia y Gipuzkoa— tienen cada una su propia normativa, pero comparten exactamente la misma tabla de retenciones: verificado de forma independiente contra la fuente oficial de cada Diputación Foral, no asumido por cercanía territorial. Selecciona tu territorio concreto en "Personalizar cálculo" para obtener la cifra real, o usa la <a href="/calculadora-sueldo-neto-pais-vasco">calculadora dedicada de sueldo neto País Vasco</a>, con selector de territorio. Puedes ver los cuatro territorios forales juntos en <a href="/fiscalidad-foral">fiscalidad foral</a>.</p>
 
     <h2 class="section-title">¿Y si trabajas en Ceuta o Melilla?</h2>
     <p>Ceuta y Melilla tienen un tratamiento especial que sí se aplica en la nómina: la cuota de retención se reduce un <strong>60%</strong>. Es el equivalente en la retención a la deducción del 60% que existe en la declaración anual para las rentas obtenidas allí. Puedes activarlo en "Personalizar cálculo".</p>
@@ -191,12 +214,24 @@
     <p>Porque el tipo de retención se calcula sobre la <strong>previsión de lo que vas a ganar en el año</strong>, no sobre lo que ganaste antes. Cuando entras en una empresa nueva a mitad de año, esa empresa calcula tu retención en función de lo que va a pagarte ella, que puede ser bastante menos que un año completo.</p>
     <p>Eso hace que a veces te retengan menos de lo que corresponde a tu renta total del año, y que en la declaración te salga a pagar. Es la causa más habitual de las sorpresas desagradables en la campaña de la renta tras un cambio de empleo.</p>
     <p>Lo mismo ocurre con los bonus y la retribución variable: si están previstos, deben sumarse a la previsión anual antes de calcular el tipo, lo que sube el porcentaje aplicado a todo el año, no solo al mes en que los cobras.</p>
+  </section>
 
+  <section class="card" id="cierre">
     <h2 class="section-title">Esto no es tu declaración de la renta</h2>
     <p>Es importante entenderlo: la retención de nómina es un <strong>adelanto a cuenta</strong> del IRPF, no el impuesto definitivo. Tu declaración anual usa la escala real estatal más la autonómica, incluye todas tus rentas —no solo el trabajo— y puede aplicar deducciones que aquí no intervienen.</p>
     <p>Por eso el resultado de esta calculadora te dice cuánto vas a cobrar cada mes, pero no si te va a salir a pagar o a devolver en junio. Si quieres entender esta diferencia con más detalle, tienes la guía completa en <a href="/retencion-irpf-vs-renta">retención de nómina vs. declaración de la renta</a>.</p>
 
     <p><strong>Fuentes oficiales:</strong> <a href="https://sede.agenciatributaria.gob.es/" target="_blank" rel="noopener">Agencia Tributaria</a> · <a href="https://www.seg-social.es/" target="_blank" rel="noopener">Seguridad Social</a>. Consulta también nuestra <a href="/metodologia">metodología de cálculo</a>.</p>
+  </section>
+
+  <section class="card" id="guias-destacadas">
+    <h2 class="section-title">Para entender más</h2>
+    <ul class="related-list">
+      <li><a href="/que-se-descuenta-de-una-nomina"><span class="related-icon" aria-hidden="true">🧾</span><span><span class="related-title">¿Qué se descuenta de una nómina?</span><span class="related-desc">IRPF, Seguridad Social y el resto de conceptos, explicados uno a uno.</span></span></a></li>
+      <li><a href="/12-pagas-vs-14-pagas"><span class="related-icon" aria-hidden="true">📅</span><span><span class="related-title">12 pagas vs 14 pagas</span><span class="related-desc">Por qué el salario anual es el mismo aunque el reparto cambie.</span></span></a></li>
+      <li><a href="/retencion-irpf-vs-renta"><span class="related-icon" aria-hidden="true">📄</span><span><span class="related-title">Retención de nómina e IRPF final</span><span class="related-desc">Por qué lo que te retienen y lo que declaras no son lo mismo.</span></span></a></li>
+    </ul>
+    <p class="field-hint"><a href="/guias">Ver todas las guías →</a></p>
   </section>
 
   <section class="card" id="faq">
@@ -232,8 +267,6 @@
       </div>
     </details>
   </section>
-
-  <section class="card" id="relacionadas"></section>
 </main>
 <footer class="footer" id="footer"></footer>
 <script src="lib/constants-2026.js?v=1"></script>
@@ -245,7 +278,7 @@
 <script src="lib/constants-alava-2026.js?v=1"></script>
 <script src="lib/tax-engine-bizkaia.js?v=1"></script>
 <script src="assets/js/format.js?v=2"></script>
-<script src="assets/js/components.js?v=13"></script>
+<script src="assets/js/components.js?v=14"></script>
 <script src="pages/bruto-a-neto.js"></script>
 </body>
 </html>

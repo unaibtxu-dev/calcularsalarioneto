@@ -88,22 +88,23 @@
     </div>
     <p class="field-hint">Los porcentajes no deben sumarse y aplicarse sin más a cualquier salario: las bases de cotización, los topes, el tipo de contrato y las contingencias profesionales pueden alterar el resultado final. El tipo de AT/EP es variable según la actividad de la empresa (epígrafe CNAE), no un porcentaje único.</p>
 
-    <h2 class="section-title">Ejemplos de coste de empresa por salario</h2>
-    <p>Con contrato general (indefinido) y el mismo AT/EP orientativo de oficinas (1,50 %) de más arriba, así queda el coste total según el salario bruto anual:</p>
+    <h2 class="section-title">Cómo cambia el coste según la actividad de la empresa</h2>
+    <p>El AT/EP no tiene un tipo único: depende del epígrafe CNAE de la actividad de la empresa. Para ver el efecto real, no lo simulado, aquí tienes el coste total de un mismo salario bruto de 30.000 € según tres actividades de referencia, calculado con el motor real:</p>
     <div class="tabla-scroll">
       <table class="tabla-sueldos" id="tabla-ejemplos-coste">
         <thead>
           <tr>
-            <th scope="col">Salario bruto anual</th>
-            <th scope="col">Costes/cotizaciones empresa</th>
-            <th scope="col">Coste total estimado</th>
+            <th scope="col">Actividad (CNAE)</th>
+            <th scope="col">Tipo AT/EP</th>
+            <th scope="col">Cotizaciones empresa</th>
+            <th scope="col">Coste total</th>
             <th scope="col">Diferencia sobre el bruto</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
-    <p class="field-hint">Calculado con el mismo motor que <a href="/coste-empresa">la calculadora de coste de empresa</a>. Si tu actividad tiene un AT/EP distinto al de oficinas, tu coste real cambiará: usa la calculadora con tu propio tipo.</p>
+    <p class="field-hint">Estos tres tipos son puntos de referencia reales de nuestras constantes de cálculo; tu actividad puede tener un tipo distinto — consulta tu recibo de liquidación de cotizaciones (RLC) o tu gestoría. Calcula el coste exacto con tu propio tipo en <a href="/coste-empresa">la calculadora de coste de empresa</a>.</p>
 
     <h2 class="section-title">Un ejemplo explicado paso a paso</h2>
     <p id="ejemplo-explicado-texto"></p>
@@ -122,6 +123,7 @@
 
     <p><strong>Fuentes oficiales:</strong> <a href="https://www.boe.es/eli/es/o/2026/03/30/pjc297" target="_blank" rel="noopener">Orden PJC/297/2026, de 30 de marzo (BOE)</a> · <a href="https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/CotizacionRecaudacionTrabajadores/10721/10957/9932/4327?changeLanguage=es" target="_blank" rel="noopener">Seguridad Social — Bases y tipos de cotización 2026</a>.</p>
     <p class="field-hint">Contenido informativo: los ejemplos y cálculos son orientativos y no sustituyen el asesoramiento fiscal o laboral profesional. Consulta nuestra <a href="/metodologia">metodología</a> y las fuentes indicadas para conocer los criterios utilizados.</p>
+    <p class="field-hint">Tienes el resto de guías sobre nómina, fiscalidad y empresa en <a href="/guias">guías</a>.</p>
   </section>
 
   <section class="card">
@@ -176,17 +178,18 @@
 <script src="/lib/constants-2026.js?v=1"></script>
 <script src="/lib/tax-engine.js?v=1"></script>
 <script src="/assets/js/format.js?v=2"></script>
-<script src="/assets/js/components.js?v=13"></script>
+<script src="/assets/js/components.js?v=14"></script>
 <script>
 App.renderNav();
-App.renderRelacionadas("relacionadas");
+App.renderRelacionadasContenido("relacionadas", "guia-coste-empresa");
 
 var ATEP_OFICINAS = Constants2026.segSocial.atEpRangoOrientativo.oficinasAdministrativo;
 var SUPUESTOS = { numPagas: 12, tipoContrato: "general" };
 
-function costeEmpresa(bruto) {
+function costeEmpresa(bruto, atEpTipo) {
+  var tipo = typeof atEpTipo === "number" ? atEpTipo : ATEP_OFICINAS;
   var normalizado = TaxEngine.normalizarInput({ brutoAnual: bruto, numPagas: SUPUESTOS.numPagas, tipoContrato: SUPUESTOS.tipoContrato });
-  var empresa = TaxEngine.calcularSegSocialEmpresa(normalizado, Constants2026, ATEP_OFICINAS);
+  var empresa = TaxEngine.calcularSegSocialEmpresa(normalizado, Constants2026, tipo);
   var costeTotal = TaxEngine.round(bruto + empresa.anual);
   return { empresaAnual: empresa.anual, costeTotal: costeTotal, diferencia: TaxEngine.round(costeTotal - bruto) };
 }
@@ -216,15 +219,23 @@ document.querySelector("#tabla-cotizaciones-2026 tbody").innerHTML = filasCotiza
   .map(function (fila) { return "<tr><td>" + fila[0] + "</td><td>" + fila[1] + "</td><td>" + fila[2] + "</td></tr>"; })
   .join("");
 
-// Tabla de ejemplos por salario (18k-50k), todo calculado con el motor real.
-// 18.000 € se añade porque equivale a 1.500 €/mes (18000/12, calculado aquí
-// mismo, no escrito a mano), un importe que se busca de forma habitual.
-var SALARIOS_EJEMPLO = [18000, 25000, 30000, 35000, 40000, 50000];
-document.querySelector("#tabla-ejemplos-coste tbody").innerHTML = SALARIOS_EJEMPLO.map(function (bruto) {
-  var r = costeEmpresa(bruto);
-  var etiquetaBruto = Fmt.money(bruto) + (bruto === 18000 ? " (" + Fmt.money(bruto / 12, true) + "/mes)" : "");
+// Tabla de coste según actividad (mismo bruto de referencia, distinto AT/EP),
+// con los tres tipos orientativos reales que ya expone Constants2026 — no
+// se inventa ningún porcentaje nuevo. Sustituye a la antigua tabla por
+// salario (18k-50k), que repetía casi la misma comparación que ya hace
+// /coste-empresa con distintos brutos: esta muestra un ángulo distinto,
+// cómo cambia el coste con la actividad de la empresa a igualdad de bruto.
+var BRUTO_REFERENCIA_ACTIVIDAD = 30000;
+var ATEP_NIVELES = [
+  { nombre: "Oficinas y trabajo administrativo", tipo: Constants2026.segSocial.atEpRangoOrientativo.oficinasAdministrativo },
+  { nombre: "Construcción de edificios", tipo: Constants2026.segSocial.atEpRangoOrientativo.construccionEdificios },
+  { nombre: "Minería subterránea", tipo: Constants2026.segSocial.atEpRangoOrientativo.mineriaSubterranea }
+];
+document.querySelector("#tabla-ejemplos-coste tbody").innerHTML = ATEP_NIVELES.map(function (nivel) {
+  var r = costeEmpresa(BRUTO_REFERENCIA_ACTIVIDAD, nivel.tipo);
   return (
-    "<tr><td>" + etiquetaBruto + "</td>" +
+    "<tr><td>" + nivel.nombre + "</td>" +
+    "<td>" + Fmt.pct(nivel.tipo * 100) + "</td>" +
     "<td>" + Fmt.money(r.empresaAnual, true) + "</td>" +
     "<td>" + Fmt.money(r.costeTotal, true) + "</td>" +
     "<td>+" + Fmt.money(r.diferencia, true) + "</td></tr>"

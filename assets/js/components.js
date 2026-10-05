@@ -15,17 +15,17 @@ var App = (function () {
   ];
 
   var REGIONES = [
-    { id: "navarra", href: "/calculadora-sueldo-neto-navarra", label: "Navarra" },
-    { id: "bizkaia", href: "/calculadora-sueldo-neto-bizkaia", label: "Bizkaia" },
-    { id: "gipuzkoa", href: "/calculadora-sueldo-neto-gipuzkoa", label: "Gipuzkoa" },
-    { id: "alava", href: "/calculadora-sueldo-neto-alava", label: "Álava" }
+    { id: "pais-vasco", href: "/calculadora-sueldo-neto-pais-vasco", label: "País Vasco" },
+    { id: "navarra", href: "/calculadora-sueldo-neto-navarra", label: "Navarra" }
   ];
 
   // Las 2 categorías del menú que son enlaces directos (no desplegables):
-  // "Calculadoras" y "Navarra y País Vasco" sí son desplegables, ver abajo.
+  // "Calculadoras" y "Fiscalidad" sí son desplegables, ver abajo. No existe
+  // categoría "Empresas" de primer nivel: /coste-empresa vive dentro de
+  // "Calculadoras" (ya estaba listada ahí; el enlace directo duplicado se
+  // retiró de la navegación principal).
   var CATEGORIAS = [
     { id: "sueldos", href: "/sueldos", label: "Sueldos", icon: "💶" },
-    { id: "empresas", href: "/coste-empresa", label: "Empresas", icon: "🏢" },
     { id: "guias", href: "/guias", label: "Guías", icon: "📘" }
   ];
 
@@ -130,19 +130,14 @@ var App = (function () {
   function renderNav(activeId) {
     var el = document.getElementById("topnav");
     if (!el) return;
-    // "coste-empresa" se excluye aquí: esa página tiene su propia categoría
-    // principal ("Empresas"), aunque la herramienta siga listada dentro de
-    // este desplegable.
-    var calculadorasActiva = activeId !== "coste-empresa" && PAGES.some(function (p) { return p.id === activeId; });
-    var regionActiva = activeId === "fiscalidad-foral" || REGIONES.some(function (r) { return r.id === activeId; });
-    var empresasActiva = activeId === "empresas" || activeId === "coste-empresa";
+    var calculadorasActiva = PAGES.some(function (p) { return p.id === activeId; });
+    var fiscalidadActiva = activeId === "fiscalidad-foral" || REGIONES.some(function (r) { return r.id === activeId; });
 
     var html = '<nav class="topnav-inner" aria-label="Categorías">';
     html += dropdownButtonHTML("🧮", "Calculadoras", calculadorasActiva);
     html += categoriaLinkHTML(CATEGORIAS[0], activeId === "sueldos");
-    html += dropdownButtonHTML("🏔️", "Navarra y País Vasco", regionActiva);
-    html += categoriaLinkHTML(CATEGORIAS[1], empresasActiva);
-    html += categoriaLinkHTML(CATEGORIAS[2], activeId === "guias");
+    html += dropdownButtonHTML("🏔️", "Fiscalidad", fiscalidadActiva);
+    html += categoriaLinkHTML(CATEGORIAS[1], activeId === "guias");
     html += "</nav>";
     // Los menús se renderizan fuera de .topnav-inner: ese contenedor tiene
     // overflow-x:auto, y por la propia especificación CSS un
@@ -157,11 +152,11 @@ var App = (function () {
       }).join("") +
       "</div>" +
       '<div class="topnav-dropdown-menu">' +
-      '<a href="/fiscalidad-foral" class="' + (activeId === "fiscalidad-foral" ? "active" : "") + '"' + (activeId === "fiscalidad-foral" ? ' aria-current="page"' : "") + ">Ver todos los territorios</a>" +
       REGIONES.map(function (r) {
         var active = r.id === activeId;
         return '<a href="' + r.href + '" class="' + (active ? "active" : "") + '"' + (active ? ' aria-current="page"' : "") + ">" + r.label + "</a>";
       }).join("") +
+      '<a href="/fiscalidad-foral" class="' + (activeId === "fiscalidad-foral" ? "active" : "") + '"' + (activeId === "fiscalidad-foral" ? ' aria-current="page"' : "") + ">Comparar regímenes</a>" +
       "</div>";
     el.innerHTML = html;
 
@@ -222,6 +217,79 @@ var App = (function () {
         '<li><a href="' + p.href + '"><span class="related-icon" aria-hidden="true">' + p.icon + "</span>" +
         '<span><span class="related-title">' + p.label + "</span>" +
         '<span class="related-desc">' + p.desc + "</span></span></a></li>";
+    });
+    html += "</ul>";
+    el.innerHTML = html;
+  }
+
+  // Relacionados para páginas de contenido (guías, fiscalidad, metodología),
+  // donde la lista genérica de "Otras herramientas" (PAGES) no es la más
+  // relevante. Mismo estilo de dato explícito que PAGES/REGIONES: cada
+  // página declara a mano sus 2-3 enlaces realmente relacionados, sin
+  // ningún recomendador automático.
+  var RELACIONADAS_CONTENIDO = {
+    "que-se-descuenta": [
+      { href: "/12-pagas-vs-14-pagas", icon: "📅", label: "12 pagas vs 14 pagas", desc: "Cómo cambia el reparto de tu nómina según el número de pagas." },
+      { href: "/retencion-irpf-vs-renta", icon: "📄", label: "Retención vs. declaración de la renta", desc: "Por qué lo que te retienen cada mes no es tu IRPF definitivo." },
+      { href: "/", icon: "💶", label: "Calcular tu sueldo neto", desc: "Aplica estos descuentos a tu propio salario bruto." }
+    ],
+    "12-pagas-vs-14-pagas": [
+      { href: "/que-se-descuenta-de-una-nomina", icon: "🧾", label: "¿Qué se descuenta de una nómina?", desc: "IRPF y Seguridad Social, los conceptos que van del bruto al neto." },
+      { href: "/retencion-irpf-vs-renta", icon: "📄", label: "Retención vs. declaración de la renta", desc: "Por qué lo que te retienen cada mes no es tu IRPF definitivo." },
+      { href: "/sueldos", icon: "💶", label: "Sueldos netos por importe", desc: "Consulta el neto correspondiente a distintos salarios brutos." }
+    ],
+    "retencion-irpf-vs-renta": [
+      { href: "/que-se-descuenta-de-una-nomina", icon: "🧾", label: "¿Qué se descuenta de una nómina?", desc: "IRPF y Seguridad Social, los conceptos que van del bruto al neto." },
+      { href: "/12-pagas-vs-14-pagas", icon: "📅", label: "12 pagas vs 14 pagas", desc: "Cómo cambia el reparto de tu nómina según el número de pagas." },
+      { href: "/", icon: "💶", label: "Calcular tu sueldo neto", desc: "Aplica el cálculo de retención a tu propio salario bruto." }
+    ],
+    "guia-pais-vasco": [
+      { href: "/calculadora-sueldo-neto-pais-vasco", icon: "🧮", label: "Calculadora de sueldo neto País Vasco", desc: "Aplica esta tabla a tu propio salario en Álava, Bizkaia o Gipuzkoa." },
+      { href: "/fiscalidad-foral", icon: "🏔️", label: "Fiscalidad foral en España", desc: "Compara régimen común, País Vasco y Navarra." }
+    ],
+    "guia-navarra": [
+      { href: "/calculadora-sueldo-neto-navarra", icon: "🧮", label: "Calculadora de sueldo neto Navarra", desc: "Aplica esta tabla a tu propio salario en Navarra." },
+      { href: "/fiscalidad-foral", icon: "🏔️", label: "Fiscalidad foral en España", desc: "Compara régimen común, País Vasco y Navarra." }
+    ],
+    "guia-coste-empresa": [
+      { href: "/coste-empresa", icon: "🏢", label: "Calculadora de coste de empresa", desc: "Calcula el coste real de un trabajador con tu propio tipo de AT/EP." },
+      { href: "/que-se-descuenta-de-una-nomina", icon: "🧾", label: "¿Qué se descuenta de una nómina?", desc: "La misma nómina, vista desde el lado del trabajador." },
+      { href: "/metodologia", icon: "📘", label: "Metodología de cálculo", desc: "Normativa, tablas y límites de nuestros cálculos." }
+    ],
+    "guia-elecciones": [
+      { href: "/retencion-irpf-vs-renta", icon: "📄", label: "Retención vs. declaración de la renta", desc: "Por qué lo que te retienen cada mes no es tu IRPF definitivo." },
+      { href: "/fiscalidad-foral", icon: "🏔️", label: "Fiscalidad foral en España", desc: "Compara régimen común, País Vasco y Navarra." },
+      { href: "/sueldos", icon: "💶", label: "Sueldos netos por importe", desc: "Consulta el neto correspondiente a distintos salarios brutos." },
+      { href: "/", icon: "🧮", label: "Calcular tu sueldo neto", desc: "Tu neto actual con la normativa vigente." }
+    ],
+    "calc-pais-vasco": [
+      { href: "/guias/tabla-retenciones-irpf-pais-vasco-2026", icon: "📘", label: "Tabla de retenciones IRPF País Vasco 2026", desc: "Consulta los porcentajes completos por rendimiento y descendientes." },
+      { href: "/fiscalidad-foral", icon: "🏔️", label: "Fiscalidad foral en España", desc: "Compara régimen común, País Vasco y Navarra." },
+      { href: "/calculadora-sueldo-neto-navarra", icon: "🧮", label: "Calculadora de sueldo neto Navarra", desc: "Si trabajas en el régimen foral navarro." }
+    ],
+    "calc-navarra": [
+      { href: "/guias/tabla-retenciones-irpf-navarra-2026", icon: "📘", label: "Tabla de retenciones IRPF Navarra 2026", desc: "Consulta los porcentajes completos por rendimiento y descendientes." },
+      { href: "/fiscalidad-foral", icon: "🏔️", label: "Fiscalidad foral en España", desc: "Compara régimen común, País Vasco y Navarra." },
+      { href: "/calculadora-sueldo-neto-pais-vasco", icon: "🧮", label: "Calculadora de sueldo neto País Vasco", desc: "Si trabajas en Álava, Bizkaia o Gipuzkoa." }
+    ],
+    "metodologia": [
+      { href: "/que-se-descuenta-de-una-nomina", icon: "🧾", label: "¿Qué se descuenta de una nómina?", desc: "IRPF y Seguridad Social explicados con ejemplos." },
+      { href: "/12-pagas-vs-14-pagas", icon: "📅", label: "12 pagas vs 14 pagas", desc: "Cómo cambia el reparto de tu nómina según el número de pagas." },
+      { href: "/", icon: "💶", label: "Calcular tu sueldo neto", desc: "Aplica esta metodología a tu propio salario." }
+    ]
+  };
+
+  function renderRelacionadasContenido(containerId, id) {
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var items = RELACIONADAS_CONTENIDO[id];
+    if (!items) { renderRelacionadas(containerId); return; }
+    var html = '<div class="section-title">También te puede interesar</div><ul class="related-list">';
+    items.forEach(function (it) {
+      html +=
+        '<li><a href="' + it.href + '"><span class="related-icon" aria-hidden="true">' + it.icon + "</span>" +
+        '<span><span class="related-title">' + it.label + "</span>" +
+        '<span class="related-desc">' + it.desc + "</span></span></a></li>";
     });
     html += "</ul>";
     el.innerHTML = html;
@@ -355,7 +423,7 @@ var App = (function () {
       "</select></div>" +
       '<div class="field"><label for="' + pre + '-hijos">Hijos a cargo</label>' +
       '<input type="number" min="0" step="1" data-field="numHijos" id="' + pre + '-hijos" value="0"></div>' +
-      '<details class="advanced"><summary>Personalizar cálculo <span class="chevron" aria-hidden="true">▾</span></summary><div class="advanced-body">' +
+      '<details class="advanced"' + (cfg.advancedOpen ? " open" : "") + '><summary>Personalizar cálculo <span class="chevron" aria-hidden="true">▾</span></summary><div class="advanced-body">' +
       '<div class="field"><label for="' + pre + '-territorio">Territorio</label>' +
       '<select data-field="territorio" id="' + pre + '-territorio">' +
       '<option value="comun"' + selTerr("comun") + ">Régimen común</option>" +
@@ -555,37 +623,51 @@ var App = (function () {
     }, datos.netoAnualObjetivo);
   }
 
-  // Orquestación Bizkaia 2026, mismo patrón que Navarra: SS estatal +
-  // retención vía TaxEngineBizkaia (núcleo ya validado). Requiere que la
-  // página haya cargado lib/constants-bizkaia-2026.js y
-  // lib/tax-engine-bizkaia.js además de los comunes.
-  function brutoToNetoBizkaia(datos) {
+  // Orquestación País Vasco 2026 (Álava, Bizkaia, Gipuzkoa): SS estatal +
+  // retención vía TaxEngineBizkaia (núcleo ya validado). Los tres
+  // territorios comparten el mismo motor y, en 2026, la misma tabla —
+  // verificado de forma independiente contra la fuente oficial de cada
+  // Diputación Foral (ver el bloque FUENTES de cada lib/constants-*-2026.js).
+  // Antes había tres copias casi idénticas de esta función (una por
+  // territorio); ahora hay una sola implementación parametrizada por las
+  // constantes del territorio, para no duplicar la lógica de cálculo
+  // mientras la lógica sea realmente la misma. brutoToNetoAlava/Bizkaia/
+  // Gipuzkoa se conservan como envoltorios finos porque pages/fiscalidad-foral.js
+  // y el selector "Personalizar cálculo" de otras páginas (p. ej. la
+  // calculadora principal) ya dependen de esos tres nombres — si algún día
+  // un territorio necesitara una regla distinta, su envoltorio pasaría a
+  // llamar a un motor/constantes propios sin tocar los otros dos.
+  function brutoToNetoForalPaisVasco(datos, constantsTerritorio) {
     var ss = TaxEngine.calcularSegSocialTrabajador(
       TaxEngine.normalizarInput({ brutoAnual: datos.salario, numPagas: datos.numPagas, tipoContrato: datos.tipoContrato }),
       Constants2026
     );
-    var bizkaia = TaxEngineBizkaia.calcularTipoRetencion(
+    var foral = TaxEngineBizkaia.calcularTipoRetencion(
       {
         retribucionFija: datos.salario,
         retribucionVariablePrevisible: 0,
         numDescendientes: datos.numHijos,
         discapacidad: datos.discapacidadPropia
       },
-      ConstantsBizkaia2026
+      constantsTerritorio
     );
     var brutoAnual = TaxEngine.round(datos.salario);
-    var retencionAnual = TaxEngine.round(datos.salario * (bizkaia.tipoRetencion / 100));
+    var retencionAnual = TaxEngine.round(datos.salario * (foral.tipoRetencion / 100));
     var netoAnual = TaxEngine.round(datos.salario - ss.anual - retencionAnual);
     return {
       bloqueado: false,
       brutoAnual: brutoAnual,
       segSocial: ss,
-      irpf: { tipoRetencion: bizkaia.tipoRetencion, retencionAnual: retencionAnual },
+      irpf: { tipoRetencion: foral.tipoRetencion, retencionAnual: retencionAnual },
       numPagas: datos.numPagas,
       netoAnual: netoAnual,
       netoPorPaga: TaxEngine.round(netoAnual / datos.numPagas),
       porcentajeQueLlega: brutoAnual > 0 ? TaxEngine.round((netoAnual / brutoAnual) * 100) : 0
     };
+  }
+
+  function brutoToNetoBizkaia(datos) {
+    return brutoToNetoForalPaisVasco(datos, ConstantsBizkaia2026);
   }
 
   function netoToBrutoBizkaia(datos) {
@@ -594,38 +676,8 @@ var App = (function () {
     }, datos.netoAnualObjetivo);
   }
 
-  // Orquestación Gipuzkoa 2026: reutiliza el mismo motor que Bizkaia
-  // (TaxEngineBizkaia) porque la tabla es idéntica, verificado por separado
-  // contra fuente propia de Gipuzkoa — solo cambian las constantes.
-  // Requiere que la página haya cargado lib/constants-gipuzkoa-2026.js
-  // además de lib/tax-engine-bizkaia.js.
   function brutoToNetoGipuzkoa(datos) {
-    var ss = TaxEngine.calcularSegSocialTrabajador(
-      TaxEngine.normalizarInput({ brutoAnual: datos.salario, numPagas: datos.numPagas, tipoContrato: datos.tipoContrato }),
-      Constants2026
-    );
-    var gipuzkoa = TaxEngineBizkaia.calcularTipoRetencion(
-      {
-        retribucionFija: datos.salario,
-        retribucionVariablePrevisible: 0,
-        numDescendientes: datos.numHijos,
-        discapacidad: datos.discapacidadPropia
-      },
-      ConstantsGipuzkoa2026
-    );
-    var brutoAnual = TaxEngine.round(datos.salario);
-    var retencionAnual = TaxEngine.round(datos.salario * (gipuzkoa.tipoRetencion / 100));
-    var netoAnual = TaxEngine.round(datos.salario - ss.anual - retencionAnual);
-    return {
-      bloqueado: false,
-      brutoAnual: brutoAnual,
-      segSocial: ss,
-      irpf: { tipoRetencion: gipuzkoa.tipoRetencion, retencionAnual: retencionAnual },
-      numPagas: datos.numPagas,
-      netoAnual: netoAnual,
-      netoPorPaga: TaxEngine.round(netoAnual / datos.numPagas),
-      porcentajeQueLlega: brutoAnual > 0 ? TaxEngine.round((netoAnual / brutoAnual) * 100) : 0
-    };
+    return brutoToNetoForalPaisVasco(datos, ConstantsGipuzkoa2026);
   }
 
   function netoToBrutoGipuzkoa(datos) {
@@ -634,38 +686,8 @@ var App = (function () {
     }, datos.netoAnualObjetivo);
   }
 
-  // Orquestación Álava 2026: reutiliza el mismo motor que Bizkaia/Gipuzkoa
-  // (TaxEngineBizkaia) porque la tabla es idéntica, verificado por separado
-  // contra fuente propia de Álava — solo cambian las constantes. Requiere
-  // que la página haya cargado lib/constants-alava-2026.js además de
-  // lib/tax-engine-bizkaia.js.
   function brutoToNetoAlava(datos) {
-    var ss = TaxEngine.calcularSegSocialTrabajador(
-      TaxEngine.normalizarInput({ brutoAnual: datos.salario, numPagas: datos.numPagas, tipoContrato: datos.tipoContrato }),
-      Constants2026
-    );
-    var alava = TaxEngineBizkaia.calcularTipoRetencion(
-      {
-        retribucionFija: datos.salario,
-        retribucionVariablePrevisible: 0,
-        numDescendientes: datos.numHijos,
-        discapacidad: datos.discapacidadPropia
-      },
-      ConstantsAlava2026
-    );
-    var brutoAnual = TaxEngine.round(datos.salario);
-    var retencionAnual = TaxEngine.round(datos.salario * (alava.tipoRetencion / 100));
-    var netoAnual = TaxEngine.round(datos.salario - ss.anual - retencionAnual);
-    return {
-      bloqueado: false,
-      brutoAnual: brutoAnual,
-      segSocial: ss,
-      irpf: { tipoRetencion: alava.tipoRetencion, retencionAnual: retencionAnual },
-      numPagas: datos.numPagas,
-      netoAnual: netoAnual,
-      netoPorPaga: TaxEngine.round(netoAnual / datos.numPagas),
-      porcentajeQueLlega: brutoAnual > 0 ? TaxEngine.round((netoAnual / brutoAnual) * 100) : 0
-    };
+    return brutoToNetoForalPaisVasco(datos, ConstantsAlava2026);
   }
 
   function netoToBrutoAlava(datos) {
@@ -796,6 +818,7 @@ var App = (function () {
   return {
     renderNav: renderNav,
     renderRelacionadas: renderRelacionadas,
+    renderRelacionadasContenido: renderRelacionadasContenido,
     renderFooter: renderFooter,
     buildFormulario: buildFormulario,
     leerFormulario: leerFormulario,

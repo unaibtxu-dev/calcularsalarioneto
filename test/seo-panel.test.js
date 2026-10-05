@@ -45,10 +45,10 @@ describe("seo-panel/data.js: extracción de hechos reales (title/meta/canonical/
     assert.ok(htmlReal.includes(p.description), "la description del panel debe ser literalmente la del HTML, no inventada");
   });
 
-  test("extrae el canonical real de la guía de Álava", () => {
+  test("extrae el canonical real de la guía de País Vasco", () => {
     const data = buildPanelData();
-    const p = data.pages.find((p) => p.cleanUrl === "/guias/tabla-retenciones-irpf-alava-2026");
-    assert.equal(p.canonical, "https://calcularsalarioneto.es/guias/tabla-retenciones-irpf-alava-2026");
+    const p = data.pages.find((p) => p.cleanUrl === "/guias/tabla-retenciones-irpf-pais-vasco-2026");
+    assert.equal(p.canonical, "https://calcularsalarioneto.es/guias/tabla-retenciones-irpf-pais-vasco-2026");
   });
 
   test("extrae el H1 real de la guía de coste de empresa", () => {

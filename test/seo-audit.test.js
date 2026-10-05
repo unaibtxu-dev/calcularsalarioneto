@@ -320,39 +320,73 @@ describe("distinción warning/error y exit code", () => {
 });
 
 // -----------------------------------------------------------------------
-// Caso de prueba real: cluster de Álava (guía informativa + calculadora
-// transaccional)
+// Caso de prueba real: cluster de País Vasco, ahora completamente 1:1 —
+// una guía consolidada (/guias/tabla-retenciones-irpf-pais-vasco-2026) y
+// una calculadora consolidada (/calculadora-sueldo-neto-pais-vasco), cada
+// una enlazando directamente a la otra. Antes había tres guías y tres
+// calculadoras (una por territorio); ambos lados se consolidaron por
+// separado en dos tareas distintas, y esta prueba cubre el estado final
+// ya sin redirecciones de por medio entre ellas.
 // -----------------------------------------------------------------------
 
-describe("cluster Álava: guía y calculadora se reconocen con intenciones distintas", () => {
+describe("cluster País Vasco: la guía y la calculadora consolidadas se reconocen con intenciones distintas y sin depender de redirects entre sí", () => {
   const ctx = lib.cargarTodo();
   const contenido = lib.checkContenido(ctx);
   const enlazado = lib.checkEnlazado(ctx);
+  const GUIA_URL = "/guias/tabla-retenciones-irpf-pais-vasco-2026";
+  const CALC_URL = "/calculadora-sueldo-neto-pais-vasco";
 
   test("la guía se reconoce con intención informational y el tema representado", () => {
-    const m = contenido.filter((f) => f.page === "/guias/tabla-retenciones-irpf-alava-2026" && f.code === "TARGET_REPRESENTED");
+    const m = contenido.filter((f) => f.page === GUIA_URL && f.code === "TARGET_REPRESENTED");
     assert.equal(m.length, 1);
     assert.match(m[0].message, /informational/);
   });
 
   test("la calculadora se reconoce con intención transactional y el tema representado", () => {
-    const m = contenido.filter((f) => f.page === "/calculadora-sueldo-neto-alava" && f.code === "TARGET_REPRESENTED");
+    const m = contenido.filter((f) => f.page === CALC_URL && f.code === "TARGET_REPRESENTED");
     assert.equal(m.length, 1);
     assert.match(m[0].message, /transactional/);
   });
 
-  test("guía y calculadora NO comparten title ni H1 (no hay canibalización literal entre ellas)", () => {
-    const guia = ctx.facts.find((p) => p.cleanUrl === "/guias/tabla-retenciones-irpf-alava-2026");
-    const calc = ctx.facts.find((p) => p.cleanUrl === "/calculadora-sueldo-neto-alava");
+  test("la guía NO comparte title ni H1 con la calculadora (no hay canibalización literal entre ellas)", () => {
+    const calc = ctx.facts.find((p) => p.cleanUrl === CALC_URL);
+    const guia = ctx.facts.find((p) => p.cleanUrl === GUIA_URL);
     assert.notEqual(guia.title.trim().toLowerCase(), calc.title.trim().toLowerCase());
     assert.notEqual(guia.h1s[0].trim().toLowerCase(), calc.h1s[0].trim().toLowerCase());
   });
 
-  test("la guía enlaza con la calculadora y viceversa (relación editorial configurada y cumplida)", () => {
-    const deGuia = enlazado.filter((f) => f.page === "/guias/tabla-retenciones-irpf-alava-2026" && f.code === "RELATED_LINK_OK");
-    const deCalc = enlazado.filter((f) => f.page === "/calculadora-sueldo-neto-alava" && f.code === "RELATED_LINK_OK");
-    assert.equal(deGuia.length, 1);
+  test("la calculadora enlaza directamente con la guía, sin pasar por ningún redirect (relación editorial configurada y cumplida)", () => {
+    const deCalc = enlazado.filter((f) => f.page === CALC_URL && f.code === "RELATED_LINK_OK");
     assert.equal(deCalc.length, 1);
+    const deCalcRedirect = enlazado.filter((f) => f.page === CALC_URL && f.code === "LINK_VIA_REDIRECT");
+    assert.equal(deCalcRedirect.length, 0, "la calculadora no debería depender de ningún redirect interno hacia la guía");
+  });
+
+  test("la guía enlaza directamente con la calculadora, sin pasar por ningún redirect (relación editorial configurada y cumplida)", () => {
+    const deGuia = enlazado.filter((f) => f.page === GUIA_URL && f.code === "RELATED_LINK_OK");
+    assert.equal(deGuia.length, 1);
+    const deGuiaRedirect = enlazado.filter((f) => f.page === GUIA_URL && f.code === "LINK_VIA_REDIRECT");
+    assert.equal(deGuiaRedirect.length, 0, "la guía no debería depender de ningún redirect interno hacia la calculadora");
+  });
+
+  test("ninguna página de las tocadas en esta consolidación depende de un redirect hacia las tres guías forales antiguas (/fiscalidad-foral queda deliberadamente fuera: no se ha tocado en esta tarea)", () => {
+    const guiasAntiguas = [
+      "/guias/tabla-retenciones-irpf-alava-2026",
+      "/guias/tabla-retenciones-irpf-bizkaia-2026",
+      "/guias/tabla-retenciones-irpf-gipuzkoa-2026"
+    ];
+    const viaRedirectGuiasAntiguas = enlazado.filter(
+      (f) => f.code === "LINK_VIA_REDIRECT" && guiasAntiguas.some((u) => f.message.includes(u))
+    );
+    assert.equal(viaRedirectGuiasAntiguas.length, 0, "no debería quedar ningún enlace interno que dependa de un redirect hacia las guías antiguas: " + JSON.stringify(viaRedirectGuiasAntiguas.map((f) => f.page)));
+  });
+
+  test("ninguna página del sitio depende ya de un redirect hacia las tres calculadoras antiguas (/fiscalidad-foral se reconstruyó y ya no enlaza a ellas)", () => {
+    const calcsAntiguas = ["/calculadora-sueldo-neto-alava", "/calculadora-sueldo-neto-bizkaia", "/calculadora-sueldo-neto-gipuzkoa"];
+    const viaRedirectCalcsAntiguas = enlazado.filter(
+      (f) => f.code === "LINK_VIA_REDIRECT" && calcsAntiguas.some((u) => f.message.includes(u))
+    );
+    assert.equal(viaRedirectCalcsAntiguas.length, 0, "no debería quedar ningún enlace interno que dependa de un redirect hacia las calculadoras antiguas: " + JSON.stringify(viaRedirectCalcsAntiguas.map((f) => f.page)));
   });
 });
 

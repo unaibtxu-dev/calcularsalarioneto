@@ -44,6 +44,70 @@
   }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Cuánto le cuesta a la empresa un sueldo de 30.000 €?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Unos 39.645 € anuales con un tipo de accidentes de trabajo del 1,50 %, es decir 9.645 € por encima del bruto. Si la actividad tiene un AT/EP más alto, el coste sube: en construcción, con un 6,70 %, superaría los 41.200 €."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Por qué el coste no cambia si pongo hijos o cambio de territorio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Porque esas variables afectan al IRPF del trabajador, no a las cotizaciones sociales. La empresa cotiza los mismos porcentajes sobre la base de cotización con independencia de la situación familiar o fiscal del empleado. Solo modifican el neto que se muestra como referencia. Tienes la diferencia completa entre lo que cotiza el trabajador y lo que cotiza la empresa en ¿qué se descuenta de una nómina?."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cotiza igual un contrato temporal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. El tipo de desempleo a cargo de la empresa es del 6,70 % en temporal frente al 5,50 % en indefinido, un 1,20 % más. El resto de conceptos son iguales. Puedes cambiar el tipo de contrato en el formulario para ver la diferencia."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Hay un tope en lo que cotiza la empresa?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Las cotizaciones ordinarias están limitadas por la base máxima, pero en 2026 existe una cotización adicional de solidaridad sobre la parte del salario que supera esa base. Por tanto, el coste de cotización empresarial puede seguir aumentando en salarios altos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cómo se calcula el coste de un trabajador para la empresa?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sumando al salario bruto anual las cotizaciones a la Seguridad Social a cargo de la empresa: contingencias comunes, desempleo, formación profesional, MEI, FOGASA y accidentes de trabajo (AT/EP). El IRPF no se incluye, porque es una retención sobre el sueldo del trabajador, no un coste adicional para la empresa."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué incluye el cálculo del coste de nómina para la empresa?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El coste de nómina para la empresa incluye el salario bruto pactado más todas las cotizaciones sociales que la empresa paga aparte (tienes el desglose completo más arriba). No incluye el IRPF, que sale del bruto del trabajador, ni otros costes laborales indirectos como indemnizaciones, beneficios o gastos de estructura."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué costes laborales tiene una empresa aparte de la Seguridad Social?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Indemnizaciones y provisiones por despido, retribución flexible y beneficios sociales, costes de estructura (puesto de trabajo, equipo, licencias) y, en sentido contrario, bonificaciones que reducen la cuota en determinados contratos. Esta calculadora se centra solo en el coste de las cotizaciones obligatorias."
+      }
+    }
+  ]
+}
+</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4073412446458032" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -70,7 +134,7 @@
     <p>El cálculo tiene una estructura sencilla: <strong>coste de empresa = salario bruto + cotizaciones empresariales a la Seguridad Social</strong>. El IRPF que aparece en la nómina <strong>no es un coste adicional para la empresa</strong> — es una retención que se descuenta del bruto del trabajador, no un pago aparte que salga del bolsillo del empleador. La calculadora de esta página aplica exactamente esa suma, con los tipos de cotización de 2026.</p>
 
     <h2 class="section-title">Qué incluye la Seguridad Social que paga la empresa</h2>
-    <p>La cotización empresarial a la Seguridad Social se compone de varios conceptos, todos ya incluidos en el cálculo de esta página: contingencias comunes (23,60 %), desempleo (5,50 % en contrato indefinido, 6,70 % en temporal), formación profesional (0,60 %), MEI (0,75 %), FOGASA (0,20 %) y accidentes de trabajo y enfermedades profesionales (AT/EP), variable según la actividad. Sumados, dan el porcentaje total que la empresa añade sobre el bruto — el desglose completo está más abajo.</p>
+    <p>La cotización empresarial se compone de varios conceptos —contingencias comunes, desempleo, formación profesional, MEI, FOGASA y accidentes de trabajo (AT/EP)—, todos ya incluidos en el cálculo de esta página. Sumados, dan el porcentaje total que la empresa añade sobre el bruto: tienes el desglose con cada porcentaje más abajo. Si quieres <a href="/guias/cuanto-cuesta-un-trabajador-a-la-empresa-2026">entender de qué se compone el coste laboral</a> y cómo se interpreta cada concepto, tienes la explicación completa en nuestra guía.</p>
 
     <h2 class="section-title">¿Cuánto cuesta realmente un trabajador?</h2>
     <p>La regla práctica que se maneja en España es que un empleado cuesta en torno a un <strong>30-35 % más</strong> que su salario bruto. Con un tipo de accidentes de trabajo bajo, propio de oficinas, el sobrecoste ronda el <strong>32 %</strong>.</p>
@@ -178,7 +242,7 @@
 <script src="lib/constants-alava-2026.js?v=1"></script>
 <script src="lib/tax-engine-bizkaia.js?v=1"></script>
 <script src="assets/js/format.js?v=2"></script>
-<script src="assets/js/components.js?v=13"></script>
+<script src="assets/js/components.js?v=14"></script>
 <script src="pages/coste-empresa.js"></script>
 </body>
 </html>

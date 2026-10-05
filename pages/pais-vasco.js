@@ -1,10 +1,19 @@
 "use strict";
 (function () {
-  App.renderNav("gipuzkoa");
-  App.renderRelacionadas("relacionadas");
+  App.renderNav("pais-vasco");
+  App.renderRelacionadasContenido("relacionadas", "calc-pais-vasco");
   var form = document.getElementById("formulario");
   var result = document.getElementById("resultado");
   var faqDinamica = document.getElementById("faq-dinamica");
+
+  // Álava, Bizkaia y Gipuzkoa comparten motor y tabla en 2026 (ver App.brutoToNetoForalPaisVasco
+  // en components.js), pero cada uno mantiene su propia función pública porque cada territorio
+  // cita su propia normativa foral por separado y podría necesitar reglas propias en el futuro.
+  var MOTOR_POR_TERRITORIO = {
+    alava: App.brutoToNetoAlava,
+    bizkaia: App.brutoToNetoBizkaia,
+    gipuzkoa: App.brutoToNetoGipuzkoa
+  };
 
   App.buildFormulario(form, {
     salarioLabel: "Salario bruto anual",
@@ -12,13 +21,14 @@
     salarioFormatoEspanol: true,
     placeholder: "30.000",
     defaultValue: "30.000",
-    territoriosSoportadosExtra: ["gipuzkoa"],
-    territorioDefecto: "gipuzkoa"
+    territoriosSoportadosExtra: ["alava", "bizkaia", "gipuzkoa"],
+    territorioDefecto: "alava",
+    advancedOpen: true
   });
 
   function render(r, datos) {
     result.hidden = false;
-    var resumen = App.resumenCondicionesHTML(datos, ["gipuzkoa"]);
+    var resumen = App.resumenCondicionesHTML(datos, ["alava", "bizkaia", "gipuzkoa"]);
     if (r.bloqueado) {
       result.innerHTML = resumen + App.bloqueoHTML(r.motivo);
       if (faqDinamica) faqDinamica.textContent = "Con el territorio elegido no podemos dar una cifra fiable (" + r.motivo + ").";
@@ -43,9 +53,9 @@
       '<p class="disclaimer">' + App.DISCLAIMER + "</p>";
 
     if (faqDinamica) {
+      var etiquetaTerritorio = datos.territorio === "alava" ? "En Álava, " : datos.territorio === "bizkaia" ? "En Bizkaia, " : datos.territorio === "gipuzkoa" ? "En Gipuzkoa, " : "Con el territorio seleccionado, ";
       faqDinamica.textContent =
-        (datos.territorio === "gipuzkoa" ? "En Gipuzkoa, " : "Con el territorio seleccionado, ") +
-        Fmt.money(r.brutoAnual, true) + " brutos al año equivalen a " + Fmt.money(r.netoAnual) +
+        etiquetaTerritorio + Fmt.money(r.brutoAnual, true) + " brutos al año equivalen a " + Fmt.money(r.netoAnual) +
         " netos, unos " + Fmt.money(r.netoPorPaga, true) + " por paga (" + datos.numPagas +
         " pagas), con una retención del " + Fmt.pct(r.irpf.tipoRetencion) + ".";
     }
@@ -57,11 +67,9 @@
       result.hidden = true;
       return;
     }
-    // Gipuzkoa usa el motor foral (el mismo que Bizkaia, tabla idéntica); el
-    // resto de territorios siguen con el común, para que el selector siga
-    // siendo útil sin duplicar reglas fiscales.
-    if (datos.territorio === "gipuzkoa") {
-      render(App.brutoToNetoGipuzkoa(datos), datos);
+    var motor = MOTOR_POR_TERRITORIO[datos.territorio];
+    if (motor) {
+      render(motor(datos), datos);
       return;
     }
     var r = TaxEngine.brutoToNeto(
@@ -85,4 +93,31 @@
 
   form.addEventListener("app:change", calcular);
   calcular();
+
+  // Tabla comparativa régimen común vs. los tres territorios vascos, para
+  // varios sueldos de referencia — calculada en vivo con el mismo motor,
+  // no con cifras escritas a mano. Sirve de evidencia visual de que los
+  // tres territorios coinciden en 2026 (ver sección "por qué dan el mismo
+  // resultado" más abajo en la página).
+  var SALARIOS_COMPARATIVA = [20000, 25000, 30000, 35000, 40000, 50000];
+  var tablaComparativa = document.getElementById("comparativa-tabla-body");
+  if (tablaComparativa) {
+    tablaComparativa.innerHTML = SALARIOS_COMPARATIVA.map(function (bruto) {
+      var datosBase = { salario: bruto, numPagas: 12, situacionFamiliar: "otro", numHijos: 0, tipoContrato: "general", discapacidadPropia: "ninguna" };
+      var comun = TaxEngine.brutoToNeto(
+        { brutoAnual: bruto, numPagas: 12, situacionFamiliar: "otro", numHijos: 0, territorio: "comun", tipoContrato: "general" },
+        Constants2026
+      );
+      var alava = App.brutoToNetoAlava(datosBase);
+      var bizkaia = App.brutoToNetoBizkaia(datosBase);
+      var gipuzkoa = App.brutoToNetoGipuzkoa(datosBase);
+      return (
+        "<tr><td>" + Fmt.money(bruto) + "</td>" +
+        "<td>" + Fmt.pct(comun.irpf.tipoRetencion) + "</td>" +
+        "<td>" + Fmt.pct(alava.irpf.tipoRetencion) + "</td>" +
+        "<td>" + Fmt.pct(bizkaia.irpf.tipoRetencion) + "</td>" +
+        "<td>" + Fmt.pct(gipuzkoa.irpf.tipoRetencion) + "</td></tr>"
+      );
+    }).join("");
+  }
 })();

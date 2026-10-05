@@ -838,31 +838,12 @@ details.advanced .advanced-body {
   max-width: 68ch;
 }
 
-.guias-filtros {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 14px 0 22px;
+.guias-seccion-titulo {
+  margin: 28px 0 12px;
 }
 
-.guias-filtros button {
-  border: 1.5px solid var(--border);
-  background: var(--surface);
-  color: var(--text-muted);
-  font-family: var(--font);
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 7px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  min-height: 36px;
-  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
-}
-
-.guias-filtros button.active {
-  background: var(--navy);
-  border-color: var(--navy);
-  color: #fff;
+.guias-seccion-titulo:first-of-type {
+  margin-top: 4px;
 }
 
 .guias-grid {
@@ -952,16 +933,6 @@ details.advanced .advanced-body {
   overflow: hidden;
 }
 
-/* .guia-card fija su propio "display: flex" con la misma especificidad que
-   la regla [hidden] { display: none } del user-agent — al tener igual
-   especificidad, la hoja de estilos del autor gana en la cascada y el
-   atributo hidden (usado por el filtro de categorías) queda visualmente
-   sin efecto. Se resuelve aquí, scopeado solo a .guia-card, sin tocar la
-   regla global .hidden ni ningún otro [hidden] del resto del sitio. */
-.guia-card[hidden] {
-  display: none !important;
-}
-
 .guia-card-media {
   aspect-ratio: 16 / 9;
   background: var(--bg);
@@ -988,20 +959,6 @@ details.advanced .advanced-body {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-}
-
-.guia-card-categoria {
-  display: inline-block;
-  align-self: flex-start;
-  background: var(--primary-soft);
-  color: var(--primary-dark);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 3px 9px;
-  border-radius: 999px;
-  margin-bottom: 8px;
 }
 
 .guia-card-title {
@@ -1052,16 +1009,6 @@ details.advanced .advanced-body {
   .guia-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 2px 4px rgba(11, 31, 58, 0.08), 0 14px 28px rgba(11, 31, 58, 0.12);
-  }
-}
-
-/* El JS del filtro de /guias ya comprueba prefers-reduced-motion antes de
-   animar la entrada/salida de tarjetas (fade + translateY), así que aquí
-   solo hace falta anular la transición de color de las píldoras — lo
-   único puramente CSS que se anima en este componente. */
-@media (prefers-reduced-motion: reduce) {
-  .guias-filtros button {
-    transition: none;
   }
 }
 

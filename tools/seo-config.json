@@ -19,42 +19,22 @@
       "disclaimerType": "foral",
       "requiresDisclaimer": true
     },
-    "/calculadora-sueldo-neto-bizkaia": {
-      "target": "calculadora sueldo neto Bizkaia 2026",
+    "/calculadora-sueldo-neto-pais-vasco": {
+      "target": "calculadora sueldo neto País Vasco 2026 (Álava, Bizkaia, Gipuzkoa)",
       "intent": "transactional",
-      "related": ["/guias/tabla-retenciones-irpf-bizkaia-2026"],
-      "disclaimerType": "foral",
-      "requiresDisclaimer": true
-    },
-    "/calculadora-sueldo-neto-gipuzkoa": {
-      "target": "calculadora sueldo neto Gipuzkoa 2026",
-      "intent": "transactional",
-      "related": ["/guias/tabla-retenciones-irpf-gipuzkoa-2026"],
-      "disclaimerType": "foral",
-      "requiresDisclaimer": true
-    },
-    "/calculadora-sueldo-neto-alava": {
-      "target": "calculadora sueldo neto Álava 2026",
-      "intent": "transactional",
-      "related": ["/guias/tabla-retenciones-irpf-alava-2026"],
+      "related": ["/guias/tabla-retenciones-irpf-pais-vasco-2026"],
       "disclaimerType": "foral",
       "requiresDisclaimer": true
     },
     "/fiscalidad-foral": { "disclaimerType": "foral", "requiresDisclaimer": true },
-    "/30000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
-    "/35000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
-    "/40000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
-    "/45000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
-    "/50000-brutos-a-netos": { "disclaimerType": "calculator", "requiresDisclaimer": true },
     "/retencion-irpf-vs-renta": { "disclaimerType": "editorial", "requiresDisclaimer": true },
     "/que-se-descuenta-de-una-nomina": { "disclaimerType": "editorial", "requiresDisclaimer": true },
     "/12-pagas-vs-14-pagas": { "disclaimerType": "editorial", "requiresDisclaimer": true },
-    "/subida-sueldo-5000": { "disclaimerType": "editorial", "requiresDisclaimer": true },
     "/sueldos": { "disclaimerType": "editorial", "requiresDisclaimer": true },
-    "/guias/tabla-retenciones-irpf-alava-2026": {
-      "target": "tabla retenciones IRPF Álava 2026",
+    "/guias/tabla-retenciones-irpf-pais-vasco-2026": {
+      "target": "tabla retenciones IRPF País Vasco 2026 (Álava, Bizkaia, Gipuzkoa)",
       "intent": "informational",
-      "related": ["/calculadora-sueldo-neto-alava"],
+      "related": ["/calculadora-sueldo-neto-pais-vasco"],
       "requiresOfficialSource": true,
       "requiresMethodology": true,
       "requiresDateContext": true,
@@ -70,30 +50,18 @@
       "disclaimerType": "editorial",
       "requiresDisclaimer": true
     },
+    "/guias/elecciones-irpf-sueldo-neto": {
+      "target": "elecciones IRPF sueldo neto qué medidas cambian la nómina",
+      "intent": "informational",
+      "related": ["/retencion-irpf-vs-renta"],
+      "requiresMethodology": true,
+      "disclaimerType": "editorial",
+      "requiresDisclaimer": true
+    },
     "/guias/tabla-retenciones-irpf-navarra-2026": {
       "target": "tabla retenciones IRPF Navarra 2026",
       "intent": "informational",
       "related": ["/calculadora-sueldo-neto-navarra"],
-      "requiresOfficialSource": true,
-      "requiresMethodology": true,
-      "requiresDateContext": true,
-      "disclaimerType": "editorial",
-      "requiresDisclaimer": true
-    },
-    "/guias/tabla-retenciones-irpf-gipuzkoa-2026": {
-      "target": "tabla retenciones IRPF Gipuzkoa 2026",
-      "intent": "informational",
-      "related": ["/calculadora-sueldo-neto-gipuzkoa"],
-      "requiresOfficialSource": true,
-      "requiresMethodology": true,
-      "requiresDateContext": true,
-      "disclaimerType": "editorial",
-      "requiresDisclaimer": true
-    },
-    "/guias/tabla-retenciones-irpf-bizkaia-2026": {
-      "target": "tabla retenciones IRPF Bizkaia 2026",
-      "intent": "informational",
-      "related": ["/calculadora-sueldo-neto-bizkaia"],
       "requiresOfficialSource": true,
       "requiresMethodology": true,
       "requiresDateContext": true,

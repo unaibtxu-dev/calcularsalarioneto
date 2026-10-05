@@ -1,7 +1,7 @@
 "use strict";
 (function () {
   App.renderNav("navarra");
-  App.renderRelacionadas("relacionadas");
+  App.renderRelacionadasContenido("relacionadas", "calc-navarra");
   var form = document.getElementById("formulario");
   var result = document.getElementById("resultado");
   var faqDinamica = document.getElementById("faq-dinamica");

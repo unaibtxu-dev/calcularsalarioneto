@@ -3,12 +3,16 @@
   App.renderNav("fiscalidad-foral");
   App.renderRelacionadas("relacionadas");
 
+  // País Vasco se representa con una sola tarjeta (no tres): Álava, Bizkaia
+  // y Gipuzkoa comparten motor y, en 2026, tabla de retención — ver
+  // App.brutoToNetoForalPaisVasco en components.js. Usamos aquí el mismo
+  // motor (vía App.brutoToNetoBizkaia) como representante de los tres,
+  // consistente con /calculadora-sueldo-neto-pais-vasco y con la guía
+  // consolidada.
   var TERRITORIOS = [
     { id: "comun", label: "Régimen común", href: "/" },
-    { id: "navarra", label: "Navarra", href: "calculadora-sueldo-neto-navarra" },
-    { id: "bizkaia", label: "Bizkaia", href: "calculadora-sueldo-neto-bizkaia" },
-    { id: "gipuzkoa", label: "Gipuzkoa", href: "calculadora-sueldo-neto-gipuzkoa" },
-    { id: "alava", label: "Álava", href: "calculadora-sueldo-neto-alava" }
+    { id: "paisvasco", label: "País Vasco", href: "/calculadora-sueldo-neto-pais-vasco" },
+    { id: "navarra", label: "Navarra", href: "/calculadora-sueldo-neto-navarra" }
   ];
 
   var form = document.getElementById("comparador-form");
@@ -69,9 +73,7 @@
       );
     }
     if (id === "navarra") return App.brutoToNetoNavarra(Object.assign({ tipoContrato: "general" }, datos));
-    if (id === "bizkaia") return App.brutoToNetoBizkaia(Object.assign({ tipoContrato: "general" }, datos));
-    if (id === "gipuzkoa") return App.brutoToNetoGipuzkoa(Object.assign({ tipoContrato: "general" }, datos));
-    if (id === "alava") return App.brutoToNetoAlava(Object.assign({ tipoContrato: "general" }, datos));
+    if (id === "paisvasco") return App.brutoToNetoBizkaia(Object.assign({ tipoContrato: "general" }, datos));
     return null;
   }
 

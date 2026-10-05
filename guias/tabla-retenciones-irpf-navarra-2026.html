@@ -120,10 +120,12 @@
       <li><a href="https://hacienda.navarra.es/CalculoRetencion/Inicio.aspx" target="_blank" rel="noopener">Hacienda Foral de Navarra — Cálculo de retenciones por rendimientos del trabajo</a></li>
       <li><a href="https://www.navarra.es/NR/rdonlyres/14E42A9F-ED01-4147-8C76-EBCF257CC797/0/Modificacionestributariaspara20263.pdf" target="_blank" rel="noopener">Gobierno de Navarra — Modificaciones tributarias para 2026</a></li>
       <li><a href="https://www.lexnavarra.navarra.es/detalle.asp?r=10615" target="_blank" rel="noopener">LexNavarra — Normativa consolidada, tabla de porcentajes de retención</a></li>
+      <li><a href="/fiscalidad-foral">Fiscalidad foral en España: País Vasco, Navarra y régimen común</a></li>
       <li><a href="/metodologia">Metodología de cálculo de SueldoClaro</a></li>
     </ul>
     <p>SueldoClaro es una herramienta orientativa y no sustituye el asesoramiento fiscal profesional ni la propia herramienta de cálculo de la Hacienda Foral de Navarra.</p>
     <p class="field-hint">Actualizado: septiembre de 2026.</p>
+    <p class="field-hint">Tienes el resto de guías sobre nómina, fiscalidad y empresa en <a href="/guias">guías</a>.</p>
   </section>
 
   <section class="card" id="faq">
@@ -163,10 +165,10 @@
 <script src="/lib/tax-engine-navarra.js?v=1"></script>
 <script src="/lib/render-tabla-retencion.js?v=2"></script>
 <script src="/assets/js/format.js?v=2"></script>
-<script src="/assets/js/components.js?v=13"></script>
+<script src="/assets/js/components.js?v=14"></script>
 <script>
 App.renderNav();
-App.renderRelacionadas("relacionadas");
+App.renderRelacionadasContenido("relacionadas", "guia-navarra");
 
 document.getElementById("tabla-retenciones-navarra").innerHTML = RenderTablaRetencion.tablaRetencionHTML(
   RenderTablaRetencion.filasDesdeUmbralesExclusivos(ConstantsNavarra2026.tablaRetencion),
